@@ -1,0 +1,8 @@
+<?php
+$viewDir = __DIR__ . '/../view/';
+return [
+    'attendance/layout' => $viewDir . 'layout.phtml',
+    'attendance/purchase/index' => $viewDir . 'purchase/index.phtml',
+    'attendance/purchase/delegates' => $viewDir . 'purchase/delegates.phtml',
+    'attendance/purchase/payment' => $viewDir . 'purchase/payment.phtml',
+];

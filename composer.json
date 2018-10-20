@@ -1,0 +1,27 @@
+{
+  "name": "conferencetools/attendance-module",
+  "description": "Provides ticket booking, management and CRM functions",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../myoss/phactor"
+    }
+  ],
+  "require": {
+    "neilime/zf2-twb-bundle": "^3.0",
+    "rwoverdijk/assetmanager": "^1.7",
+    "zendframework/zend-mvc": "^3.0.1",
+    "zendframework/zend-form": "^2.12",
+    "zendframework/zend-i18n": "^2.9@dev",
+    "zfr/zfr-stripe-module": "~5.0",
+    "carnage/phactor": "dev-master",
+    "zendframework/zend-mvc-plugin-flashmessenger": "^1.1@dev"
+  },
+  "autoload": {
+    "psr-4": {
+      "ConferenceTools\\Attendance\\": "src"
+    }
+  }
+}

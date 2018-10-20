@@ -1,0 +1,54 @@
+<?php $this->form->prepare();?>
+<? $this->form($this->form)?>
+<div class="row" >
+    <div class="col-md-8">
+        <form class="form-horizontal" method="post">
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <?php for ($i = 0; $i < $this->delegates; $i++): ?>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="heading_<?=$i?>">
+                        <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_<?=$i?>" aria-expanded="true" aria-controls="collapse_<?=$i?>">
+                                Delegate #<?=($i + 1)?>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse_<?=$i?>" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading_<?=$i?>">
+                        <div class="panel-body">
+                            <div style="padding: 15px;">
+                            <?=$this->formCollection($this->form->get('delegate_' . $i)) ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endfor;?>
+                <?=$this->formHidden($this->form->get('security'))?>
+                <?=$this->formSubmit($this->form->get('continue'))?>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4">
+
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Basket
+                    </a>
+                </h4>
+            </div>
+            <div class="panel-body">
+                <?php foreach ($this->purchase->getTickets() as $ticketId => $quantity): ?>
+            <div class="row">
+                <span class="col-xs-12 col-md-8"><?= $this->tickets[$ticketId]->getTicket()->getName() ?></span>
+                <span class="col-xs-12 col-md-4"><?= $quantity ?></span>
+                <?php if ( ! empty($this->tickets[$ticketId]->getTicket()->getDescription())): ?>
+                    <span class="help-block col-xs-12 col-md-12"><?= $this->tickets[$ticketId]->getTicket()->getDescription() ?></span>
+                <?php endif ?>
+            </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+    </div>
+</div>

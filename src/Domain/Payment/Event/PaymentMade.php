@@ -1,12 +1,12 @@
 <?php
 
 
-namespace ConferenceTools\Attendance\Domain\Purchasing\Event;
+namespace ConferenceTools\Attendance\Domain\Payment\Event;
 
 use JMS\Serializer\Annotation as Jms;
 use Carnage\Phactor\Message\HasActorId;
 
-class PurchasePaid implements HasActorId
+class PaymentMade implements HasActorId
 {
     /**
      * @var string

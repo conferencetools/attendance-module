@@ -10,6 +10,7 @@
     }
   ],
   "require": {
+    "php": "~7.2",
     "neilime/zf2-twb-bundle": "^3.0",
     "rwoverdijk/assetmanager": "^1.7",
     "zendframework/zend-mvc": "^3.0.1",
@@ -17,7 +18,9 @@
     "zendframework/zend-i18n": "^2.9@dev",
     "zfr/zfr-stripe-module": "~5.0",
     "carnage/phactor": "dev-master",
-    "zendframework/zend-mvc-plugin-flashmessenger": "^1.1@dev"
+    "zendframework/zend-mvc-plugin-flashmessenger": "^1.1@dev",
+    "zendframework/zend-math": "^3.0",
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4": {

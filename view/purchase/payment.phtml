@@ -13,7 +13,7 @@ $this->headLink()->appendStylesheet('/css/card.css');
 <? //$this->render('tickets/ticket/_orderInformation', ['purchase' => $this->purchase]) ?>
 <div class="row">
     <div class="col-md-6 col-xs-12">
-        <?php //$this->form->prepare();?>
+        <?php $this->form->prepare();?>
         <?php echo $this->form($this->form); ?>
         <div class="panel panel-default credit-card-box">
             <div class="panel-heading display-table" >
@@ -23,6 +23,29 @@ $this->headLink()->appendStylesheet('/css/card.css');
                 </div>
             </div>
             <div class="panel-body">
+                <?php foreach ($this->purchase->getTickets() as $ticketId => $quantity): ?>
+                    <div class="row">
+                        <span class="col-xs-12 col-md-8"><?= $this->tickets[$ticketId]->getTicket()->getName() ?></span>
+                        <span class="col-xs-12 col-md-4"><?= $quantity ?></span>
+                        <?php if ( ! empty($this->tickets[$ticketId]->getTicket()->getDescription())): ?>
+                            <span class="help-block col-xs-12 col-md-12"><?= $this->tickets[$ticketId]->getTicket()->getDescription() ?></span>
+                        <?php endif ?>
+                    </div>
+                <?php endforeach; ?>
+                <hr />
+                <div class="row">
+                    <span class="col-xs-8"><strong>Sub Total</strong></span>
+                    <span class="col-xs-4"><?= $this->moneyFormat($this->purchase->getTotal(), true) ?></span>
+                </div>
+                <div class="row">
+                    <span class="col-xs-8"><strong>VAT</strong></span>
+                    <span class="col-xs-4"><?= $this->moneyFormat($this->purchase->getTotal()->getTax()) ?></span>
+                </div>
+                <div class="row">
+                    <span class="col-xs-8"><strong>Total</strong></span>
+                    <span class="col-xs-4"><?= $this->moneyFormat($this->purchase->getTotal()) ?></span>
+                </div>
+
             </div>
         </div>
     </div>
@@ -37,7 +60,7 @@ $this->headLink()->appendStylesheet('/css/card.css');
                 </div>
             </div>
             <div class="panel-body">
-                    <form role="form" id="payment-form" method="POST" action="javascript:void(0);">
+                    <form role="form" id="payment-information-form" method="POST" action="javascript:void(0);">
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="form-group">

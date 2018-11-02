@@ -13,20 +13,24 @@ class Ticket
 {
     /**
      * @ORM\Column(type="string")
+     * @Jms\Type("string")
      * @var string
      */
     private $code;
     /**
      * @ORM\Column(type="string")
+     * @Jms\Type("string")
      * @var string
      */
     private $name;
     /**
      * @ORM\Column(type="string")
+     * @Jms\Type("string")
      * @var string
      */
     private $description;
     /**
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price")
      * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Price")
      * @var Price
      */

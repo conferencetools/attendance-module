@@ -40,7 +40,17 @@ return [
                                 'action' => 'payment',
                             ],
                         ]
-                    ]
+                    ],
+                    'complete' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => ':purchaseId/complete',
+                            'defaults' => [
+                                'controller' => Controller\PurchaseController::class,
+                                'action' => 'complete',
+                            ],
+                        ]
+                    ],
                 ],
             ],
         ]

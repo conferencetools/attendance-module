@@ -21,9 +21,9 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  */
-var $form = $('#payment-form');
+var $form = $('#payment-information-form');
 var submitPaymentButton = $('#submit-payment');
-var delegateForm = $('#delegate-form');
+var delegateForm = $('#payment-form');
 var stripeTokenElement = delegateForm.find('input[name="stripe_token"]');
 submitPaymentButton.on('click', payWithStripe);
 
@@ -31,7 +31,7 @@ submitPaymentButton.on('click', payWithStripe);
 function payWithStripe(e) {
 
     e.preventDefault();
-    function stripeResponseHandler(status, response) {
+    function stripeResponseHandler(status, response) {console.log(response)
         if (response.error) {
             /* Visual feedback */
             submitPaymentButton.html('Try again').prop('disabled', false);

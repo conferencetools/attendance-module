@@ -11,6 +11,7 @@ use ConferenceTools\Attendance\Domain\Purchasing\Command as PurchasingCommand;
 use ConferenceTools\Attendance\Domain\Delegate\Command as DelegateCommand;
 use ConferenceTools\Attendance\Domain\Ticketing\Event as TicketingEvent;
 use ConferenceTools\Attendance\Domain\Purchasing\Event as PurchasingEvent;
+use ConferenceTools\Attendance\Domain\Payment\Event as PaymentEvent;
 use ConferenceTools\Attendance\Domain\Ticketing\TicketType;
 
 class MessageSubscriptions
@@ -47,11 +48,20 @@ class MessageSubscriptions
                 AvailableTickets::class,
                 Projector::class,
             ],
+            PurchasingEvent\PurchaseStartedBy::class => [
+                Projector::class,
+            ],
+            PurchasingEvent\OutstandingPaymentCalculated::class => [
+                Projector::class,
+            ],
             TicketingEvent\TicketsOnSale::class => [
                 AvailableTickets::class,
             ],
             TicketingEvent\TicketsWithdrawnFromSale::class => [
                 AvailableTickets::class,
+            ],
+            PaymentEvent\PaymentMade::class => [
+                Purchase::class,
             ]
         ];
     }

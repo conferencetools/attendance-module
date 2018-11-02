@@ -6,24 +6,41 @@ use Carnage\Phactor\Actor\AbstractActor;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\CheckPurchaseTimeout;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;
-use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchasePaid;
+use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\OutstandingPaymentCalculated;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseStartedBy;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketAllocatedToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
+use ConferenceTools\Attendance\Domain\Ticketing\Price;
 
 class Purchase extends AbstractActor
 {
     private $unallocatedTickets;
     private $paid;
     private $tickets;
+    private $email;
 
     protected function handlePurchaseTickets(PurchaseTickets $command)
     {
+        $this->fire(new PurchaseStartedBy($this->id(), $command->getEmail()));
+        /** @var Price $total */
+        $total = null;
+
         foreach ($command->getTickets() as $ticket) {
             /** @var TicketQuantity $ticket */
             $this->fire(new TicketsReserved($this->id(), $ticket->getTicketId(), $ticket->getQuantity()));
+            $total = ($total === null) ? $ticket->getTotalPrice() : $total->add($ticket->getTotalPrice());
         }
+
+        $this->fire(new OutstandingPaymentCalculated($this->id(), $total));
+
         $this->schedule(new CheckPurchaseTimeout($this->id()), (new \DateTime())->add(new \DateInterval('PT1800S')));
+    }
+
+    protected function applyPurchaseStartedBy(PurchaseStartedBy $event)
+    {
+        $this->email = $event->getEmail();
     }
 
     protected function applyTicketsReserved(TicketsReserved $event)
@@ -57,7 +74,7 @@ class Purchase extends AbstractActor
         }
     }
 
-    protected function applyPurchasePaid(PurchasePaid $event)
+    protected function applyPaymentMade(PaymentMade $event)
     {
         $this->paid = true;
     }

@@ -13,14 +13,25 @@ class PurchaseTickets
      * @Jms\Type("array<ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity>")
      */
     private $tickets;
+    /**
+     * @var string
+     * @Jms\Type("string")
+     */
+    private $email;
 
-    public function __construct(TicketQuantity ...$tickets)
+    public function __construct(string $email, TicketQuantity ...$tickets)
     {
         $this->tickets = $tickets;
+        $this->email = $email;
     }
 
     public function getTickets(): array
     {
         return $this->tickets;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
     }
 }

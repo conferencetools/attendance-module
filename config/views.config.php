@@ -5,4 +5,5 @@ return [
     'attendance/purchase/index' => $viewDir . 'purchase/index.phtml',
     'attendance/purchase/delegates' => $viewDir . 'purchase/delegates.phtml',
     'attendance/purchase/payment' => $viewDir . 'purchase/payment.phtml',
+    'attendance/purchase/complete' => $viewDir . 'purchase/complete.phtml',
 ];

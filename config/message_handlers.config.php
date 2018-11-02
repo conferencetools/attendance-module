@@ -8,5 +8,6 @@ return [
     'factories' => [
         Ticketing\AvailableTickets::class => Factory\Ticketing\AvailableTicketsFactory::class,
         Purchasing\Projector::class => Factory\Purchasing\ProjectorFactory::class,
+        \ConferenceTools\Attendance\Handler\StripePaymentHandler::class => \ConferenceTools\Attendance\Handler\StripePaymentHandlerFactory::class,
     ]
 ];

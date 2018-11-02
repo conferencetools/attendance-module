@@ -68,6 +68,8 @@ class DelegateInformation extends Fieldset implements InputFilterProviderInterfa
      */
     public function getInputFilterSpecification()
     {
-        return [];
+        return [
+            'tickets' => ['required' => false]
+        ];
     }
 }

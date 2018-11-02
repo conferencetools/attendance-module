@@ -20,4 +20,24 @@ class TakePayment
         $this->paymentData = $paymentData;
         $this->paymentEmail = $paymentEmail;
     }
+
+    public function getPurchaseId(): string
+    {
+        return $this->purchaseId;
+    }
+
+    public function getAmount(): Price
+    {
+        return $this->amount;
+    }
+
+    public function getPaymentData()
+    {
+        return $this->paymentData;
+    }
+
+    public function getPaymentEmail(): string
+    {
+        return $this->paymentEmail;
+    }
 }

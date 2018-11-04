@@ -4,8 +4,8 @@
 namespace ConferenceTools\Attendance\Controller;
 
 
-use Carnage\Phactor\ReadModel\Repository;
-use Carnage\Phactor\Zend\ControllerPlugin\MessageBus;
+use Phactor\ReadModel\Repository;
+use Phactor\Zend\ControllerPlugin\MessageBus;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 

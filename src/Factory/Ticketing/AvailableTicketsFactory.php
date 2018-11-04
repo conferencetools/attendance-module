@@ -4,7 +4,7 @@
 namespace ConferenceTools\Attendance\Factory\Ticketing;
 
 
-use Carnage\Phactor\Zend\RepositoryManager;
+use Phactor\Zend\RepositoryManager;
 use ConferenceTools\Attendance\Domain\Ticketing\AvailableTickets;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketType;
 use Interop\Container\ContainerInterface;

@@ -4,10 +4,10 @@
 namespace ConferenceTools\Attendance\Handler;
 
 
-use Carnage\Phactor\Message\ActorIdentity;
-use Carnage\Phactor\Message\Bus;
-use Carnage\Phactor\Message\DomainMessage;
-use Carnage\Phactor\Message\Handler;
+use Phactor\Message\ActorIdentity;
+use Phactor\Message\Bus;
+use Phactor\Message\DomainMessage;
+use Phactor\Message\Handler;
 use ConferenceTools\Attendance\Domain\Payment\Command\TakePayment;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
 use ZfrStripe\Client\StripeClient;

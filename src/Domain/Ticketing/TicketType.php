@@ -4,7 +4,7 @@
 namespace ConferenceTools\Attendance\Domain\Ticketing;
 
 
-use Carnage\Phactor\Actor\AbstractActor;
+use Phactor\Actor\AbstractActor;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\CheckTicketAvailability;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;

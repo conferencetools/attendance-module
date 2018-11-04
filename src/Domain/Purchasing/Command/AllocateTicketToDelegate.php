@@ -4,7 +4,7 @@
 namespace ConferenceTools\Attendance\Domain\Purchasing\Command;
 
 use JMS\Serializer\Annotation as Jms;
-use Carnage\Phactor\Message\HasActorId;
+use Phactor\Message\HasActorId;
 
 class AllocateTicketToDelegate implements HasActorId
 {

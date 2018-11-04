@@ -4,7 +4,7 @@
 namespace ConferenceTools\Attendance\Factory\Purchasing;
 
 
-use Carnage\Phactor\Zend\RepositoryManager;
+use Phactor\Zend\RepositoryManager;
 use ConferenceTools\Attendance\Domain\Purchasing\Projector;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use Interop\Container\ContainerInterface;

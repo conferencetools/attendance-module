@@ -3,7 +3,7 @@
 namespace ConferenceTools\Attendance\Domain\Delegate;
 
 
-use Carnage\Phactor\Actor\AbstractActor;
+use Phactor\Actor\AbstractActor;
 use ConferenceTools\Attendance\Domain\Delegate\Command\RegisterDelegate;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketAllocatedToDelegate;

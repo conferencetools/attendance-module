@@ -2,7 +2,7 @@
 
 namespace ConferenceTools\Attendance\Domain\Purchasing;
 
-use Carnage\Phactor\Actor\AbstractActor;
+use Phactor\Actor\AbstractActor;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\CheckPurchaseTimeout;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;

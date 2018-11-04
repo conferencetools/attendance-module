@@ -4,7 +4,7 @@
 namespace ConferenceTools\Attendance\Handler;
 
 
-use Carnage\Phactor\Message\Bus;
+use Phactor\Message\Bus;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;

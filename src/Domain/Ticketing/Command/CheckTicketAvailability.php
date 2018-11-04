@@ -2,7 +2,7 @@
 
 namespace ConferenceTools\Attendance\Domain\Ticketing\Command;
 
-use Carnage\Phactor\Message\HasActorId;
+use Phactor\Message\HasActorId;
 use JMS\Serializer\Annotation as Jms;
 
 class CheckTicketAvailability implements HasActorId

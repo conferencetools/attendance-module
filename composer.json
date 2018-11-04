@@ -12,7 +12,6 @@
   "require": {
     "php": "~7.2",
     "neilime/zf2-twb-bundle": "^3.0",
-    "rwoverdijk/assetmanager": "^1.7",
     "zendframework/zend-mvc": "^3.0.1",
     "zendframework/zend-form": "^2.12",
     "zendframework/zend-i18n": "^2.9@dev",

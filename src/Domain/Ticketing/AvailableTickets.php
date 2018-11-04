@@ -4,9 +4,9 @@
 namespace ConferenceTools\Attendance\Domain\Ticketing;
 
 
-use Carnage\Phactor\Message\DomainMessage;
-use Carnage\Phactor\Message\Handler;
-use Carnage\Phactor\ReadModel\Repository;
+use Phactor\Message\DomainMessage;
+use Phactor\Message\Handler;
+use Phactor\ReadModel\Repository;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;

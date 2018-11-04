@@ -3,9 +3,9 @@
 
 namespace ConferenceTools\Attendance\Domain\Purchasing;
 
-use Carnage\Phactor\Message\DomainMessage;
-use Carnage\Phactor\Message\Handler;
-use Carnage\Phactor\ReadModel\Repository;
+use Phactor\Message\DomainMessage;
+use Phactor\Message\Handler;
+use Phactor\ReadModel\Repository;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\OutstandingPaymentCalculated;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseStartedBy;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;

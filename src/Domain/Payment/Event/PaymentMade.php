@@ -4,7 +4,7 @@
 namespace ConferenceTools\Attendance\Domain\Payment\Event;
 
 use JMS\Serializer\Annotation as Jms;
-use Carnage\Phactor\Message\HasActorId;
+use Phactor\Message\HasActorId;
 
 class PaymentMade implements HasActorId
 {

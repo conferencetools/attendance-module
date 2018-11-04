@@ -16,7 +16,7 @@
     "zendframework/zend-form": "^2.12",
     "zendframework/zend-i18n": "^2.9@dev",
     "zfr/zfr-stripe-module": "~5.0",
-    "carnage/phactor": "dev-master",
+    "phactor/phactor": "dev-master",
     "zendframework/zend-mvc-plugin-flashmessenger": "^1.1@dev",
     "zendframework/zend-math": "^3.0",
     "ext-json": "*"

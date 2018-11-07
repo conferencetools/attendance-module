@@ -44,7 +44,7 @@ class Purchase
         $this->tickets[$ticketId] = $quantity;
     }
 
-    public function getTickets()
+    public function getTickets(): array
     {
         return $this->tickets;
     }
@@ -54,7 +54,7 @@ class Purchase
         return $this->email;
     }
 
-    public function getMaxDelegates()
+    public function getMaxDelegates(): int
     {
         $delegates = 0;
         foreach ($this->getTickets() as $ticketId => $quantity) {

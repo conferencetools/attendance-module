@@ -6,6 +6,7 @@ namespace ConferenceTools\Attendance\Controller;
 
 use ConferenceTools\Attendance\Domain\Delegate\Command\RegisterDelegate;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
+use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Domain\Payment\Command\TakePayment;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;
@@ -135,10 +136,11 @@ class PurchaseController extends AppController
                 $data = $form->getData();
                 if ($this->validateDelegateTicketAssignment($purchase, $data)) {
                     for ($i = 0; $i < $maxDelegates; $i++) {
+                        $delegate = $data['delegate_' . $i];
+
                         if (empty($delegate['tickets'])) {
                             continue;
                         }
-                        $delegate = $data['delegate_' . $i];
                         $command = new RegisterDelegate(
                             $purchaseId,
                             $delegate['firstname'],
@@ -209,7 +211,8 @@ class PurchaseController extends AppController
 
         /** @var Purchase $purchase*/
         $purchase = $this->repository(Purchase::class)->get($purchaseId);
-        return new ViewModel(['purchase' => $purchase,'tickets' => $this->getTickets()]);
+        $delegates = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $purchaseId)));
+        return new ViewModel(['purchase' => $purchase,'tickets' => $this->getTickets(), 'delegates' => $delegates]);
     }
 
     /**

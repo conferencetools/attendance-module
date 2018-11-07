@@ -41,3 +41,23 @@ $this->headLink()->appendStylesheet('/css/card.css');
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default credit-card-box">
+            <div class="panel-heading display-table" >
+                <div class="row display-tr" >
+                    <h3 class="panel-title display-td" >Delegates</h3>
+                    <div class="display-td" ></div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <?php foreach ($this->delegates as $delegate): ?>
+                    <div class="row">
+                        <span class="col-xs-8"><?= $delegate->getFirstName()?> <?= $delegate->getLastName()?></span>
+                        <span class="col-xs-4">Edit</span>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>

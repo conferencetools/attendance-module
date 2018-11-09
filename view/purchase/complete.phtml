@@ -54,7 +54,11 @@ $this->headLink()->appendStylesheet('/css/card.css');
                 <?php foreach ($this->delegates as $delegate): ?>
                     <div class="row">
                         <span class="col-xs-8"><?= $delegate->getFirstName()?> <?= $delegate->getLastName()?></span>
-                        <span class="col-xs-4">Edit</span>
+                        <span class="col-xs-4">
+                            <a href="<?=$this->url('attendance/delegates', ['delegateId' => $delegate->getId()])?>">
+                                Edit
+                            </a>
+                        </span>
                     </div>
                 <?php endforeach; ?>
             </div>

@@ -53,6 +53,16 @@ return [
                     ],
                 ],
             ],
+            'delegates' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/delegate/:delegateId',
+                    'defaults' => [
+                        'controller' => Controller\DelegateController::class,
+                        'action' => 'update-details',
+                    ]
+                ],
+            ],
         ]
     ]
 ];

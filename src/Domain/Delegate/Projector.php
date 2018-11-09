@@ -4,6 +4,7 @@
 namespace ConferenceTools\Attendance\Domain\Delegate;
 
 
+use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateDetailsUpdated;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
 use Phactor\ReadModel\Repository;
@@ -28,6 +29,9 @@ class Projector implements Handler
                 break;
             case $event instanceof TicketAllocatedToDelegate:
                 $this->ticketAllocated($event);
+                break;
+            case $event instanceof DelegateDetailsUpdated:
+                $this->updateDetails($event);
                 break;
         }
 
@@ -54,5 +58,17 @@ class Projector implements Handler
     {
         $delegate = $this->repository->get($event->getDelegateId());
         $delegate->addTicket($event->getTicketId());
+    }
+
+    private function updateDetails(DelegateDetailsUpdated $event)
+    {
+        $delegate = $this->repository->get($event->getDelegateId());
+        $delegate->updateDetails(            $event->getFirstname(),
+            $event->getLastname(),
+            $event->getEmail(),
+            $event->getCompany(),
+            $event->getTwitter(),
+            $event->getRequirements()
+        );
     }
 }

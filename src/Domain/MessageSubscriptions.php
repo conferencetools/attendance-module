@@ -23,6 +23,9 @@ class MessageSubscriptions
             DelegateCommand\RegisterDelegate::class => [
                 Delegate\Delegate::class,
             ],
+            DelegateCommand\UpdateDelegateDetails::class => [
+                Delegate\Delegate::class,
+            ],
 
             PurchasingCommand\CheckPurchaseTimeout::class => [
                 Purchasing\Purchase::class,
@@ -43,6 +46,9 @@ class MessageSubscriptions
 
             //################## Events #######################
             DelegateEvent\DelegateRegistered::class => [
+                Delegate\Projector::class,
+            ],
+            DelegateEvent\DelegateDetailsUpdated::class => [
                 Delegate\Projector::class,
             ],
 

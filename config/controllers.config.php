@@ -6,5 +6,6 @@ use Zend\ServiceManager\Factory\InvokableFactory;
 return [
     'factories' => [
         Controller\PurchaseController::class => InvokableFactory::class,
+        Controller\DelegateController::class => InvokableFactory::class,
     ]
 ];

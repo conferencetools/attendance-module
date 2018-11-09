@@ -63,6 +63,16 @@ class Delegate
         $this->tickets[] =  $ticketId;
     }
 
+    public function updateDetails($firstname, $lastname, $email, $company, $twitter, $requirements)
+    {
+        $this->firstname = $firstname;
+        $this->lastname = $lastname;
+        $this->email = $email;
+        $this->company = $company;
+        $this->twitter = $twitter;
+        $this->requirements = $requirements;
+    }
+
     public function getId()
     {
         return $this->id;

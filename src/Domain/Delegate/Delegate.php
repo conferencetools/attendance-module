@@ -3,6 +3,8 @@
 namespace ConferenceTools\Attendance\Domain\Delegate;
 
 
+use ConferenceTools\Attendance\Domain\Delegate\Command\UpdateDelegateDetails;
+use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateDetailsUpdated;
 use Phactor\Actor\AbstractActor;
 use ConferenceTools\Attendance\Domain\Delegate\Command\RegisterDelegate;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
@@ -36,6 +38,29 @@ class Delegate extends AbstractActor
     protected function applyDelegateRegistered(DelegateRegistered $event)
     {
         $this->purchaseId = $event->getPurchaseId();
+        $this->firstname = $event->getFirstname();
+        $this->lastname = $event->getLastname();
+        $this->email = $event->getEmail();
+        $this->company = $event->getCompany();
+        $this->twitter = $event->getTwitter();
+        $this->requirements = $event->getRequirements();
+    }
+
+    protected function handleUpdateDelegateDetails(UpdateDelegateDetails $command)
+    {
+        $this->fire(new DelegateDetailsUpdated(
+            $this->id(),
+            $command->getFirstname(),
+            $command->getLastname(),
+            $command->getEmail(),
+            $command->getCompany(),
+            $command->getTwitter(),
+            $command->getRequirements()
+        ));
+    }
+
+    protected function applyDelegateDetailsUpdated(DelegateDetailsUpdated $event)
+    {
         $this->firstname = $event->getFirstname();
         $this->lastname = $event->getLastname();
         $this->email = $event->getEmail();

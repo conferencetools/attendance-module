@@ -15,23 +15,10 @@ use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketType;
 use ConferenceTools\Attendance\Form\DelegatesForm;
-use ConferenceTools\Attendance\Form\Fieldset\DelegateInformation;
 use ConferenceTools\Attendance\Form\PaymentForm;
 use ConferenceTools\Attendance\Form\PurchaseForm;
 use Doctrine\Common\Collections\Criteria;
-use TwbBundle\Form\View\Helper\TwbBundleForm;
-use Zend\Form\Element\Csrf;
-use Zend\Form\Element\Hidden;
-use Zend\Form\Element\MultiCheckbox;
-use Zend\Form\Element\Number;
-use Zend\Form\Element\Submit;
-use Zend\Form\Element\Text;
-use Zend\Form\Fieldset;
-use Zend\Form\Form;
-use Zend\Validator\EmailAddress;
-use Zend\Validator\NotEmpty;
 use Zend\View\Model\ViewModel;
-use ZfrStripe\Exception\CardErrorException;
 
 class PurchaseController extends AppController
 {

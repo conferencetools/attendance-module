@@ -4,15 +4,10 @@
 namespace ConferenceTools\Attendance\Controller;
 
 
-use ConferenceTools\Attendance\Domain\Delegate\Command\DelegateDetailsUpdated;
 use ConferenceTools\Attendance\Domain\Delegate\Command\UpdateDelegateDetails;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
-use ConferenceTools\Attendance\Form\Fieldset\DelegateInformation;
+use ConferenceTools\Attendance\Form\DelegateForm;
 use GeneratedHydrator\Configuration;
-use GeneratedHydrator\Factory\HydratorFactory;
-use Zend\Form\Element\Csrf;
-use Zend\Form\Element\Submit;
-use Zend\Form\Form;
 use Zend\View\Model\ViewModel;
 
 class DelegateController extends AppController
@@ -21,11 +16,7 @@ class DelegateController extends AppController
     {
         $delegateId = $this->params()->fromRoute('delegateId');
 
-        //@TODO this really really needs sorting out...
-        $form = new Form();
-        $form->add(['type' => DelegateInformation::class, 'name' => 'delegate']);
-        $form->add(new Csrf('security'));
-        $form->add(new Submit('update', ['label' => 'Update']));
+        $form = $this->form(DelegateForm::class);
 
         $delegate = $this->repository(Delegate::class)->get($delegateId);
         if ($this->getRequest()->isPost()) {

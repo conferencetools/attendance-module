@@ -4,6 +4,7 @@
 namespace ConferenceTools\Attendance\Handler;
 
 
+use Phactor\Identity\Generator;
 use Phactor\Message\Bus;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -16,6 +17,6 @@ class StripePaymentHandlerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new StripePaymentHandler($container->get(StripeClient::class), $container->get(Bus::class));
+        return new StripePaymentHandler($container->get(StripeClient::class), $container->get(Bus::class), $container->get(Generator::class));
     }
 }

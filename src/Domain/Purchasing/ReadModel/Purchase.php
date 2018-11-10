@@ -27,6 +27,12 @@ class Purchase
     private $email;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var boolean
+     */
+    private $isPaid = false;
+
+    /**
      * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Price")
      * @var Price
      */
@@ -72,5 +78,15 @@ class Purchase
     public function getTotal(): Price
     {
         return $this->total;
+    }
+
+    public function isPaid()
+    {
+        return $this->isPaid;
+    }
+
+    public function paid()
+    {
+        $this->isPaid = true;
     }
 }

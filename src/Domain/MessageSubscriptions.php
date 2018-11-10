@@ -79,6 +79,7 @@ class MessageSubscriptions
 
             PaymentEvent\PaymentMade::class => [
                 Purchasing\Purchase::class,
+                Purchasing\Projector::class,
             ]
         ];
     }

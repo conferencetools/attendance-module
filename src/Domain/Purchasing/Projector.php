@@ -3,6 +3,7 @@
 
 namespace ConferenceTools\Attendance\Domain\Purchasing;
 
+use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
 use Phactor\ReadModel\Repository;
@@ -32,6 +33,9 @@ class Projector implements Handler
                 break;
             case $event instanceof OutstandingPaymentCalculated:
                 $this->updatePrice($event);
+                break;
+            case $event instanceof PaymentMade:
+                $this->purchasePaid($event);
         }
 
         $this->repository->commit();
@@ -55,5 +59,12 @@ class Projector implements Handler
         /** @var Purchase $entity */
         $entity = $this->repository->get($event->getPurchaseId());
         $entity->updateTotal($event->getTotal());
+    }
+
+    private function purchasePaid(PaymentMade $event)
+    {
+        /** @var Purchase $entity */
+        $entity = $this->repository->get($event->getActorId());
+        $entity->paid();
     }
 }

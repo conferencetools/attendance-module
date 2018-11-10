@@ -4,6 +4,7 @@
 namespace ConferenceTools\Attendance\Handler;
 
 
+use Phactor\Identity\Generator;
 use Phactor\Message\ActorIdentity;
 use Phactor\Message\Bus;
 use Phactor\Message\DomainMessage;
@@ -32,11 +33,13 @@ class StripePaymentHandler implements Handler
 
     private $stripeClient;
     private $messageBus;
+    private $identityGenerator;
 
-    public function __construct(StripeClient $stripeClient, Bus $messageBus)
+    public function __construct(StripeClient $stripeClient, Bus $messageBus, Generator $identityGenerator)
     {
         $this->stripeClient = $stripeClient;
         $this->messageBus = $messageBus;
+        $this->identityGenerator = $identityGenerator;
     }
 
     public function handle(DomainMessage $domainMessage)
@@ -54,14 +57,13 @@ class StripePaymentHandler implements Handler
                 ]
             ]);
         } catch (CardErrorException $e) {
-            //@TODO a real exception please!
-            throw new \Exception($this->getDetailedErrorMessage($e));
+            throw new PaymentFailed($this->getDetailedErrorMessage($e));
         }
 
         $this->messageBus->handle(DomainMessage::recordMessage(
-            'id',
+            $this->identityGenerator->generateIdentity(),
             $domainMessage,
-            new ActorIdentity(\get_class($this), $domainMessage->getCorrelationId()),
+            new ActorIdentity(\get_class($this), $this->identityGenerator->generateIdentity()),
             1,
             new PaymentMade($message->getPurchaseId())
         ));

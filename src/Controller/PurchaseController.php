@@ -17,6 +17,7 @@ use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketType;
 use ConferenceTools\Attendance\Form\DelegatesForm;
 use ConferenceTools\Attendance\Form\PaymentForm;
 use ConferenceTools\Attendance\Form\PurchaseForm;
+use ConferenceTools\Attendance\Handler\PaymentFailed;
 use Doctrine\Common\Collections\Criteria;
 use Zend\View\Model\ViewModel;
 
@@ -67,6 +68,15 @@ class PurchaseController extends AppController
 
         /** @var Purchase $purchase*/
         $purchase = $this->repository(Purchase::class)->get($purchaseId);
+
+        if ($purchase === null) {
+            $this->flashMessenger()->addErrorMessage('Purchase not found, or has timed out');
+            return $this->redirect()->toRoute('attendance/purchase');
+        }
+
+        if ($purchase->isPaid()) {
+            return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $purchaseId]);
+        }
 
         foreach ($purchase->getTickets() as $ticketId => $quantity) {
             $ticketOptions[$ticketId] = $tickets[$ticketId]->getTicket()->getName();
@@ -126,6 +136,15 @@ class PurchaseController extends AppController
         /** @var Purchase $purchase*/
         $purchase = $this->repository(Purchase::class)->get($purchaseId);
 
+        if ($purchase === null) {
+            $this->flashMessenger()->addErrorMessage('Purchase not found, or has timed out');
+            return $this->redirect()->toRoute('attendance/purchase');
+        }
+
+        if ($purchase->isPaid()) {
+            return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $purchaseId]);
+        }
+
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
             $form->setData($data);
@@ -135,7 +154,7 @@ class PurchaseController extends AppController
                     $this->messageBus()->fire($command);
 
                     return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $purchaseId]);
-                } catch (\Exception $e) {
+                } catch (PaymentFailed $e) {
                     $this->flashMessenger()->addErrorMessage(
                         sprintf(
                             'There was an issue with taking your payment: %s Please try again.',
@@ -155,6 +174,12 @@ class PurchaseController extends AppController
 
         /** @var Purchase $purchase*/
         $purchase = $this->repository(Purchase::class)->get($purchaseId);
+
+        if ($purchase === null) {
+            $this->flashMessenger()->addErrorMessage('Purchase not found, or has timed out');
+            return $this->redirect()->toRoute('attendance/purchase');
+        }
+
         $delegates = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $purchaseId)));
         return new ViewModel(['purchase' => $purchase,'tickets' => $this->getTickets(), 'delegates' => $delegates]);
     }

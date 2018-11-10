@@ -13,6 +13,7 @@ use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
  * @method MessageBus messageBus()
  * @method Repository repository(string $className)
  * @method FlashMessenger flashMessenger()
+ * @method \Zend\Form\Form form(string $name, array $options = [])
  */
 abstract class AppController extends AbstractActionController
 {

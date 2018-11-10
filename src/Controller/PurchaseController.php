@@ -14,7 +14,10 @@ use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketType;
+use ConferenceTools\Attendance\Form\DelegatesForm;
 use ConferenceTools\Attendance\Form\Fieldset\DelegateInformation;
+use ConferenceTools\Attendance\Form\PaymentForm;
+use ConferenceTools\Attendance\Form\PurchaseForm;
 use Doctrine\Common\Collections\Criteria;
 use TwbBundle\Form\View\Helper\TwbBundleForm;
 use Zend\Form\Element\Csrf;
@@ -37,31 +40,7 @@ class PurchaseController extends AppController
     public function indexAction()
     {
         $tickets = $this->getTickets();
-        $form = new Form();
-        $fieldset = new Fieldset('quantity');
-        foreach ($tickets as $ticketId => $ticket) {
-            $fieldset->add((new Number($ticketId))->setAttributes(['class' => 'form-control','min' => 0,'max' => $ticket->getRemaining(), 'value' => 0]));
-        }
-        $form->add($fieldset);
-        $form->add([
-            'type' => Text::class,
-            'name' => 'purchase_email',
-            'options' => [
-                'label' => 'Email',
-                'label_attributes' => ['class' => 'col-sm-4 control-label'],
-                'twb-layout' => TwbBundleForm::LAYOUT_HORIZONTAL,
-                'column-size' => 'sm-8',
-            ],
-            'attributes' => ['class' => 'form-control', 'placeholder' => 'Your receipt will be emailed to this address']
-        ]);
-        $form->getInputFilter()
-            ->get('purchase_email')
-            ->setAllowEmpty(false)
-            ->setRequired(true)
-            ->getValidatorChain()
-            ->attach(new NotEmpty())
-            ->attach(new EmailAddress());
-
+        $form = $this->form(PurchaseForm::class, ['tickets' => $tickets]);
 
         //@TODO if discount code in url fetch + validate it.
         //@TODO if discount code in url, apply it to prices (use <strike></strike>)
@@ -79,15 +58,10 @@ class PurchaseController extends AppController
                             $selectedTickets[] = new TicketQuantity($ticketId, $tickets[$ticketId]->getTicket(), $quantity);
                         }
                     }
-                    //@TODO capture email address here instead?
-                    //@TODO capture GDPR confirmation
-                    $messages = $this->messageBus()->fire(new PurchaseTickets($data['purchase_email'], ...$selectedTickets));
 
-                    foreach ($messages as $message) {
-                        if ($message->getMessage() instanceof TicketsReserved) {
-                            $purchaseId = $message->getMessage()->getId();
-                        }
-                    }
+                    //@TODO capture GDPR confirmation?
+                    $messages = $this->messageBus()->fire(new PurchaseTickets($data['purchase_email'], ...$selectedTickets));
+                    $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
 
                     //@TODO handle discount code?
 
@@ -111,23 +85,11 @@ class PurchaseController extends AppController
             $ticketOptions[$ticketId] = $tickets[$ticketId]->getTicket()->getName();
         }
 
-        //@TODO this really really needs sorting out...
-        $form = new Form();
         $maxDelegates = $purchase->getMaxDelegates();
-
-        for ($i = 0; $i < $maxDelegates; $i++) {
-            $fieldsetName = 'delegate_' . $i;
-            $form->add(['type' => DelegateInformation::class, 'name' => $fieldsetName]);
-            $form->get($fieldsetName)->add(
-                new MultiCheckbox(
-                    'tickets',
-                    ['value_options' => $ticketOptions, 'label' => 'Tickets']
-                )
-            );
-        }
-
-        $form->add(new Csrf('security'));
-        $form->add(new Submit('continue', ['label' => 'Continue']));
+        $form = $this->form(DelegatesForm::class, [
+            'ticketOptions' => $ticketOptions,
+            'maxDelegates' => $maxDelegates
+        ]);
 
         if ($this->getRequest()->isPost()) {
             $form->setData($this->params()->fromPost());
@@ -151,15 +113,9 @@ class PurchaseController extends AppController
                             $delegate['requirements']
                         );
 
+                        //@TODO should message bus should reuse the correlation id between subsequent command dispatches? (or add metadata requestId)
                         $messages = $this->messageBus()->fire($command);
-                        //@TODO add this functionallity to the message bus
-                        //@TODO message bus should reuse the correlation id between subsequent command dispatches
-                        foreach ($messages as $message) {
-                            if ($message->getMessage() instanceof DelegateRegistered) {
-                                $delegateId = $message->getMessage()->getId();
-                                break;
-                            }
-                        }
+                        $delegateId = $this->messageBus()->firstInstanceOf(DelegateRegistered::class, ...$messages)->getId();
 
                         foreach ($delegate['tickets'] as $ticketId) {
                             $command = new AllocateTicketToDelegate($delegateId, $purchaseId, $ticketId);
@@ -176,9 +132,7 @@ class PurchaseController extends AppController
 
     public function paymentAction()
     {
-        $form = new Form('payment-form');
-        $form->add(new Hidden('stripe_token'));
-        $form->add(new Csrf('security'));
+        $form = $this->form(PaymentForm::class);
 
         $purchaseId = $this->params()->fromRoute('purchaseId');
 
@@ -187,18 +141,21 @@ class PurchaseController extends AppController
 
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
-            try {
-                $command = new TakePayment($purchaseId, $purchase->getTotal(), $data['stripe_token'], $purchase->getEmail());
-                $this->messageBus()->fire($command);
+            $form->setData($data);
+            if ($form->isValid()) {
+                try {
+                    $command = new TakePayment($purchaseId, $purchase->getTotal(), $data['stripe_token'], $purchase->getEmail());
+                    $this->messageBus()->fire($command);
 
-                return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $purchaseId]);
-            } catch (\Exception $e) {
-                $this->flashMessenger()->addErrorMessage(
-                    sprintf(
-                        'There was an issue with taking your payment: %s Please try again.',
-                        $e->getMessage()
-                    )
-                );
+                    return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $purchaseId]);
+                } catch (\Exception $e) {
+                    $this->flashMessenger()->addErrorMessage(
+                        sprintf(
+                            'There was an issue with taking your payment: %s Please try again.',
+                            $e->getMessage()
+                        )
+                    );
+                }
             }
         }
 

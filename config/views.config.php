@@ -7,4 +7,5 @@ return [
     'attendance/purchase/payment' => $viewDir . 'purchase/payment.phtml',
     'attendance/purchase/complete' => $viewDir . 'purchase/complete.phtml',
     'attendance/delegate/update-details' => $viewDir . 'delegate/update-details.phtml',
+    'email/receipt' => $viewDir . 'email/receipt.phtml',
 ];

@@ -2,6 +2,7 @@
   "name": "conferencetools/attendance-module",
   "description": "Provides ticket booking, management and CRM functions",
   "minimum-stability": "dev",
+  "prefer-stable": true,
   "license": "MIT",
   "repositories": [
     {
@@ -19,7 +20,8 @@
     "phactor/phactor": "dev-master",
     "zendframework/zend-mvc-plugin-flashmessenger": "^1.1@dev",
     "zendframework/zend-math": "^3.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "zendframework/zend-mail": "^2.10@dev"
   },
   "autoload": {
     "psr-4": {

@@ -11,5 +11,6 @@ return [
         Purchasing\Projector::class => Factory\Purchasing\ProjectorFactory::class,
         Delegate\Projector::class => Factory\Delegate\ProjectorFactory::class,
         \ConferenceTools\Attendance\Handler\StripePaymentHandler::class => \ConferenceTools\Attendance\Handler\StripePaymentHandlerFactory::class,
+        \ConferenceTools\Attendance\Handler\EmailPurchase::class => \ConferenceTools\Attendance\Handler\EmailPurchaseFactory::class,
     ]
 ];

@@ -45,7 +45,12 @@ class Purchase
         $this->total = Price::fromNetCost(new Money(0, ''), new TaxRate(0));
     }
 
-    public function addTickets(string $ticketId, int $quantity)
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function addTickets(string $ticketId, int $quantity): void
     {
         $this->tickets[$ticketId] = $quantity;
     }
@@ -70,7 +75,7 @@ class Purchase
         return $delegates;
     }
 
-    public function updateTotal(Price $total)
+    public function updateTotal(Price $total): void
     {
         $this->total = $total;
     }
@@ -80,12 +85,12 @@ class Purchase
         return $this->total;
     }
 
-    public function isPaid()
+    public function isPaid(): bool
     {
         return $this->isPaid;
     }
 
-    public function paid()
+    public function paid(): void
     {
         $this->isPaid = true;
     }

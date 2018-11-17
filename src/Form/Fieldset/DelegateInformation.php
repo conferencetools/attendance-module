@@ -2,6 +2,8 @@
 
 namespace ConferenceTools\Attendance\Form\Fieldset;
 
+use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
+use Zend\Form\Element\Radio;
 use Zend\Form\Element\Text;
 use Zend\Form\Element\Textarea;
 use Zend\Form\Fieldset;
@@ -16,16 +18,18 @@ class DelegateInformation extends Fieldset implements InputFilterProviderInterfa
     {
         $this->add([
             'type' => Text::class,
-            'name' => 'firstname',
+            'name' => 'name',
             'options' => [
-                'label' => 'First name'
+                'label' => 'Name',
+                'help-block' => 'We\'ll print this on your delegate badge and use it to check you in on the day'
             ],
         ]);
         $this->add([
             'type' => Text::class,
-            'name' => 'lastname',
+            'name' => 'company',
             'options' => [
-                'label' => 'Family name'
+                'label' => 'Company',
+                'help-block' => 'We\'ll print this on your delegate badge'
             ],
         ]);
         $this->add([
@@ -37,25 +41,34 @@ class DelegateInformation extends Fieldset implements InputFilterProviderInterfa
             ],
         ]);
         $this->add([
-            'type' => Text::class,
-            'name' => 'company',
+            'type' => Radio::class,
+            'name' => 'preference',
             'options' => [
-                'label' => 'Company'
+                'value_options' => [
+                    DietaryRequirements::NONE => 'None',
+                    DietaryRequirements::VEGETARIAN => 'Vegetarian',
+                    DietaryRequirements::VEGAN => 'Vegan',
+                ],
+                'label' => 'Dietary Preference',
+                'help-block' => 'We\'ll pass this on to the caterers'
+
             ],
         ]);
         $this->add([
             'type' => Text::class,
-            'name' => 'twitter',
+            'name' => 'allergies',
             'options' => [
-                'label' => 'Twitter handle'
+                'label' => 'Any Allergies',
+                'help-block' => 'We\'ll pass this on to the caterers, please also make yourself known to them on the day'
             ],
         ]);
+
         $this->add([
-            'type' => Textarea::class,
+            'type' => Text::class,
             'name' => 'requirements',
             'options' => [
-                'label' => 'Any Requirements',
-                'help-block' => 'eg dietary needs, accessibility needs etc'
+                'label' => 'Accessibility requirements',
+                'help-block' => 'We\'ll pass this on to the venue, please get in touch if you\'d like to discuss these further'
             ],
         ]);
     }

@@ -15,6 +15,6 @@ class DelegateForm extends Form
     {
         $this->add(['type' => Fieldset\DelegateInformation::class, 'name' => 'delegate']);
         $this->add(new Csrf('security'));
-        $this->add(new Submit('continue', ['label' => 'Update']));
+        $this->add(new Submit('update', ['label' => 'Update']));
     }
 }

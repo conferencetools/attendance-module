@@ -12,25 +12,23 @@ use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketAllocatedToDelegate
 
 class Delegate extends AbstractActor
 {
-    private $firstname;
-    private $lastname;
     private $email;
     private $company;
-    private $twitter;
     private $requirements;
     private $purchaseId;
     private $tickets;
+    private $dietaryRequirements;
+    private $name;
 
     protected function handleRegisterDelegate(RegisterDelegate $command)
     {
         $this->fire(new DelegateRegistered(
             $this->id(),
             $command->getPurchaseId(),
-            $command->getFirstname(),
-            $command->getLastname(),
+            $command->getName(),
             $command->getEmail(),
             $command->getCompany(),
-            $command->getTwitter(),
+            $command->getDietaryRequirements(),
             $command->getRequirements()
         ));
     }
@@ -38,11 +36,10 @@ class Delegate extends AbstractActor
     protected function applyDelegateRegistered(DelegateRegistered $event)
     {
         $this->purchaseId = $event->getPurchaseId();
-        $this->firstname = $event->getFirstname();
-        $this->lastname = $event->getLastname();
+        $this->name = $event->getName();
+        $this->dietaryRequirements = $event->getDietaryRequirements();
         $this->email = $event->getEmail();
         $this->company = $event->getCompany();
-        $this->twitter = $event->getTwitter();
         $this->requirements = $event->getRequirements();
     }
 
@@ -50,22 +47,20 @@ class Delegate extends AbstractActor
     {
         $this->fire(new DelegateDetailsUpdated(
             $this->id(),
-            $command->getFirstname(),
-            $command->getLastname(),
+            $command->getName(),
             $command->getEmail(),
             $command->getCompany(),
-            $command->getTwitter(),
+            $command->getDietaryRequirements(),
             $command->getRequirements()
         ));
     }
 
     protected function applyDelegateDetailsUpdated(DelegateDetailsUpdated $event)
     {
-        $this->firstname = $event->getFirstname();
-        $this->lastname = $event->getLastname();
+        $this->name = $event->getName();
+        $this->dietaryRequirements = $event->getDietaryRequirements();
         $this->email = $event->getEmail();
         $this->company = $event->getCompany();
-        $this->twitter = $event->getTwitter();
         $this->requirements = $event->getRequirements();
     }
 

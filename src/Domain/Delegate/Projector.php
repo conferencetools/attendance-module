@@ -43,11 +43,10 @@ class Projector implements Handler
         $delegate = new ReadModel\Delegate(
             $event->getId(),
             $event->getPurchaseId(),
-            $event->getFirstname(),
-            $event->getLastname(),
+            $event->getName(),
             $event->getEmail(),
             $event->getCompany(),
-            $event->getTwitter(),
+            $event->getDietaryRequirements(),
             $event->getRequirements()
         );
 
@@ -63,11 +62,11 @@ class Projector implements Handler
     private function updateDetails(DelegateDetailsUpdated $event)
     {
         $delegate = $this->repository->get($event->getDelegateId());
-        $delegate->updateDetails(            $event->getFirstname(),
-            $event->getLastname(),
+        $delegate->updateDetails(
+            $event->getName(),
             $event->getEmail(),
             $event->getCompany(),
-            $event->getTwitter(),
+            $event->getDietaryRequirements(),
             $event->getRequirements()
         );
     }

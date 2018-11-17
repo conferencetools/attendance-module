@@ -5,6 +5,7 @@ namespace ConferenceTools\Attendance\Controller;
 
 
 use ConferenceTools\Attendance\Domain\Delegate\Command\UpdateDelegateDetails;
+use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Form\DelegateForm;
 use GeneratedHydrator\Configuration;
@@ -23,14 +24,15 @@ class DelegateController extends AppController
             $form->setData($this->params()->fromPost());
             if ($form->isValid()) {
                 $data = $form->getData();
+                $delegateData = $data['delegate'];
+                $dietaryRequirements = new DietaryRequirements($delegateData['preference'], $delegateData['allergies']);
                 $command = new UpdateDelegateDetails(
                     $delegateId,
-                    $data['delegate']['firstname'],
-                    $data['delegate']['lastname'],
-                    $data['delegate']['email'],
-                    $data['delegate']['company'],
-                    $data['delegate']['twitter'],
-                    $data['delegate']['requirements']
+                    $delegateData['name'],
+                    $delegateData['email'],
+                    $delegateData['company'],
+                    $dietaryRequirements,
+                    $delegateData['requirements']
                 );
                 $this->messageBus()->fire($command);
             }

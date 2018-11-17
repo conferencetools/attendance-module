@@ -5,6 +5,7 @@ namespace ConferenceTools\Attendance\Controller;
 
 
 use ConferenceTools\Attendance\Domain\Delegate\Command\RegisterDelegate;
+use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Domain\Payment\Command\TakePayment;
@@ -100,13 +101,14 @@ class PurchaseController extends AppController
                         if (empty($delegate['tickets'])) {
                             continue;
                         }
+                        $dietaryRequirements = new DietaryRequirements($delegate['preference'], $delegate['allergies']);
+
                         $command = new RegisterDelegate(
                             $purchaseId,
-                            $delegate['firstname'],
-                            $delegate['lastname'],
+                            $delegate['name'],
                             $delegate['email'],
                             $delegate['company'],
-                            $delegate['twitter'],
+                            $dietaryRequirements,
                             $delegate['requirements']
                         );
 

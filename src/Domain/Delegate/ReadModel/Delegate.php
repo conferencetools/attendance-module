@@ -2,6 +2,7 @@
 
 namespace ConferenceTools\Attendance\Domain\Delegate\ReadModel;
 
+use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -16,11 +17,7 @@ class Delegate
     /**
      * @ORM\Column(type="string")
      */
-    private $firstname;
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $lastname;
+    private $name;
     /**
      * @ORM\Column(type="string")
      */
@@ -29,10 +26,6 @@ class Delegate
      * @ORM\Column(type="string")
      */
     private $company;
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $twitter;
     /**
      * @ORM\Column(type="string")
      */
@@ -45,17 +38,25 @@ class Delegate
      * @ORM\Column(type="json_array")
      */
     private $tickets = [];
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $allergies;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $preference;
 
-    public function __construct($id, $purchaseId, $firstname, $lastname, $email, $company, $twitter, $requirements)
+    public function __construct($id, $purchaseId, $name, $email, $company, DietaryRequirements $dietaryRequirements, $requirements)
     {
         $this->id = $id;
-        $this->firstname = $firstname;
-        $this->lastname = $lastname;
+        $this->name = $name;
         $this->email = $email;
         $this->company = $company;
-        $this->twitter = $twitter;
         $this->requirements = $requirements;
         $this->purchaseId = $purchaseId;
+        $this->allergies = $dietaryRequirements->getAllergies();
+        $this->preference = $dietaryRequirements->getPreference();
     }
 
     public function addTicket($ticketId)
@@ -63,13 +64,13 @@ class Delegate
         $this->tickets[] =  $ticketId;
     }
 
-    public function updateDetails($firstname, $lastname, $email, $company, $twitter, $requirements)
+    public function updateDetails($name, $email, $company, DietaryRequirements $dietaryRequirements, $requirements)
     {
-        $this->firstname = $firstname;
-        $this->lastname = $lastname;
+        $this->name = $name;
         $this->email = $email;
         $this->company = $company;
-        $this->twitter = $twitter;
+        $this->allergies = $dietaryRequirements->getAllergies();
+        $this->preference = $dietaryRequirements->getPreference();
         $this->requirements = $requirements;
     }
 
@@ -78,14 +79,9 @@ class Delegate
         return $this->id;
     }
 
-    public function getFirstname()
+    public function getName()
     {
-        return $this->firstname;
-    }
-
-    public function getLastname()
-    {
-        return $this->lastname;
+        return $this->name;
     }
 
     public function getEmail()
@@ -116,5 +112,15 @@ class Delegate
     public function getTickets()
     {
         return $this->tickets;
+    }
+
+    public function getAllergies()
+    {
+        return $this->allergies;
+    }
+
+    public function getPreference()
+    {
+        return $this->preference;
     }
 }

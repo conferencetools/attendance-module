@@ -2,7 +2,7 @@
 <? $this->form($this->form)?>
 <div class="row" >
     <div class="col-md-8">
-        <form class="form-horizontal" method="post">
+        <form method="post">
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                 <?php for ($i = 0; $i < $this->delegates; $i++): ?>
                     <div class="panel panel-default">
@@ -16,7 +16,7 @@
                         <div id="collapse_<?=$i?>" class="panel-collapse collapse <?=$i==0?'in':''?>" role="tabpanel" aria-labelledby="heading_<?=$i?>">
                             <div class="panel-body">
                                 <div style="padding: 15px;">
-                                <?=$this->formCollection($this->form->get('delegate_' . $i)) ?>
+                                    <?=$this->formCollection($this->form->get('delegate_' . $i), false) ?>
                                     <a role="button" class="btn btn-default delegate-next" data-delegate="<?=$i?>">Next</a>
                                 </div>
                             </div>

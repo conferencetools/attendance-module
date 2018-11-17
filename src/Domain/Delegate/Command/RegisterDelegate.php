@@ -3,6 +3,7 @@
 
 namespace ConferenceTools\Attendance\Domain\Delegate\Command;
 
+use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
 use JMS\Serializer\Annotation as Jms;
 
 class RegisterDelegate
@@ -11,12 +12,7 @@ class RegisterDelegate
      * @var string
      * @Jms\Type("string")
      */
-    private $firstname;
-    /**
-     * @var string
-     * @Jms\Type("string")
-     */
-    private $lastname;
+    private $name;
     /**
      * @var string
      * @Jms\Type("string")
@@ -28,10 +24,10 @@ class RegisterDelegate
      */
     private $company;
     /**
-     * @var string
-     * @Jms\Type("string")
+     * @var DietaryRequirements
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements")
      */
-    private $twitter;
+    private $dietaryRequirements;
     /**
      * @var string
      * @Jms\Type("string")
@@ -43,30 +39,19 @@ class RegisterDelegate
      */
     private $purchaseId;
 
-    public function __construct(string $purchaseId, string $firstname, string $lastname, string $email, string $company, string $twitter, string $requirements)
+    public function __construct(string $purchaseId, string $name, string $email, string $company, DietaryRequirements $dietaryRequirements, string $requirements)
     {
-        $this->firstname = $firstname;
-        $this->lastname = $lastname;
         $this->email = $email;
         $this->company = $company;
-        $this->twitter = $twitter;
         $this->requirements = $requirements;
         $this->purchaseId = $purchaseId;
+        $this->name = $name;
+        $this->dietaryRequirements = $dietaryRequirements;
     }
 
     public function getPurchaseId(): string
     {
         return $this->purchaseId;
-    }
-
-    public function getFirstname(): string
-    {
-        return $this->firstname;
-    }
-
-    public function getLastname(): string
-    {
-        return $this->lastname;
     }
 
     public function getEmail(): string
@@ -79,9 +64,14 @@ class RegisterDelegate
         return $this->company;
     }
 
-    public function getTwitter(): string
+    public function getName(): string
     {
-        return $this->twitter;
+        return $this->name;
+    }
+
+    public function getDietaryRequirements(): DietaryRequirements
+    {
+        return $this->dietaryRequirements;
     }
 
     public function getRequirements(): string

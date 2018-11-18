@@ -42,7 +42,7 @@ class Purchase
     {
         $this->id = $id;
         $this->email = $email;
-        $this->total = Price::fromNetCost(new Money(0, ''), new TaxRate(0));
+        $this->total = Price::fromNetCost(new Money(0), new TaxRate(0));
     }
 
     public function getId(): string

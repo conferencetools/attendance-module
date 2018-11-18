@@ -34,6 +34,7 @@ class StripePaymentHandler implements Handler
     private $stripeClient;
     private $messageBus;
     private $identityGenerator;
+    private $currency = 'GBP';
 
     public function __construct(StripeClient $stripeClient, Bus $messageBus, Generator $identityGenerator)
     {
@@ -49,7 +50,7 @@ class StripePaymentHandler implements Handler
         try {
             $this->stripeClient->createCharge([
                 "amount" => $message->getAmount()->getGross()->getAmount(),
-                "currency" => $message->getAmount()->getGross()->getCurrency(),
+                "currency" => $this->currency,
                 'source' => $message->getPaymentData(),
                 'metadata' => [
                     'email' => $message->getPaymentEmail(),

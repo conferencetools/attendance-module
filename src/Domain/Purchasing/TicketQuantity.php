@@ -3,7 +3,7 @@
 
 namespace ConferenceTools\Attendance\Domain\Purchasing;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
-use ConferenceTools\Attendance\Domain\Ticketing\Ticket;
+use ConferenceTools\Attendance\Domain\Ticketing\Event;
 use JMS\Serializer\Annotation as Jms;
 
 class TicketQuantity
@@ -19,11 +19,17 @@ class TicketQuantity
      */
     private $quantity;
     /**
-     * @var Ticket
-     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Ticket")
+     * @var Event
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Event")
      */
     private $ticket;
-    public function __construct(string $ticketId, Ticket $ticket, int $quantity)
+    /**
+     * @var Price
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price")
+     */
+    private $price;
+
+    public function __construct(string $ticketId, Event $event, int $quantity, Price $price)
     {
         if ($quantity < 0) {
             throw new \DomainException('Quantity must be a positive value');
@@ -31,7 +37,8 @@ class TicketQuantity
 
         $this->ticketId = $ticketId;
         $this->quantity = $quantity;
-        $this->ticket = $ticket;
+        $this->ticket = $event;
+        $this->price = $price;
     }
 
     public function getTicketId(): string
@@ -44,13 +51,13 @@ class TicketQuantity
         return $this->quantity;
     }
 
-    public function getTicket(): Ticket
+    public function getTicket(): Event
     {
         return $this->ticket;
     }
 
     public function getTotalPrice(): Price
     {
-        return $this->ticket->getPrice()->multiply($this->quantity);
+        return $this->price->multiply($this->quantity);
     }
 }

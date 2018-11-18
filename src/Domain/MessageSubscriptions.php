@@ -12,7 +12,7 @@ use ConferenceTools\Attendance\Domain\Delegate\Event as DelegateEvent;
 use ConferenceTools\Attendance\Domain\Ticketing\Event as TicketingEvent;
 use ConferenceTools\Attendance\Domain\Purchasing\Event as PurchasingEvent;
 use ConferenceTools\Attendance\Domain\Payment\Event as PaymentEvent;
-use ConferenceTools\Attendance\Domain\Ticketing\TicketType;
+use ConferenceTools\Attendance\Domain\Ticketing\Ticket;
 
 class MessageSubscriptions
 {
@@ -38,10 +38,10 @@ class MessageSubscriptions
             ],
 
             TicketingCommand\ReleaseTicket::class => [
-                TicketType::class,
+                Ticket::class,
             ],
             TicketingCommand\CheckTicketAvailability::class => [
-                TicketType::class,
+                Ticket::class,
             ],
 
             //################## Events #######################

@@ -3,7 +3,7 @@
 namespace ConferenceTools\Attendance\Handler;
 
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
-use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketType;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketsForSale;
 use Interop\Container\ContainerInterface;
 use Phactor\Zend\RepositoryManager;
 use Zend\Mail\Transport\Factory;
@@ -19,7 +19,7 @@ class EmailPurchaseFactory implements FactoryInterface
 
         return new EmailPurchase(
             $repositoryManager->get(Purchase::class),
-            $repositoryManager->get(TicketType::class),
+            $repositoryManager->get(TicketsForSale::class),
             $container->get('Zend\View\View'),
             $transport,
             $config['conferencetools']['mailconf']['purchase'] ?? []

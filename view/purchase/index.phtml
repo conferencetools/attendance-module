@@ -19,7 +19,7 @@
                                 <?php
                                 else:
                                     foreach ($this->tickets as $id => $ticket):
-                                        /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketType $ticket */
+                                        /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketsForSale $ticket */
                                         ?>
                                         <tr>
                                             <td class="col-md-9 col-xs-6">
@@ -32,7 +32,7 @@
                                                 <?php endif ?>
                                             </td>
                                             <td class="col-md-3 col-xs-6">
-                                                <span class="col-xs-6"><?= $this->moneyFormat($ticket->getTicket()->getPrice()) ?></span>
+                                                <span class="col-xs-6"><?= $this->moneyFormat($ticket->getPrice()) ?></span>
                                                 <span class="col-xs-6">
                                                     <?=$this->formInput($this->form->get('quantity')->get($ticket->getId()))?>
                                                 </span>

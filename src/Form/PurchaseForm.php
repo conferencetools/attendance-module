@@ -2,7 +2,7 @@
 
 namespace ConferenceTools\Attendance\Form;
 
-use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketType;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketsForSale;
 use TwbBundle\Form\View\Helper\TwbBundleForm;
 use Zend\Form\Element\Number;
 use Zend\Form\Element\Text;
@@ -16,7 +16,7 @@ class PurchaseForm extends Form implements InputFilterProviderInterface
 {
     public function init()
     {
-        /** @var TicketType[] $tickets */
+        /** @var TicketsForSale[] $tickets */
         $tickets = $this->getOption('tickets');
         $fieldset = new Fieldset('quantity');
 

@@ -3,9 +3,10 @@
 
 namespace ConferenceTools\Attendance\Domain\Ticketing\Event;
 
+use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use JMS\Serializer\Annotation as Jms;
 use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
-use ConferenceTools\Attendance\Domain\Ticketing\Ticket;
+use ConferenceTools\Attendance\Domain\Ticketing\Event;
 
 class TicketsReleased
 {
@@ -16,9 +17,9 @@ class TicketsReleased
     private $id;
     /**
      * @var string
-     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Ticket")
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Event")
      */
-    private $ticket;
+    private $event;
     /**
      * @var string
      * @Jms\Type("integer")
@@ -29,13 +30,20 @@ class TicketsReleased
      * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates")
      */
     private $availabilityDates;
+    /**
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price")
+     * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Price")
+     * @var Price
+     */
+    private $price;
 
-    public function __construct(string $id, Ticket $ticket, int $quantity, AvailabilityDates $availabilityDates)
+    public function __construct(string $id, Event $event, int $quantity, AvailabilityDates $availabilityDates, Price $price)
     {
         $this->id = $id;
-        $this->ticket = $ticket;
+        $this->event = $event;
         $this->quantity = $quantity;
         $this->availabilityDates = $availabilityDates;
+        $this->price = $price;
     }
 
     public function getId(): string
@@ -43,9 +51,9 @@ class TicketsReleased
         return $this->id;
     }
 
-    public function getTicket(): Ticket
+    public function getEvent(): Event
     {
-        return $this->ticket;
+        return $this->event;
     }
 
     public function getQuantity(): int
@@ -56,5 +64,10 @@ class TicketsReleased
     public function getAvailabilityDates(): AvailabilityDates
     {
         return $this->availabilityDates;
+    }
+
+    public function getPrice(): Price
+    {
+        return $this->price;
     }
 }

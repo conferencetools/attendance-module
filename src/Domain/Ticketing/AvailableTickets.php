@@ -11,7 +11,7 @@ use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
-use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketType;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketsForSale;
 
 class AvailableTickets implements Handler
 {
@@ -45,7 +45,7 @@ class AvailableTickets implements Handler
 
     private function newTicket(TicketsOnSale $message)
     {
-        $entity = new TicketType($message->getId(), $message->getTicket(), $message->getQuantity());
+        $entity = new TicketsOnSale($message->getId(), $message->getTicket(), $message->getQuantity(), $message->getPrice());
         $this->repository->add($entity);
     }
 
@@ -57,14 +57,14 @@ class AvailableTickets implements Handler
 
     private function ticketsReserved(TicketsReserved $message)
     {
-        /** @var TicketType $entity */
+        /** @var Ticket $entity */
         $entity = $this->repository->get($message->getTicketId());
         $entity->decreaseRemainingBy($message->getQuantity());
     }
 
     private function ticketsExpired(TicketReservationExpired $message)
     {
-        /** @var TicketType $entity */
+        /** @var Ticket $entity */
         $entity = $this->repository->get($message->getTicketId());
         $entity->increaseRemainingBy($message->getQuantity());
     }

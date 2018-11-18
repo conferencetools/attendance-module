@@ -3,64 +3,84 @@
 
 namespace ConferenceTools\Attendance\Domain\Ticketing;
 
-use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as Jms;
 
-/**
- * @ORM\Embeddable()
- */
-class Ticket
+use Phactor\Actor\AbstractActor;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\CheckTicketAvailability;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
+
+class Ticket extends AbstractActor
 {
     /**
-     * @ORM\Column(type="string")
-     * @Jms\Type("string")
-     * @var string
+     * @var AvailabilityDates
      */
-    private $code;
-    /**
-     * @ORM\Column(type="string")
-     * @Jms\Type("string")
-     * @var string
-     */
-    private $name;
-    /**
-     * @ORM\Column(type="string")
-     * @Jms\Type("string")
-     * @var string
-     */
-    private $description;
-    /**
-     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price")
-     * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Price")
-     * @var Price
-     */
+    private $availabilityDates;
+    private $event;
+    private $quantity;
+    private $onSale = false;
     private $price;
 
-    public function __construct(string $code, string $name, string $description, Price $price)
+    protected function handleReleaseTicket(ReleaseTicket $command)
     {
-        $this->code = $code;
-        $this->name = $name;
-        $this->description = $description;
-        $this->price = $price;
+        $availabilityDates = $command->getAvailableDates();
+
+        $this->fire(new TicketsReleased(
+            $this->id(),
+            $command->getTicket(),
+            $command->getQuantity(),
+            $availabilityDates,
+            $command->getPrice()
+        ));
+
+        if ($availabilityDates->availableNow()) {
+            $this->fire(new TicketsOnSale($this->id(), $command->getTicket(), $command->getQuantity(), $command->getPrice()));
+            $availableUntil = $availabilityDates->getAvailableUntil();
+
+            if ($availableUntil instanceof \DateTime) {
+                $this->schedule(new CheckTicketAvailability($this->id()), $availableUntil);
+            }
+        } else {
+            $availableFrom = $availabilityDates->getAvailableFrom();
+
+            if ($availableFrom instanceof \DateTime) {
+                $this->schedule(new CheckTicketAvailability($this->id()), $availableFrom);
+            }
+        }
     }
 
-    public function getCode(): string
+    protected function applyTicketsReleased(TicketsReleased $event)
     {
-        return $this->code;
+        $this->availabilityDates = $event->getAvailabilityDates();
+        $this->event = $event->getEvent();
+        $this->quantity = $event->getQuantity();
+        $this->price = $event->getPrice();
     }
 
-    public function getName(): string
+    protected function applyTicketsOnSale(TicketsOnSale $event)
     {
-        return $this->name;
+        $this->onSale = true;
     }
 
-    public function getDescription(): string
+    protected function handleCheckTicketAvailability(CheckTicketAvailability $command)
     {
-        return $this->description;
+        if (!$this->onSale && $this->availabilityDates->availableNow()) {
+            $this->fire(new TicketsOnSale($this->id(), $this->event, $this->quantity, $this->price));
+            $availableUntil = $this->availabilityDates->getAvailableUntil();
+
+            if ($availableUntil instanceof \DateTime) {
+                $this->schedule(new CheckTicketAvailability($this->id()), $availableUntil);
+            }
+        }
+
+        if ($this->onSale && !$this->availabilityDates->availableNow()) {
+            $this->fire(new TicketsWithdrawnFromSale($this->id()));
+        }
     }
 
-    public function getPrice(): Price
+    protected function applyTicketsWithdrawnFromSale(TicketsWithdrawnFromSale $event)
     {
-        return $this->price;
+        $this->onSale = false;
     }
 }

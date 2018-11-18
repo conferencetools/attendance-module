@@ -3,8 +3,9 @@
 
 namespace ConferenceTools\Attendance\Domain\Ticketing\Event;
 
+use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use JMS\Serializer\Annotation as Jms;
-use ConferenceTools\Attendance\Domain\Ticketing\Ticket;
+use ConferenceTools\Attendance\Domain\Ticketing\Event;
 
 class TicketsOnSale
 {
@@ -13,8 +14,8 @@ class TicketsOnSale
      */
     private $id;
     /**
-     * @var Ticket
-     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Ticket")
+     * @var Event
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Event")
      */
     private $ticket;
     /**
@@ -22,12 +23,18 @@ class TicketsOnSale
      * @Jms\Type("integer")
      */
     private $quantity;
+    /**
+     * @var Price
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price")
+     */
+    private $price;
 
-    public function __construct(string $id, Ticket $ticket, int $quantity)
+    public function __construct(string $id, Event $ticket, int $quantity, Price $price)
     {
         $this->id = $id;
         $this->ticket = $ticket;
         $this->quantity = $quantity;
+        $this->price = $price;
     }
 
     public function getId(): string
@@ -35,7 +42,7 @@ class TicketsOnSale
         return $this->id;
     }
 
-    public function getTicket(): \ConferenceTools\Attendance\Domain\Ticketing\Ticket
+    public function getTicket(): \ConferenceTools\Attendance\Domain\Ticketing\Event
     {
         return $this->ticket;
     }
@@ -43,5 +50,10 @@ class TicketsOnSale
     public function getQuantity(): int
     {
         return $this->quantity;
+    }
+
+    public function getPrice(): Price
+    {
+        return $this->price;
     }
 }

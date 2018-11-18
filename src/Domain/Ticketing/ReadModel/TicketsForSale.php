@@ -2,32 +2,39 @@
 
 namespace ConferenceTools\Attendance\Domain\Ticketing\ReadModel;
 
-use ConferenceTools\Attendance\Domain\Ticketing\Ticket;
+use ConferenceTools\Attendance\Domain\Ticketing\Event;
+use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
-class TicketType
+class TicketsForSale
 {
     /**
      * @ORM\Id @ORM\Column(type="string")
      */
     private $id;
     /**
-     * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Ticket")
+     * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Event")
      */
     private $ticket;
     /**
      * @ORM\Column(type="integer")
      */
     private $remaining;
+    /**
+     * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Price")
+     * @var Price
+     */
+    private $price;
 
-    public function __construct(string $id, Ticket $ticket, int $remaining)
+    public function __construct(string $id, Event $ticket, int $remaining, Price $price)
     {
         $this->id = $id;
         $this->ticket = $ticket;
         $this->remaining = $remaining;
+        $this->price = $price;
     }
 
     public function getId(): string
@@ -35,7 +42,7 @@ class TicketType
         return $this->id;
     }
 
-    public function getTicket(): Ticket
+    public function getTicket(): Event
     {
         return $this->ticket;
     }
@@ -43,6 +50,11 @@ class TicketType
     public function getRemaining(): int
     {
         return $this->remaining;
+    }
+
+    public function getPrice(): Price
+    {
+        return $this->price;
     }
 
     public function decreaseRemainingBy(int $quantity): void

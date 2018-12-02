@@ -17,12 +17,14 @@ class EmailPurchaseFactory implements FactoryInterface
         $transport = Factory::create($config['mail']);
         $repositoryManager = $container->get(RepositoryManager::class);
 
+        $emailConfig = $config['conferencetools']['mailconf']['purchase'] ?? [];
+        $emailConfig['companyinfo'] = $config['conferencetools']['companyinfo'];
         return new EmailPurchase(
             $repositoryManager->get(Purchase::class),
             $repositoryManager->get(TicketsForSale::class),
             $container->get('Zend\View\View'),
             $transport,
-            $config['conferencetools']['mailconf']['purchase'] ?? []
+            $emailConfig
         );
     }
 }

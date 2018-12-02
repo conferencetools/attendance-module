@@ -13,6 +13,7 @@ use ConferenceTools\Attendance\Domain\Ticketing\Event as TicketingEvent;
 use ConferenceTools\Attendance\Domain\Purchasing\Event as PurchasingEvent;
 use ConferenceTools\Attendance\Domain\Payment\Event as PaymentEvent;
 use ConferenceTools\Attendance\Domain\Ticketing\Ticket;
+use ConferenceTools\Attendance\Domain\Ticketing\Tickets;
 
 class MessageSubscriptions
 {
@@ -75,6 +76,9 @@ class MessageSubscriptions
             ],
             TicketingEvent\TicketsWithdrawnFromSale::class => [
                 AvailableTickets::class,
+            ],
+            TicketingEvent\TicketsReleased::class => [
+                Tickets::class,
             ],
 
             PaymentEvent\PaymentMade::class => [

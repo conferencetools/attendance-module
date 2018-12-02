@@ -32,7 +32,6 @@ class TicketsReleased
     private $availabilityDates;
     /**
      * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price")
-     * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Price")
      * @var Price
      */
     private $price;

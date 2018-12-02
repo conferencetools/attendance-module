@@ -6,7 +6,7 @@ use Zend\Router\Http\Placeholder;
 use Zend\Router\Http\Segment;
 
 //@TODO refactor routes
-return [
+$routes = [
     'attendance' => [
         'type' => Placeholder::class,
         'child_routes' => [
@@ -64,5 +64,48 @@ return [
                 ],
             ],
         ]
-    ]
+    ],
+
 ];
+
+function getflag(string $name, bool $default = false): bool {
+    $value = getenv($name);
+    return $value ? filter_var($value, FILTER_VALIDATE_BOOLEAN) : $default;
+}
+
+if (getflag('ENABLE_ADMIN')) {
+    $routes['attendance-admin'] = [
+        'type' => Literal::class,
+        'may_terminate' => true,
+        'options' => [
+            'route' => '/admin',
+        ],
+        'child_routes' => [
+            'tickets' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/tickets',
+                    'defaults' => [
+                        'controller' => Controller\Admin\TicketsController::class,
+                        'action' => 'index'
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'new' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/new',
+                            'defaults' => [
+                                'action' => 'new-ticket'
+                            ]
+                        ],
+                    ]
+                ],
+
+            ]
+        ]
+    ];
+}
+
+return $routes;

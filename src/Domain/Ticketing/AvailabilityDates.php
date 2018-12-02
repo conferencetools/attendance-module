@@ -4,10 +4,22 @@
 namespace ConferenceTools\Attendance\Domain\Ticketing;
 
 use JMS\Serializer\Annotation as Jms;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Embeddable()
+ */
 class AvailabilityDates
 {
+    /**
+     * @JMS\Type("DateTime")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
     private $availableFrom;
+    /**
+     * @JMS\Type("DateTime")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
     private $availableUntil;
 
     private function __construct() {}

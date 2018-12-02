@@ -45,7 +45,7 @@ class AvailableTickets implements Handler
 
     private function newTicket(TicketsOnSale $message)
     {
-        $entity = new TicketsOnSale($message->getId(), $message->getTicket(), $message->getQuantity(), $message->getPrice());
+        $entity = new TicketsForSale($message->getId(), $message->getTicket(), $message->getQuantity(), $message->getPrice());
         $this->repository->add($entity);
     }
 

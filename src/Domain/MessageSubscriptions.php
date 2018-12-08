@@ -55,6 +55,7 @@ class MessageSubscriptions
 
             PurchasingEvent\TicketReservationExpired::class => [
                 AvailableTickets::class,
+                Purchasing\Projector::class,
             ],
             PurchasingEvent\TicketAllocatedToDelegate::class => [
                 Delegate\Delegate::class,

@@ -67,10 +67,12 @@ $routes = [
     ],
 
 ];
-
-function getflag(string $name, bool $default = false): bool {
-    $value = getenv($name);
-    return $value ? filter_var($value, FILTER_VALIDATE_BOOLEAN) : $default;
+if (!function_exists('getflag')) {
+    function getflag(string $name, bool $default = false): bool
+    {
+        $value = getenv($name);
+        return $value ? filter_var($value, FILTER_VALIDATE_BOOLEAN) : $default;
+    }
 }
 
 if (getflag('ENABLE_ADMIN')) {

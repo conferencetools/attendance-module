@@ -84,6 +84,12 @@ class PurchaseController extends AppController
             return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $purchaseId]);
         }
 
+        $delegates = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $purchaseId)));
+
+        if (count($delegates) > 0) {
+            return $this->redirect()->toRoute('attendance/purchase/payment', ['purchaseId' => $purchaseId]);
+        }
+
         foreach ($purchase->getTickets() as $ticketId => $quantity) {
             $ticketOptions[$ticketId] = $tickets[$ticketId]->getTicket()->getName();
         }

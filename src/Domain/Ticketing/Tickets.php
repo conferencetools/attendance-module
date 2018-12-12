@@ -30,7 +30,7 @@ class Tickets implements Handler
 
     private function newTicket(TicketsReleased $event)
     {
-        $entity = new Ticket($event->getId(), $event->getEvent(), $event->getQuantity(), $event->getPrice(), $event->getAvailabilityDates());
+        $entity = new Ticket($event->getId(), $event->getEvent(), $event->getQuantity(), $event->getPrice(), $event->getAvailabilityDates(), $event->isPrivate());
         $this->repository->add($entity);
     }
 }

@@ -35,14 +35,20 @@ class TicketsReleased
      * @var Price
      */
     private $price;
+    /**
+     * @Jms\Type("bool")
+     * @var bool
+     */
+    private $private;
 
-    public function __construct(string $id, Event $event, int $quantity, AvailabilityDates $availabilityDates, Price $price)
+    public function __construct(string $id, Event $event, int $quantity, AvailabilityDates $availabilityDates, Price $price, bool $private)
     {
         $this->id = $id;
         $this->event = $event;
         $this->quantity = $quantity;
         $this->availabilityDates = $availabilityDates;
         $this->price = $price;
+        $this->private = $private;
     }
 
     public function getId(): string
@@ -68,5 +74,10 @@ class TicketsReleased
     public function getPrice(): Price
     {
         return $this->price;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->private;
     }
 }

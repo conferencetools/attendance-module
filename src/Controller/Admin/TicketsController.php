@@ -45,7 +45,8 @@ class TicketsController extends AppController
                     new Event($data['code'], $data['name'], $data['description']),
                     $data['quantity'],
                     $this->makeAvailableDates($data['from'], $data['until']),
-                    $this->makePrice($data['price'], $data['grossOrNet'])
+                    $this->makePrice($data['price'], $data['grossOrNet']),
+                    (bool) $data['private']
                 );
                 $this->messageBus()->fire($command);
             }

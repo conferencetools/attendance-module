@@ -34,14 +34,20 @@ class Ticket
      * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates")
      */
     private $availabilityDates;
+    /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $private;
 
-    public function __construct(string $id, Event $event, int $quantity, Price $price, AvailabilityDates $availabilityDates)
+    public function __construct(string $id, Event $event, int $quantity, Price $price, AvailabilityDates $availabilityDates, bool $private)
     {
         $this->id = $id;
         $this->event = $event;
         $this->quantity = $quantity;
         $this->price = $price;
         $this->availabilityDates = $availabilityDates;
+        $this->private = $private;
     }
 
     public function getId(): string
@@ -67,5 +73,10 @@ class Ticket
     public function getAvailabilityDates(): AvailabilityDates
     {
         return $this->availabilityDates;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->private;
     }
 }

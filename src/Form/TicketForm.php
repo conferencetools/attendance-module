@@ -4,6 +4,7 @@
 namespace ConferenceTools\Attendance\Form;
 
 
+use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Csrf;
 use Zend\Form\Element\DateTime;
 use Zend\Form\Element\Radio;
@@ -79,6 +80,18 @@ class TicketForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Price in pence',
             ],
+        ]);
+
+        $this->add([
+            'type' => Radio::class,
+            'name' => 'private',
+            'options' => [
+                'value_options' => [
+                    true => 'Yes',
+                    false => 'No',
+                ],
+                'label' => 'Private ticket'
+            ]
         ]);
         $this->add(new Csrf('security'));
         $this->add(new Submit('create', ['label' => 'Create']));

@@ -31,8 +31,13 @@ class Ticket extends AbstractActor
             $command->getTicket(),
             $command->getQuantity(),
             $availabilityDates,
-            $command->getPrice()
+            $command->getPrice(),
+            $command->isPrivate()
         ));
+
+        if ($command->isPrivate()) {
+            return;
+        }
 
         if ($availabilityDates->availableNow()) {
             $this->fire(new TicketsOnSale($this->id(), $command->getTicket(), $command->getQuantity(), $command->getPrice()));

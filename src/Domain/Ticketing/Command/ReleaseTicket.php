@@ -26,13 +26,18 @@ class ReleaseTicket
      * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price")
      */
     private $price;
+    /**
+     * @Jms\Type("bool")
+     */
+    private $private = false;
 
-    public function __construct(Event $ticket, int $quantity, AvailabilityDates $availableDates, Price $price)
+    public function __construct(Event $ticket, int $quantity, AvailabilityDates $availableDates, Price $price, bool $private)
     {
         $this->ticket = $ticket;
         $this->quantity = $quantity;
         $this->availableDates = $availableDates;
         $this->price = $price;
+        $this->private = $private;
     }
 
     public function getTicket(): Event
@@ -53,5 +58,10 @@ class ReleaseTicket
     public function getPrice(): Price
     {
         return $this->price;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->private;
     }
 }

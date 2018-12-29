@@ -38,6 +38,13 @@ class Purchase extends AbstractActor
         $this->schedule(new CheckPurchaseTimeout($this->id()), (new \DateTime())->add(new \DateInterval('PT1800S')));
     }
 
+    protected function handleApplyDiscount()
+    {
+        foreach ($this->tickets as $ticketId => $quantity) {
+            $totalDiscount = $discount->calculateDiscount(new TicketQuantity($ticketId, $event, $quantity));
+        }
+    }
+
     protected function applyPurchaseStartedBy(PurchaseStartedBy $event)
     {
         $this->email = $event->getEmail();

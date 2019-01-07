@@ -4,12 +4,6 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "license": "MIT",
-  "repositories": [
-    {
-      "type": "path",
-      "url": "../../myoss/phactor"
-    }
-  ],
   "require": {
     "php": "~7.2",
     "neilime/zf2-twb-bundle": "^3.0",

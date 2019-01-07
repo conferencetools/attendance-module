@@ -27,7 +27,7 @@
                                                     <?= $ticket->getQuantity() ?>
                                                 </span>
                                                 <?php if ( ! empty($ticket->getEvent()->getDescription())): ?>
-                                                    <span class="help-block col-xs-12 col-md-12"><?= $ticket->getTicket()->getDescription() ?></span>
+                                                    <span class="help-block col-xs-12 col-md-12"><?= $ticket->getEvent()->getDescription() ?></span>
                                                 <?php endif ?>
                                             </td>
                                             <td class="col-md-3 col-xs-6">

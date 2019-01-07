@@ -75,39 +75,40 @@ if (!function_exists('getflag')) {
     }
 }
 
-if (getflag('ENABLE_ADMIN')) {
-    $routes['attendance-admin'] = [
-        'type' => Literal::class,
-        'may_terminate' => true,
-        'options' => [
-            'route' => '/admin',
-        ],
-        'child_routes' => [
-            'tickets' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route' => '/tickets',
-                    'defaults' => [
-                        'controller' => Controller\Admin\TicketsController::class,
-                        'action' => 'index'
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes' => [
-                    'new' => [
-                        'type' => Literal::class,
-                        'options' => [
-                            'route' => '/new',
-                            'defaults' => [
-                                'action' => 'new-ticket'
-                            ]
-                        ],
-                    ]
-                ],
-
-            ]
+$routes['attendance-admin'] = [
+    'type' => Literal::class,
+    'may_terminate' => true,
+    'options' => [
+        'route' => '/admin',
+        'defaults' => [
+            'requiresAuth' => true,
         ]
-    ];
-}
+    ],
+    'child_routes' => [
+        'tickets' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/tickets',
+                'defaults' => [
+                    'controller' => Controller\Admin\TicketsController::class,
+                    'action' => 'index'
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'new' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/new',
+                        'defaults' => [
+                            'action' => 'new-ticket'
+                        ]
+                    ],
+                ]
+            ],
+
+        ]
+    ]
+];
 
 return $routes;

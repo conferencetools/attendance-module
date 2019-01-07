@@ -48,6 +48,8 @@ class TicketsController extends AppController
                     $this->makePrice($data['price'], $data['grossOrNet'])
                 );
                 $this->messageBus()->fire($command);
+
+                return $this->redirect()->toRoute('attendance-admin/tickets');
             }
         }
 

@@ -5,6 +5,8 @@ namespace ConferenceTools\Attendance\Domain\Delegate;
 
 
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateDetailsUpdated;
+use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
+use Doctrine\Common\Collections\Criteria;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
 use Phactor\ReadModel\Repository;
@@ -33,6 +35,10 @@ class Projector implements Handler
             case $event instanceof DelegateDetailsUpdated:
                 $this->updateDetails($event);
                 break;
+            case $event instanceof PaymentMade:
+                $this->paymentMade($event);
+                break;
+
         }
 
         $this->repository->commit();
@@ -69,5 +75,11 @@ class Projector implements Handler
             $event->getDietaryRequirements(),
             $event->getRequirements()
         );
+    }
+
+    private function paymentMade(PaymentMade $event): void
+    {
+        $delegate = $this->repository->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $event->getActorId())))->first();
+        $delegate->purchasePaid();
     }
 }

@@ -47,6 +47,11 @@ class Delegate
      */
     private $preference;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isPaid = false;
+
     public function __construct($id, $purchaseId, $name, $email, $company, DietaryRequirements $dietaryRequirements, $requirements)
     {
         $this->id = $id;
@@ -94,11 +99,6 @@ class Delegate
         return $this->company;
     }
 
-    public function getTwitter()
-    {
-        return $this->twitter;
-    }
-
     public function getRequirements()
     {
         return $this->requirements;
@@ -122,5 +122,10 @@ class Delegate
     public function getPreference()
     {
         return $this->preference;
+    }
+
+    public function purchasePaid(): void
+    {
+        $this->isPaid = true;
     }
 }

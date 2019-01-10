@@ -54,11 +54,9 @@ class MessageSubscriptions
             //################## Events #######################
             DelegateEvent\DelegateRegistered::class => [
                 Delegate\Projector::class,
-                Reporting\CateringReport::class,
             ],
             DelegateEvent\DelegateDetailsUpdated::class => [
                 Delegate\Projector::class,
-                Reporting\CateringReport::class,
             ],
 
             PurchasingEvent\TicketReservationExpired::class => [
@@ -95,7 +93,7 @@ class MessageSubscriptions
             PaymentEvent\PaymentMade::class => [
                 Purchasing\Purchase::class,
                 Purchasing\Projector::class,
-                Reporting\CateringReport::class,
+                Delegate\Projector::class,
             ]
         ];
     }

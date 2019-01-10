@@ -88,6 +88,45 @@ $routes['attendance-admin'] = [
         ]
     ],
     'child_routes' => [
+        'reports' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/reports',
+                'defaults'=> [
+                    'controller' => Controller\Admin\ReportsController::class,
+                    'action' => 'index',
+                ]
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'catering' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/catering',
+                    ],
+                    'child_routes' => [
+                        'preferences' => [
+                            'type' => Literal::class,
+                            'options' => [
+                                'route' => '/preferences',
+                                'defaults' => [
+                                    'action' => 'cateringPreferences',
+                                ]
+                            ],
+                        ],
+                        'allergies' => [
+                            'type' => Literal::class,
+                            'options' => [
+                                'route' => '/allergies',
+                                'defaults' => [
+                                    'action' => 'cateringAlergies',
+                                ]
+                            ],
+                        ],
+                    ]
+                ]
+            ]
+        ],
         'tickets' => [
             'type' => Literal::class,
             'options' => [

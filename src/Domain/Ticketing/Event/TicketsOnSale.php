@@ -10,6 +10,7 @@ use ConferenceTools\Attendance\Domain\Ticketing\Event;
 class TicketsOnSale
 {
     /**
+     * @Jms\Type("string")
      * @var string
      */
     private $id;

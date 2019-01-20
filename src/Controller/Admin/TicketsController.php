@@ -6,7 +6,9 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 
 use ConferenceTools\Attendance\Controller\AppController;
 use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
@@ -54,6 +56,24 @@ class TicketsController extends AppController
         }
 
         return new ViewModel(['form' => $form]);
+    }
+
+    public function withdrawAction()
+    {
+        $ticketId = $this->params()->fromRoute('ticketId');
+        $command = new WithdrawFromSale($ticketId);
+        $this->messageBus()->fire($command);
+
+        return $this->redirect()->toRoute('attendance-admin/tickets');
+    }
+
+    public function putOnSaleAction()
+    {
+        $ticketId = $this->params()->fromRoute('ticketId');
+        $command = new PutOnSale($ticketId);
+        $this->messageBus()->fire($command);
+
+        return $this->redirect()->toRoute('attendance-admin/tickets');
     }
 
     private function makeAvailableDates(string $from, string $until)

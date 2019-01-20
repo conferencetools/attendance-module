@@ -4,6 +4,8 @@
 namespace ConferenceTools\Attendance\Domain\Ticketing;
 
 
+use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
 use Phactor\Actor\AbstractActor;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\CheckTicketAvailability;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
@@ -56,6 +58,20 @@ class Ticket extends AbstractActor
         $this->event = $event->getEvent();
         $this->quantity = $event->getQuantity();
         $this->price = $event->getPrice();
+    }
+
+    protected function handleWithdrawFromSale(WithdrawFromSale $command)
+    {
+        if ($this->onSale) {
+            $this->fire(new TicketsWithdrawnFromSale($this->id()));
+        }
+    }
+
+    protected function handlePutOnSale(PutOnSale $command)
+    {
+        if (!$this->onSale) {
+            $this->fire(new TicketsOnSale($this->id(), $this->event, $this->quantity, $this->price));
+        }
     }
 
     protected function applyTicketsOnSale(TicketsOnSale $event)

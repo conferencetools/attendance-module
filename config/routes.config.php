@@ -107,7 +107,25 @@ $routes['attendance-admin'] = [
                             'action' => 'new-ticket'
                         ]
                     ],
-                ]
+                ],
+                'withdraw' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/withdraw/:ticketId',
+                        'defaults' => [
+                            'action' => 'withdraw',
+                        ]
+                    ],
+                ],
+                'put-on-sale' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/put-on-sale/:ticketId',
+                        'defaults' => [
+                            'action' => 'put-on-sale',
+                        ]
+                    ],
+                ],
             ],
 
         ]

@@ -21,7 +21,7 @@
                                         /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket $ticket */
                                         ?>
                                         <tr>
-                                            <td class="col-md-9 col-xs-6">
+                                            <td class="col-md-6 col-xs-6">
                                                 <span class="col-xs-12 col-md-6"><?= $ticket->getEvent()->getName() ?></span>
                                                 <span class="hidden-xs col-md-6">
                                                     <?= $ticket->getQuantity() ?>
@@ -30,8 +30,19 @@
                                                     <span class="help-block col-xs-12 col-md-12"><?= $ticket->getEvent()->getDescription() ?></span>
                                                 <?php endif ?>
                                             </td>
-                                            <td class="col-md-3 col-xs-6">
+                                            <td class="col-md-3 col-xs-3">
                                                 <span class="col-xs-6"><?= $this->moneyFormat($ticket->getPrice()) ?></span>
+                                            </td>
+                                            <td class="col-md-3 col-xs-3">
+                                                <?php if ($ticket->isOnSale()): ?>
+                                                <a class="btn btn-danger" href="<?=$this->url('attendance-admin/tickets/withdraw', ['ticketId' => $ticket->getId()])?>">
+                                                    Withdraw
+                                                </a>
+                                                <?php else:?>
+                                                    <a class="btn btn-warning" href="<?=$this->url('attendance-admin/tickets/put-on-sale', ['ticketId' => $ticket->getId()])?>">
+                                                        Put on Sale
+                                                    </a>
+                                                <?endif;?>
                                             </td>
                                         </tr>
                                     <?php

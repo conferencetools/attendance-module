@@ -44,6 +44,12 @@ class MessageSubscriptions
             TicketingCommand\CheckTicketAvailability::class => [
                 Ticket::class,
             ],
+            TicketingCommand\WithdrawFromSale::class => [
+                Ticket::class,
+            ],
+            TicketingCommand\PutOnSale::class => [
+                Ticket::class,
+            ],
 
             //################## Events #######################
             DelegateEvent\DelegateRegistered::class => [
@@ -74,9 +80,11 @@ class MessageSubscriptions
 
             TicketingEvent\TicketsOnSale::class => [
                 AvailableTickets::class,
+                Tickets::class,
             ],
             TicketingEvent\TicketsWithdrawnFromSale::class => [
                 AvailableTickets::class,
+                Tickets::class,
             ],
             TicketingEvent\TicketsReleased::class => [
                 Tickets::class,

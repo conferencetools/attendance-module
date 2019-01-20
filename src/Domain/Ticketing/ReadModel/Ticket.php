@@ -34,6 +34,10 @@ class Ticket
      * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates")
      */
     private $availabilityDates;
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $onSale = false;
 
     public function __construct(string $id, Event $event, int $quantity, Price $price, AvailabilityDates $availabilityDates)
     {
@@ -67,5 +71,20 @@ class Ticket
     public function getAvailabilityDates(): AvailabilityDates
     {
         return $this->availabilityDates;
+    }
+
+    public function withdraw()
+    {
+        $this->onSale = false;
+    }
+
+    public function onSale()
+    {
+        $this->onSale = true;
+    }
+
+    public function isOnSale()
+    {
+        return $this->onSale;
     }
 }

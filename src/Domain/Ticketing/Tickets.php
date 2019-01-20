@@ -4,7 +4,9 @@
 namespace ConferenceTools\Attendance\Domain\Ticketing;
 
 
+use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
@@ -18,6 +20,7 @@ class Tickets implements Handler
     {
         $this->repository = $repository;
     }
+
     public function handle(DomainMessage $message)
     {
         $event = $message->getMessage();
@@ -25,12 +28,34 @@ class Tickets implements Handler
             case $event instanceof TicketsReleased:
                 $this->newTicket($event);
                 break;
+            case $event instanceof TicketsWithdrawnFromSale:
+                $this->withdrawn($event);
+                break;
+            case $event instanceof TicketsOnSale:
+                $this->onSale($event);
+                break;
         }
+
+        $this->repository->commit();
     }
 
     private function newTicket(TicketsReleased $event)
     {
         $entity = new Ticket($event->getId(), $event->getEvent(), $event->getQuantity(), $event->getPrice(), $event->getAvailabilityDates());
         $this->repository->add($entity);
+    }
+
+    private function withdrawn(TicketsWithdrawnFromSale $event)
+    {
+        /** @var Ticket $ticket */
+        $ticket = $this->repository->get($event->getId());
+        $ticket->withdraw();
+    }
+
+    private function onSale(TicketsOnSale $event)
+    {
+        /** @var Ticket $ticket */
+        $ticket = $this->repository->get($event->getId());
+        $ticket->onSale();
     }
 }

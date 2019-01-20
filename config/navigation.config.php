@@ -15,5 +15,19 @@ return [
                 ],
             ],
         ],
+        [
+            'label' => 'Reporting',
+            'route' => 'attendance-admin/reports',
+            'pages' => [
+                [
+                    'label' => 'Catering preferences',
+                    'route' => 'attendance-admin/reports/catering/preferences',
+                ],
+                [
+                    'label' => 'Catering allergies',
+                    'route' => 'attendance-admin/reports/catering/allergies',
+                ],
+            ],
+        ],
     ],
 ];

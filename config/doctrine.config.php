@@ -20,7 +20,7 @@ return [
             'drivers' => [
                 'ConferenceTools\\Attendance\\Domain\\Ticketing' => 'ticketing',
                 'ConferenceTools\\Attendance\\Domain\\Purchasing' => 'purchasing',
-                'ConferenceTools\\Attendance\\Domain\\Delegate' => 'delegates'
+                'ConferenceTools\\Attendance\\Domain\\Delegate' => 'delegates',
             ]
         ]
     ],

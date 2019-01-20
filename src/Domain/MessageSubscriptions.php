@@ -3,8 +3,11 @@
 namespace ConferenceTools\Attendance\Domain;
 
 use ConferenceTools\Attendance\Domain\Delegate;
+use ConferenceTools\Attendance\Domain\Discounting\DiscountType;
 use ConferenceTools\Attendance\Domain\Purchasing;
 use ConferenceTools\Attendance\Domain\Ticketing\AvailableTickets;
+use ConferenceTools\Attendance\Domain\Discounting\Command as DiscountingCommand;
+use ConferenceTools\Attendance\Domain\Discounting\Event as DiscountingEvent;
 use ConferenceTools\Attendance\Domain\Ticketing\Command as TicketingCommand;
 use ConferenceTools\Attendance\Domain\Purchasing\Command as PurchasingCommand;
 use ConferenceTools\Attendance\Domain\Delegate\Command as DelegateCommand;
@@ -28,6 +31,10 @@ class MessageSubscriptions
                 Delegate\Delegate::class,
             ],
 
+            DiscountingCommand\CreateDiscount::class => [
+                DiscountType::class,
+            ],
+
             PurchasingCommand\CheckPurchaseTimeout::class => [
                 Purchasing\Purchase::class,
             ],
@@ -35,6 +42,9 @@ class MessageSubscriptions
                 Purchasing\Purchase::class,
             ],
             PurchasingCommand\AllocateTicketToDelegate::class => [
+                Purchasing\Purchase::class,
+            ],
+            PurchasingCommand\ApplyDiscount::class => [
                 Purchasing\Purchase::class,
             ],
 
@@ -57,6 +67,10 @@ class MessageSubscriptions
             ],
             DelegateEvent\DelegateDetailsUpdated::class => [
                 Delegate\Projector::class,
+            ],
+
+            DiscountingEvent\DiscountCreated::class => [
+                Discounting\Projector::class,
             ],
 
             PurchasingEvent\TicketReservationExpired::class => [

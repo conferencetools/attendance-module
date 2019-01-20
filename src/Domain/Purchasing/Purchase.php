@@ -2,6 +2,8 @@
 
 namespace ConferenceTools\Attendance\Domain\Purchasing;
 
+use ConferenceTools\Attendance\Domain\Purchasing\Command\ApplyDiscount;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\DiscountApplied;
 use Phactor\Actor\AbstractActor;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\CheckPurchaseTimeout;
@@ -18,8 +20,11 @@ class Purchase extends AbstractActor
 {
     private $unallocatedTickets;
     private $paid;
+    /** @var TicketQuantity[] */
     private $tickets;
     private $email;
+    /** @var Price */
+    private $total;
 
     protected function handlePurchaseTickets(PurchaseTickets $command)
     {
@@ -38,11 +43,16 @@ class Purchase extends AbstractActor
         $this->schedule(new CheckPurchaseTimeout($this->id()), (new \DateTime())->add(new \DateInterval('PT1800S')));
     }
 
-    protected function handleApplyDiscount()
+    protected function applyPurchaseTickets(PurchaseTickets $command)
     {
-        foreach ($this->tickets as $ticketId => $quantity) {
-            $totalDiscount = $discount->calculateDiscount(new TicketQuantity($ticketId, $event, $quantity));
-        }
+        $this->tickets = $command->getTickets();
+    }
+
+    protected function handleApplyDiscount(ApplyDiscount $command)
+    {
+        $totalDiscount = $command->getDiscount()->calculateDiscount($this->tickets);
+        $this->fire(new DiscountApplied($this->id(), $command->getDiscountId(), $command->getDiscountCode()));
+        $this->fire(new OutstandingPaymentCalculated($this->id(), $this->total->subtract($totalDiscount)));
     }
 
     protected function applyPurchaseStartedBy(PurchaseStartedBy $event)
@@ -53,7 +63,6 @@ class Purchase extends AbstractActor
     protected function applyTicketsReserved(TicketsReserved $event)
     {
         $this->unallocatedTickets[$event->getTicketId()] = $event->getQuantity();
-        $this->tickets[$event->getTicketId()] = $event->getQuantity();
     }
 
     protected function handleAllocateTicketToDelegate(AllocateTicketToDelegate $command)
@@ -71,8 +80,8 @@ class Purchase extends AbstractActor
     protected function handleCheckPurchaseTimeout(CheckPurchaseTimeout $command)
     {
         if (!$this->paid) {
-            foreach ($this->tickets as $ticketId => $quantity) {
-                $this->fire(new TicketReservationExpired($this->id(), $ticketId, $quantity));
+            foreach ($this->tickets as $ticket) {
+                $this->fire(new TicketReservationExpired($this->id(), $ticket->getTicketId(), $ticket->getQuantity()));
             }
 
             //@TODO deallocate any tickets from delegates (maybe leave them in place for now; at some point there needs
@@ -84,5 +93,10 @@ class Purchase extends AbstractActor
     protected function applyPaymentMade(PaymentMade $event)
     {
         $this->paid = true;
+    }
+
+    protected function applyOutstandingPaymentCalculated(OutstandingPaymentCalculated $event)
+    {
+        $this->total = $event->getTotal();
     }
 }

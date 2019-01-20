@@ -58,21 +58,22 @@ class TicketsController extends AppController
 
     private function makeAvailableDates(string $from, string $until)
     {
+        $timezone = new \DateTimeZone(\DateTimeZone::UTC);
         if ($from === '') {
             if ($until === '') {
                 return AvailabilityDates::always();
             }
 
-            return AvailabilityDates::until(\DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $until));
+            return AvailabilityDates::until(\DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $until, $timezone));
         }
 
         if ($until === '') {
-            return AvailabilityDates::after(\DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $from));
+            return AvailabilityDates::after(\DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $from, $timezone));
         }
 
         return AvailabilityDates::between(
-            \DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $from),
-            \DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $until)
+            \DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $from, $timezone),
+            \DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $until, $timezone)
         );
     }
 

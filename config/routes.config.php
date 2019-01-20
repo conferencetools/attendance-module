@@ -82,6 +82,9 @@ $routes['attendance-admin'] = [
         'route' => '/admin',
         'defaults' => [
             'requiresAuth' => true,
+            'layout' => 'attendance/admin-layout',
+            'controller' => Controller\Admin\IndexController::class,
+            'action' => 'index'
         ]
     ],
     'child_routes' => [

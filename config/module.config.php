@@ -12,6 +12,7 @@ return [
     'message_handlers' => require __DIR__ . '/message_handlers.config.php',
     'message_subscriptions' => require __DIR__ . '/message_subscriptions.config.php',
     'message_subscription_providers' => [\ConferenceTools\Attendance\Domain\MessageSubscriptions::class],
+    'navigation' => require __DIR__ . '/navigation.config.php',
     'router' => [
         'routes' => require __DIR__ . '/routes.config.php',
     ],
@@ -30,6 +31,11 @@ return [
             'stripeKey' => \ConferenceTools\Attendance\View\Helper\StripeKeyFactory::class,
             //'ticketsConfig' => \ConferenceTools\Tickets\View\Helper\ConfigurationFactory::class,
             //'serverUrl' => \ConferenceTools\Tickets\View\Helper\ServerUrlFactory::class,
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+            'navigation' => \Zend\Navigation\Service\DefaultNavigationFactory::class,
         ],
     ],
 ];

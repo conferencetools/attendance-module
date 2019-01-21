@@ -78,7 +78,7 @@ class TicketsController extends AppController
 
     private function makeAvailableDates(string $from, string $until)
     {
-        $timezone = new \DateTimeZone(\DateTimeZone::UTC);
+        $timezone = new \DateTimeZone('UTC');
         if ($from === '') {
             if ($until === '') {
                 return AvailabilityDates::always();

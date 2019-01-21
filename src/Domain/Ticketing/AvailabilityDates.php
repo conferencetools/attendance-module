@@ -70,7 +70,7 @@ class AvailabilityDates
 
     public function availableNow(): bool
     {
-        $now = new \DateTime('now', new \DateTimeZone(\DateTimeZone::UTC));
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
 
         if ($this->availableFrom === null) {
             return $this->availableUntil === null || $now <= $this->availableUntil;

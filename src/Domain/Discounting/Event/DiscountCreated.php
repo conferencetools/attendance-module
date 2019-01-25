@@ -3,35 +3,40 @@
 
 namespace ConferenceTools\Attendance\Domain\Discounting\Event;
 
-
+use JMS\Serializer\Annotation as Jms;
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
 use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
 
 class DiscountCreated
 {
     /**
-     * @var string
+     * @Jms\Type("string")
      */
     private $id;
     /**
-     * @var string
+     * @Jms\Type("string")
      */
     private $name;
     /**
-     * @var Discount
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Discounting\Discount")
      */
     private $discount;
     /**
-     * @var AvailabilityDates
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates")
      */
     private $availabilityDates;
+    /**
+     * @Jms\Type("bool")
+     */
+    private $availableNow;
 
-    public function __construct(string $id, string $name, Discount $discount, AvailabilityDates $availabilityDates)
+    public function __construct(string $id, string $name, Discount $discount, AvailabilityDates $availabilityDates, bool $availableNow)
     {
         $this->id = $id;
         $this->name = $name;
         $this->discount = $discount;
         $this->availabilityDates = $availabilityDates;
+        $this->availableNow = $availableNow;
     }
 
     public function getId(): string
@@ -52,5 +57,10 @@ class DiscountCreated
     public function getAvailabilityDates(): AvailabilityDates
     {
         return $this->availabilityDates;
+    }
+
+    public function isAvailableNow(): bool
+    {
+        return $this->availableNow;
     }
 }

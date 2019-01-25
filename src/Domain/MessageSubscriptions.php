@@ -72,6 +72,12 @@ class MessageSubscriptions
             DiscountingEvent\DiscountCreated::class => [
                 Discounting\Projector::class,
             ],
+            DiscountingEvent\DiscountAvailable::class => [
+                Discounting\Projector::class,
+            ],
+            DiscountingEvent\DiscountWithdrawn::class => [
+                Discounting\Projector::class,
+            ],
 
             PurchasingEvent\TicketReservationExpired::class => [
                 AvailableTickets::class,

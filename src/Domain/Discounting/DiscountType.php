@@ -4,8 +4,11 @@ namespace ConferenceTools\Attendance\Domain\Discounting;
 
 use ConferenceTools\Attendance\Domain\Discounting\Command\CreateDiscount;
 use ConferenceTools\Attendance\Domain\Discounting\Command\CheckDiscountAvailability;
+use ConferenceTools\Attendance\Domain\Discounting\Event\DiscountAvailable;
 use ConferenceTools\Attendance\Domain\Discounting\Event\DiscountCreated;
+use ConferenceTools\Attendance\Domain\Discounting\Event\DiscountWithdrawn;
 use Phactor\Actor\AbstractActor;
+use Phactor\Message\DomainMessage;
 
 class DiscountType extends AbstractActor
 {
@@ -13,6 +16,7 @@ class DiscountType extends AbstractActor
     private $discount;
     private $availabilityDates;
     private $codes;
+    private $available;
 
     protected function handleCreateDiscount(CreateDiscount $command)
     {
@@ -21,20 +25,21 @@ class DiscountType extends AbstractActor
             $this->id(),
             $command->getName(),
             $command->getDiscount(),
-            $availabilityDates
+            $availabilityDates,
+            $availabilityDates->availableNow()
         ));
 
         if ($availabilityDates->availableNow()) {
             $availableUntil = $availabilityDates->getAvailableUntil();
 
             if ($availableUntil instanceof \DateTime) {
-                $this->schedule(new CheckDiscountAvailability($this->id()), $availableUntil);
+                $this->schedule(new CheckDiscountAvailability($this->id(), $availabilityDates), $availableUntil);
             }
         } else {
             $availableFrom = $availabilityDates->getAvailableFrom();
 
             if ($availableFrom instanceof \DateTime) {
-                $this->schedule(new CheckDiscountAvailability($this->id()), $availableFrom);
+                $this->schedule(new CheckDiscountAvailability($this->id(), $availabilityDates), $availableFrom);
             }
         }
     }
@@ -44,31 +49,39 @@ class DiscountType extends AbstractActor
         $this->name = $event->getName();
         $this->discount = $event->getDiscount();
         $this->availabilityDates = $event->getAvailabilityDates();
+        $this->available = $event->isAvailableNow();
     }
 
-    public function handleAddCode()
+    public function handleCheckDiscountAvailability(CheckDiscountAvailability $message)
     {
-        //discount code created
-        if ($availabilityDates->availableNow()) {
-            $this->fire(new TicketsOnSale($this->id(), $command->getTicket(), $command->getQuantity(), $command->getPrice()));
-            $availableUntil = $availabilityDates->getAvailableUntil();
+        if (!$this->availabilityDates->equals($message->getAvailabilityDates())) {
+            return;
+        }
+
+        if ($this->available) {
+            $this->fire(new DiscountWithdrawn($this->id()));
+        } else {
+            $this->fire(new DiscountAvailable($this->id()));
+            $availableUntil = $this->availabilityDates->getAvailableUntil();
 
             if ($availableUntil instanceof \DateTime) {
-                $this->schedule(new CheckTicketAvailability($this->id()), $availableUntil);
-            }
-        } else {
-            $availableFrom = $availabilityDates->getAvailableFrom();
-
-            if ($availableFrom instanceof \DateTime) {
-                $this->schedule(new CheckTicketAvailability($this->id()), $availableFrom);
+                $this->schedule(new CheckDiscountAvailability($this->id(), $this->availabilityDates), $availableUntil);
             }
         }
     }
 
-    public function handleCheckExpiry()
+    public function applyDiscountWithdrawn(DiscountWithdrawn $message)
     {
-        //raise DiscountAvailable x codes
-        //raise DiscountExpired x codes
+        $this->available = false;
+    }
+
+    public function applyDiscountAvailable(DiscountAvailable $message)
+    {
+        $this->available = true;
+    }
+
+    public function handleAddCode()
+    {
     }
 
 }

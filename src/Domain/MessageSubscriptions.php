@@ -34,6 +34,12 @@ class MessageSubscriptions
             DiscountingCommand\CreateDiscount::class => [
                 DiscountType::class,
             ],
+            DiscountingCommand\AddCode::class => [
+                DiscountType::class,
+            ],
+            DiscountingCommand\CheckDiscountAvailability::class => [
+                DiscountType::class,
+            ],
 
             PurchasingCommand\CheckPurchaseTimeout::class => [
                 Purchasing\Purchase::class,
@@ -76,6 +82,9 @@ class MessageSubscriptions
                 Discounting\Projector::class,
             ],
             DiscountingEvent\DiscountWithdrawn::class => [
+                Discounting\Projector::class,
+            ],
+            DiscountingEvent\CodeAdded::class => [
                 Discounting\Projector::class,
             ],
 

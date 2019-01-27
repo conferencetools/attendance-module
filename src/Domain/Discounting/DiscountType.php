@@ -2,8 +2,10 @@
 
 namespace ConferenceTools\Attendance\Domain\Discounting;
 
+use ConferenceTools\Attendance\Domain\Discounting\Command\AddCode;
 use ConferenceTools\Attendance\Domain\Discounting\Command\CreateDiscount;
 use ConferenceTools\Attendance\Domain\Discounting\Command\CheckDiscountAvailability;
+use ConferenceTools\Attendance\Domain\Discounting\Event\CodeAdded;
 use ConferenceTools\Attendance\Domain\Discounting\Event\DiscountAvailable;
 use ConferenceTools\Attendance\Domain\Discounting\Event\DiscountCreated;
 use ConferenceTools\Attendance\Domain\Discounting\Event\DiscountWithdrawn;
@@ -80,8 +82,13 @@ class DiscountType extends AbstractActor
         $this->available = true;
     }
 
-    public function handleAddCode()
+    public function handleAddCode(AddCode $command)
     {
+        $this->fire(new CodeAdded($this->id(), $command->getCode()));
     }
 
+    protected function applyCodeAdded(CodeAdded $event)
+    {
+        $this->codes[] = $event->getCode();
+    }
 }

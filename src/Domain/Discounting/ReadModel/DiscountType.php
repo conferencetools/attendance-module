@@ -3,8 +3,8 @@
 
 namespace ConferenceTools\Attendance\Domain\Discounting\ReadModel;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
 /**
  * @ORM\Entity()
@@ -20,7 +20,7 @@ class DiscountType
      */
     private $name;
     /**
-     * @ORM\Column(type="int")
+     * @ORM\Column(type="integer")
      */
     private $percentage;
     /**
@@ -36,9 +36,13 @@ class DiscountType
      */
     private $forTicketIds;
     /**
-     * @ORM\Column(type="bool")
+     * @ORM\Column(type="boolean")
      */
     private $available;
+    /**
+     * @ORM\OneToMany(targetEntity="ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountCode", mappedBy="discountType", cascade={"all"})
+     */
+    private $codes;
 
     public function __construct(string $id, string $name, Discount $discount, bool $available)
     {
@@ -49,6 +53,7 @@ class DiscountType
         $this->perPurchase = $discount->getPerPurchase();
         $this->forTicketIds = $discount->getForTicketIds();
         $this->available = $available;
+        $this->codes = new ArrayCollection();
     }
 
     public function getId(): string
@@ -79,5 +84,10 @@ class DiscountType
     public function isAvailable(): bool
     {
         return $this->available;
+    }
+
+    public function addCode(string $code)
+    {
+        $this->codes->add(new DiscountCode($this, $code));
     }
 }

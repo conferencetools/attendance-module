@@ -13,6 +13,8 @@ return [
     'attendance/admin/index/index' => $viewDir . 'admin/index/index.phtml',
     'attendance/admin/tickets/new-ticket' => $viewDir . 'admin/tickets/new-ticket.phtml',
     'attendance/admin/tickets/index' => $viewDir . 'admin/tickets/index.phtml',
+    'attendance/admin/discounts/new-discount' => $viewDir . 'admin/discounts/new-discount.phtml',
+    'attendance/admin/discounts/index' => $viewDir . 'admin/discounts/index.phtml',
     'attendance/admin/reports/index' => $viewDir . 'admin/reports/index.phtml',
 
     'email/receipt' => $viewDir . 'email/receipt.phtml',

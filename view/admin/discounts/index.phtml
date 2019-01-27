@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-default credit-card-box">
+            <div class="panel-heading display-table" >
+                <div class="row display-tr" >
+                    <h3 class="panel-title display-td" >Discounts</h3>
+                    <a class="btn btn-success" style="float:right" href="<?=$this->url('attendance-admin/discounts/new')?>">Add</a>
+                </div>
+            </div>
+            <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="table">
+                                <?php if (count($this->discounts) === 0): ?>
+                                    <tr>
+                                        <td>You haven't created any disccounts yet.</td>
+                                    </tr>
+                                <?php
+                                else:
+                                    foreach ($this->discounts as $id => $discount):
+                                        /** @var \ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType $ticket */
+                                        ?>
+                                        <tr>
+                                            <td class="col-md-6 col-xs-6">
+                                                <span class="col-xs-12 col-md-6"><?= $discount->getName() ?></span>
+                                            </td>
+                                            <td class="col-md-3 col-xs-3">
+                                            </td>
+                                        </tr>
+                                    <?php
+                                    endforeach;
+                                endif;
+                                ?>
+                            </table>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>

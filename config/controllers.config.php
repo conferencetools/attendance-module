@@ -10,5 +10,6 @@ return [
         Controller\Admin\TicketsController::class => InvokableFactory::class,
         Controller\Admin\ReportsController::class => InvokableFactory::class,
         Controller\Admin\IndexController::class =>  InvokableFactory::class,
+        Controller\Admin\DiscountsController::class =>  InvokableFactory::class,
     ]
 ];

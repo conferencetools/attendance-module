@@ -62,7 +62,7 @@ class DiscountsController extends AppController
                 $this->messageBus()->fire($command);
 
                 return $this->redirect()->toRoute('attendance-admin/discounts');
-            } else {var_dump($form->getMessages());die();}
+            }
         }
 
         return new ViewModel(['form' => $form]);
@@ -103,13 +103,13 @@ class DiscountsController extends AppController
     {
         switch ($data['type']) {
             case 'percentage':
-                $discount = Discount::percentage($data['percent'], ...$data['ticketIds']);
+                $discount = Discount::percentage($data['percent'], ...$data['ticketIds'] ?? []);
                 break;
             case 'perTicket':
-                $discount = Discount::perTicket($this->makePrice($data['price'], $data['grossOrNet']), ...$data['ticketIds']);
+                $discount = Discount::perTicket($this->makePrice($data['price'], $data['grossOrNet']), ...$data['ticketIds'] ?? []);
                 break;
             case 'perPurchase':
-                $discount = Discount::perPurchase($this->makePrice($data['price'], $data['grossOrNet']), ...$data['ticketIds']);
+                $discount = Discount::perPurchase($this->makePrice($data['price'], $data['grossOrNet']), ...$data['ticketIds'] ?? []);
                 break;
         }
 

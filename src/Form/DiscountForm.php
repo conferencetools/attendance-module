@@ -95,6 +95,25 @@ class DiscountForm extends Form implements InputFilterProviderInterface
         $this->add(new Submit('create', ['label' => 'Create']));
     }
 
+    public function setData($data)
+    {
+        parent::setData($data);
+
+        switch($data['type']) {
+            case 'percentage':
+                $this->setValidationGroup([
+                    'type', 'name', 'from', 'until', 'percent', 'ticketIds', 'security'
+                ]);
+                break;
+            case 'perTicket':
+            case 'perPurchase':
+                $this->setValidationGroup([
+                    'type', 'name', 'from', 'until', 'grossOrNet', 'price', 'ticketIds', 'security'
+                ]);
+                break;
+        }
+    }
+
     public function getInputFilterSpecification()
     {
         return [
@@ -116,6 +135,9 @@ class DiscountForm extends Form implements InputFilterProviderInterface
                     ['name' => GreaterThan::class, ['options' => ['min' => 0]]]
                 ]
             ],
+            'ticketIds' => [
+                'allow_empty' => true,
+            ]
         ];
     }
 }

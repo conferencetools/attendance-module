@@ -31,4 +31,8 @@ class DiscountCode
         return $this->discountType;
     }
 
+    public function __toString()
+    {
+        return $this->code;
+    }
 }

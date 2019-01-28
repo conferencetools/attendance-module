@@ -188,6 +188,15 @@ $routes['attendance-admin'] = [
                         ]
                     ],
                 ],
+                'add-code' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:discountId/add-code',
+                        'defaults' => [
+                            'action' => 'add-code'
+                        ]
+                    ],
+                ],
             ],
         ],
     ]

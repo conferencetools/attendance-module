@@ -84,7 +84,7 @@ class DiscountType
         $perTicket = $this->perTicket_net !== null ? Price::fromNetCost(new Money($this->perTicket_net), new TaxRate($this->perTicket_tax)) : null;
         $perPurchase = $this->perPurchase_net !== null ? Price::fromNetCost(new Money($this->perPurchase_net), new TaxRate($this->perPurchase_tax)) : null;
 
-        return new Discount($this->percentage, $perTicket, $perPurchase, $this->forTicketIds);
+        return new Discount($this->percentage, $perTicket, $perPurchase, ...$this->forTicketIds);
     }
 
     public function withdraw()
@@ -105,5 +105,10 @@ class DiscountType
     public function addCode(string $code)
     {
         $this->codes->add(new DiscountCode($this, $code));
+    }
+
+    public function getCodes(): array
+    {
+        return $this->codes->toArray();
     }
 }

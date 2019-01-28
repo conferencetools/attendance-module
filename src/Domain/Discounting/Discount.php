@@ -3,15 +3,27 @@
 
 namespace ConferenceTools\Attendance\Domain\Discounting;
 
-
+use JMS\Serializer\Annotation as Jms;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 
 class Discount
 {
+    /**
+     * @Jms\Type("integer")
+     */
     private $percentage;
+    /**
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price")
+     */
     private $perTicket;
+    /**
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price")
+     */
     private $perPurchase;
+    /**
+     * @Jms\Type("array<string>")
+     */
     private $forTicketIds = [];
 
     public function __construct(?int $percentage, ?Price $perTicket, ?Price $perPurchase, string ...$forTicketIds)
@@ -90,5 +102,23 @@ class Discount
     private function accept(TicketQuantity $ticket): bool
     {
         return empty($this->forTicketIds) || \in_array($ticket->getTicketId(), $this->forTicketIds, true);
+    }
+
+    /** @TODO should be in a view helper probably */
+    public function __toString()
+    {
+        if ($this->perPurchase !== null) {
+            return $this->perPurchase->getGross()->getAmount() . ' per purchase.';
+        }
+
+        if ($this->perTicket !== null) {
+            return $this->perTicket->getGross()->getAmount() . ' per ticket.';
+        }
+
+        if ($this->percentage !== null) {
+            return $this->percentage . '%';
+        }
+
+        return '';
     }
 }

@@ -5,6 +5,7 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 
 
 use ConferenceTools\Attendance\Controller\AppController;
+use ConferenceTools\Attendance\Domain\Discounting\Command\AddCode;
 use ConferenceTools\Attendance\Domain\Discounting\Command\CreateDiscount;
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType;
@@ -17,6 +18,7 @@ use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
+use ConferenceTools\Attendance\Form\DiscountCodeForm;
 use ConferenceTools\Attendance\Form\DiscountForm;
 use ConferenceTools\Attendance\Form\TicketForm;
 use Doctrine\Common\Collections\Criteria;
@@ -68,6 +70,27 @@ class DiscountsController extends AppController
         return new ViewModel(['form' => $form]);
     }
 
+    public function addCodeAction()
+    {
+        $form = $this->form(DiscountCodeForm::class);
+
+        if ($this->getRequest()->isPost()) {
+            $form->setData($this->params()->fromPost());
+
+            if ($form->isValid()) {
+                $data = $form->getData();
+                $command = new AddCode(
+                    $this->params()->fromRoute('discountId'),
+                    $data['code']
+                );
+                $this->messageBus()->fire($command);
+
+                return $this->redirect()->toRoute('attendance-admin/discounts');
+            }
+        }
+
+        return new ViewModel(['form' => $form]);
+    }
 
     private function makeAvailableDates(string $from, string $until)
     {

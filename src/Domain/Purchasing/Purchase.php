@@ -50,7 +50,7 @@ class Purchase extends AbstractActor
 
     protected function handleApplyDiscount(ApplyDiscount $command)
     {
-        $totalDiscount = $command->getDiscount()->calculateDiscount($this->tickets);
+        $totalDiscount = $command->getDiscount()->calculateDiscount(...$this->tickets);
         $this->fire(new DiscountApplied($this->id(), $command->getDiscountId(), $command->getDiscountCode()));
         $this->fire(new OutstandingPaymentCalculated($this->id(), $this->total->subtract($totalDiscount)));
     }

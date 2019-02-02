@@ -8,8 +8,10 @@ use ConferenceTools\Attendance\Domain\Delegate\Command\RegisterDelegate;
 use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
+use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountCode;
 use ConferenceTools\Attendance\Domain\Payment\Command\TakePayment;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
+use ConferenceTools\Attendance\Domain\Purchasing\Command\ApplyDiscount;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
@@ -39,7 +41,7 @@ class PurchaseController extends AppController
             $form->setData($formData);
             if ($form->isValid()) {
                 $data = $form->getData();
-                if ($this->validateTicketQuantity($data['quantity'])) {
+                if ($this->validateTicketQuantity($data['quantity']) && $this->validateDiscountCode($data['discount_code'])) {
 
                     foreach ($data['quantity'] as $ticketId => $quantity) {
                         $quantity = (int)$quantity;
@@ -57,7 +59,17 @@ class PurchaseController extends AppController
                     $messages = $this->messageBus()->fire(new PurchaseTickets($data['purchase_email'], ...$selectedTickets));
                     $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
 
-                    //@TODO handle discount code?
+                    if (!empty($data['discount_code'])) {
+                        $code = $this->fetchDiscountCode($data['discount_code']);
+                        $command = new ApplyDiscount(
+                            $purchaseId,
+                            $code->getDiscountType()->getId(),
+                            $data['discount_code'],
+                            $code->getDiscountType()->getDiscount()
+                        );
+
+                        $this->messageBus()->fire($command);
+                    }
 
                     return $this->redirect()->toRoute('attendance/purchase/delegate-info', ['purchaseId' => $purchaseId]);
                 }
@@ -271,5 +283,30 @@ class PurchaseController extends AppController
         }
 
         return $valid;
+    }
+
+    private function validateDiscountCode(string $discountCode): bool
+    {
+        if (empty($discountCode)) {
+            return true;
+        }
+
+        $code = $this->fetchDiscountCode($discountCode);
+
+        $valid = ($code instanceof DiscountCode && $code->getDiscountType()->isAvailable());
+
+        if (!$valid) {
+            $this->flashMessenger()->addErrorMessage('Invalid discount code');
+        }
+
+        return $valid;
+    }
+
+    private function fetchDiscountCode(string $discountCode): ?DiscountCode
+    {
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('code', $discountCode));
+        $codes = $this->repository(DiscountCode::class)->matching($criteria);
+        $code = $codes->current();
+        return $code ? $code : null;
     }
 }

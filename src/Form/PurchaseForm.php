@@ -37,7 +37,17 @@ class PurchaseForm extends Form implements InputFilterProviderInterface
             'attributes' => ['class' => 'form-control', 'placeholder' => 'Your receipt will be emailed to this address']
         ]);
 
-        //@TODO add discount code
+        $this->add([
+            'type' => Text::class,
+            'name' => 'discount_code',
+            'options' => [
+                'label' => 'Discount Code',
+                'label_attributes' => ['class' => 'col-sm-4 control-label'],
+                'twb-layout' => TwbBundleForm::LAYOUT_HORIZONTAL,
+                'column-size' => 'sm-8',
+            ],
+            'attributes' => ['class' => 'form-control', 'placeholder' => 'Discount Code']
+        ]);
     }
 
     public function getInputFilterSpecification()
@@ -50,6 +60,10 @@ class PurchaseForm extends Form implements InputFilterProviderInterface
                     ['name' => NotEmpty::class],
                     ['name' => EmailAddress::class],
                 ]
+            ],
+            'discount_code' => [
+                'allow_empty' => true,
+                'required' => true,
             ]
         ];
     }

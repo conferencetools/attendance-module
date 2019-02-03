@@ -3,16 +3,20 @@
 
 namespace ConferenceTools\Attendance\Domain\Purchasing\Event;
 
+use JMS\Serializer\Annotation as Jms;
 
 class DiscountApplied
 {
     /**
+     * @Jms\Type("string")
      */
     private $purchaseId;
     /**
+     * @Jms\Type("string")
      */
     private $discountId;
     /**
+     * @Jms\Type("string")
      */
     private $discountCode;
 

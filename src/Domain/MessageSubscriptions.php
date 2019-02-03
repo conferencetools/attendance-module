@@ -106,6 +106,9 @@ class MessageSubscriptions
             PurchasingEvent\OutstandingPaymentCalculated::class => [
                 Purchasing\Projector::class,
             ],
+            Purchasing\Event\DiscountApplied::class => [
+                Purchasing\Projector::class,
+            ],
 
             TicketingEvent\TicketsOnSale::class => [
                 AvailableTickets::class,

@@ -150,12 +150,21 @@
                                                             style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                                                             <td class="alignright" width="80%"
                                                                 style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; text-align: right; border-top-width: 2px; border-top-color: #333; border-top-style: solid; border-bottom-color: #333; border-bottom-width: 2px; border-bottom-style: solid; font-weight: 700; margin: 0; padding: 5px 0;"
-                                                                align="right" valign="top">Sub Total <br />VAT<br />Total
+                                                                align="right" valign="top">
+                                                                Sub Total <br />
+                                                                <?php if ($this->discount):?>
+                                                                    Discount applied <br />
+                                                                <?php endif;?>
+                                                                VAT<br />
+                                                                Total
                                                             </td>
                                                             <td class="alignright"
                                                                 style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; text-align: right; border-top-width: 2px; border-top-color: #333; border-top-style: solid; border-bottom-color: #333; border-bottom-width: 2px; border-bottom-style: solid; font-weight: 700; margin: 0; padding: 5px 0;"
                                                                 align="right" valign="top">
                                                                 <?= $this->moneyFormat($this->purchase->getTotal(), true) ?><br />
+                                                                <?php if ($this->discount):?>
+                                                                    <?= $this->discount->getName() ?> <br />
+                                                                <?php endif;?>
                                                                 <?= $this->moneyFormat($this->purchase->getTotal()->getTax()) ?><br />
                                                                 <?= $this->moneyFormat($this->purchase->getTotal()) ?>
                                                             </td>

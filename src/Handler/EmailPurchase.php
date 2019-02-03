@@ -23,10 +23,12 @@ class EmailPurchase implements Handler
     private $config;
     private $purchaseRepository;
     private $ticketsRepository;
+    private $discountRepository;
 
     public function __construct(
         Repository $purchaseRepository,
         Repository $ticketsRepository,
+        Repository $discountRepository,
         View $view,
         TransportInterface $mail,
         array $config = []
@@ -37,6 +39,7 @@ class EmailPurchase implements Handler
         $this->config['subject'] = $this->config['subject'] ?? 'Your ticket receipt';
         $this->purchaseRepository = $purchaseRepository;
         $this->ticketsRepository = $ticketsRepository;
+        $this->discountRepository = $discountRepository;
     }
 
 
@@ -53,13 +56,19 @@ class EmailPurchase implements Handler
         }
         /** @var Purchase $purchase */
         $purchase = $this->purchaseRepository->get($message->getActorId());
+        $discount = null;
+
+        if ($purchase->getDiscountId() !== null) {
+            $discount = $this->discountRepository->get($purchase->getDiscountId());
+        }
+
         $tickets = $this->ticketsRepository->matching(Criteria::create());
 
         foreach ($tickets as $ticket) {
             $ticketsIndexed[$ticket->getId()] = $ticket;
         }
 
-        $viewModel = new ViewModel(['purchase' => $purchase, 'tickets' => $ticketsIndexed, 'config'=> $this->config]);
+        $viewModel = new ViewModel(['purchase' => $purchase, 'discount' => $discount, 'tickets' => $ticketsIndexed, 'config'=> $this->config]);
         $viewModel->setTemplate('email/receipt');
 
         $response = new Response();

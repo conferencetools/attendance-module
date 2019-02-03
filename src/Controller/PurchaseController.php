@@ -9,6 +9,7 @@ use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountCode;
+use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType;
 use ConferenceTools\Attendance\Domain\Payment\Command\TakePayment;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\ApplyDiscount;
@@ -161,6 +162,12 @@ class PurchaseController extends AppController
         /** @var Purchase $purchase*/
         $purchase = $this->repository(Purchase::class)->get($purchaseId);
 
+        $discount = null;
+
+        if ($purchase->getDiscountId() !== null) {
+            $discount = $this->repository(DiscountType::class)->get($purchase->getDiscountId());
+        }
+
         if ($purchase === null) {
             $this->flashMessenger()->addErrorMessage('Purchase not found, or has timed out');
             return $this->redirect()->toRoute('attendance/purchase');
@@ -190,7 +197,7 @@ class PurchaseController extends AppController
             }
         }
 
-        return new ViewModel(['form' => $form, 'purchase' => $purchase,'tickets' => $this->getTickets()]);
+        return new ViewModel(['form' => $form, 'purchase' => $purchase, 'discount' => $discount, 'tickets' => $this->getTickets()]);
     }
 
     public function completeAction()
@@ -200,13 +207,19 @@ class PurchaseController extends AppController
         /** @var Purchase $purchase*/
         $purchase = $this->repository(Purchase::class)->get($purchaseId);
 
+        $discount = null;
+
+        if ($purchase->getDiscountId() !== null) {
+            $discount = $this->repository(DiscountType::class)->get($purchase->getDiscountId());
+        }
+
         if ($purchase === null) {
             $this->flashMessenger()->addErrorMessage('Purchase not found, or has timed out');
             return $this->redirect()->toRoute('attendance/purchase');
         }
 
         $delegates = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $purchaseId)));
-        return new ViewModel(['purchase' => $purchase,'tickets' => $this->getTickets(), 'delegates' => $delegates]);
+        return new ViewModel(['purchase' => $purchase, 'discount' => $discount, 'tickets' => $this->getTickets(), 'delegates' => $delegates]);
     }
 
     /**

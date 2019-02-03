@@ -3,15 +3,27 @@
 
 namespace ConferenceTools\Attendance\Domain\Purchasing\Command;
 
-
+use JMS\Serializer\Annotation as Jms;
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
 use Phactor\Message\HasActorId;
 
 class ApplyDiscount implements HasActorId
 {
+    /**
+     * @Jms\Type("string")
+     */
     private $purchaseId;
+    /**
+     * @Jms\Type("string")
+     */
     private $discountId;
+    /**
+     * @Jms\Type("string")
+     */
     private $discountCode;
+    /**
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Discounting\Discount")
+     */
     private $discount;
 
     public function __construct(string $purchaseId, string $discountId, string $discountCode, Discount $discount)

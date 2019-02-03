@@ -4,6 +4,7 @@
 namespace ConferenceTools\Attendance\Domain\Purchasing;
 
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\DiscountApplied;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
 use Phactor\Message\DomainMessage;
@@ -41,6 +42,9 @@ class Projector implements Handler
                 break;
             case $event instanceof TicketReservationExpired:
                 $this->purchaseTimeout($event);
+                break;
+            case $event instanceof DiscountApplied:
+                $this->discountApplied($event);
                 break;
         }
 
@@ -80,5 +84,12 @@ class Projector implements Handler
         if ($entity instanceof Purchase) {
             $this->repository->remove($entity);
         }
+    }
+
+    private function discountApplied(DiscountApplied $event)
+    {
+        /** @var Purchase $entity */
+        $entity = $this->repository->get($event->getPurchaseId());
+        $entity->discountApplied($event->getDiscountId(), $event->getDiscountCode());
     }
 }

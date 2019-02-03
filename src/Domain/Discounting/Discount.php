@@ -3,6 +3,7 @@
 
 namespace ConferenceTools\Attendance\Domain\Discounting;
 
+use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use JMS\Serializer\Annotation as Jms;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
@@ -78,12 +79,12 @@ class Discount
             return $this->perPurchase;
         }
 
-        $totalDiscount = Price::fromNetCost(0, current($tickets)->getTotalPrice()->getTaxRate());
+        $totalDiscount = Price::fromNetCost(new Money(0), current($tickets)->getTotalPrice()->getTaxRate());
 
         if ($this->perTicket !== null) {
             foreach ($tickets as $ticket) {
                 if (empty($this->forTicketIds) || \in_array($ticket->getTicketId(), $this->forTicketIds, true)) {
-                    $totalDiscount->add($this->perTicket->multiply($ticket->getQuantity()));
+                    $totalDiscount = $totalDiscount->add($this->perTicket->multiply($ticket->getQuantity()));
                 }
             }
         }
@@ -91,7 +92,7 @@ class Discount
         if ($this->percentage !== null) {
             foreach ($tickets as $ticket) {
                 if ($this->accept($ticket)) {
-                    $totalDiscount->add($ticket->getTotalPrice()->multiply($this->percentage/100));
+                    $totalDiscount = $totalDiscount->add($ticket->getTotalPrice()->multiply($this->percentage/100));
                 }
             }
         }

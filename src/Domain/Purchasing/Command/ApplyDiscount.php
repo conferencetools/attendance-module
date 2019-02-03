@@ -5,8 +5,9 @@ namespace ConferenceTools\Attendance\Domain\Purchasing\Command;
 
 
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
+use Phactor\Message\HasActorId;
 
-class ApplyDiscount
+class ApplyDiscount implements HasActorId
 {
     private $purchaseId;
     private $discountId;
@@ -19,6 +20,11 @@ class ApplyDiscount
         $this->discountId = $discountId;
         $this->discountCode = $discountCode;
         $this->discount = $discount;
+    }
+
+    public function getActorId(): string
+    {
+        return $this->purchaseId;
     }
 
     public function getPurchaseId(): string

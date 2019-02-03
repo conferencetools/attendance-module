@@ -9,6 +9,7 @@ use ConferenceTools\Attendance\Domain\Discounting\Event\CodeAdded;
 use ConferenceTools\Attendance\Domain\Discounting\Event\DiscountAvailable;
 use ConferenceTools\Attendance\Domain\Discounting\Event\DiscountCreated;
 use ConferenceTools\Attendance\Domain\Discounting\Event\DiscountWithdrawn;
+use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
 use Phactor\Actor\AbstractActor;
 use Phactor\Message\DomainMessage;
 
@@ -16,6 +17,7 @@ class DiscountType extends AbstractActor
 {
     private $name;
     private $discount;
+    /** @var AvailabilityDates */
     private $availabilityDates;
     private $codes;
     private $available;

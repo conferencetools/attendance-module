@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Domain\Discounting\Event;
 
 use JMS\Serializer\Annotation as Jms;

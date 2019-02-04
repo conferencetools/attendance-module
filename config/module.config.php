@@ -21,7 +21,6 @@ return [
             'ConferenceTools\Attendance\Controller' => 'attendance',
         ],
         'template_map' => require __DIR__ . '/views.config.php',
-        'display_exceptions' => true,
     ],
     'view_helpers' => [
         'invokables' => [

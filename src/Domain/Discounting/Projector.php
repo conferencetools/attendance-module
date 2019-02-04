@@ -21,7 +21,7 @@ class Projector implements Handler
         $this->repository = $repository;
     }
 
-    public function handle(DomainMessage $message)
+    public function handle(DomainMessage $message): void
     {
         $event = $message->getMessage();
         switch (true) {
@@ -48,21 +48,21 @@ class Projector implements Handler
         $this->repository->add($model);
     }
 
-    private function withdrawn(DiscountWithdrawn $event)
+    private function withdrawn(DiscountWithdrawn $event): void
     {
         /** @var ReadModel\DiscountType $discount */
         $discount = $this->repository->get($event->getId());
         $discount->withdraw();
     }
 
-    private function available(DiscountAvailable $event)
+    private function available(DiscountAvailable $event): void
     {
         /** @var ReadModel\DiscountType $discount */
         $discount = $this->repository->get($event->getId());
         $discount->available();
     }
 
-    private function addCode(CodeAdded $event)
+    private function addCode(CodeAdded $event): void
     {
         /** @var ReadModel\DiscountType $discount */
         $discount = $this->repository->get($event->getId());

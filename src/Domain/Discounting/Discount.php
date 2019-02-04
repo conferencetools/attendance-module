@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Domain\Discounting;
 
 use ConferenceTools\Attendance\Domain\Ticketing\Money;
@@ -35,22 +34,19 @@ class Discount
         $this->forTicketIds = $forTicketIds;
     }
 
-    public static function percentage(int $percentage, string ...$forTicketIds)
+    public static function percentage(int $percentage, string ...$forTicketIds): Discount
     {
-        $instance = new self($percentage, null, null, ...$forTicketIds);
-        return $instance;
+        return new self($percentage, null, null, ...$forTicketIds);
     }
 
-    public static function perTicket(Price $perTicket, string ...$forTicketIds)
+    public static function perTicket(Price $perTicket, string ...$forTicketIds): Discount
     {
-        $instance = new self(null, $perTicket, null, ...$forTicketIds);
-        return $instance;
+        return new self(null, $perTicket, null, ...$forTicketIds);
     }
 
-    public static function perPurchase(Price $perPurchase, string ...$forTicketIds)
+    public static function perPurchase(Price $perPurchase, string ...$forTicketIds): Discount
     {
-        $instance = new self(null, null, $perPurchase, ...$forTicketIds);
-        return $instance;
+        return new self(null, null, $perPurchase, ...$forTicketIds);
     }
 
     public function getPercentage(): ?int

@@ -22,7 +22,7 @@ class DiscountType extends AbstractActor
     private $codes;
     private $available;
 
-    protected function handleCreateDiscount(CreateDiscount $command)
+    protected function handleCreateDiscount(CreateDiscount $command): void
     {
         $availabilityDates = $command->getAvailabilityDates();
         $this->fire(new DiscountCreated(
@@ -48,7 +48,7 @@ class DiscountType extends AbstractActor
         }
     }
 
-    protected function applyDiscountCreated(DiscountCreated $event)
+    protected function applyDiscountCreated(DiscountCreated $event): void
     {
         $this->name = $event->getName();
         $this->discount = $event->getDiscount();
@@ -56,7 +56,7 @@ class DiscountType extends AbstractActor
         $this->available = $event->isAvailableNow();
     }
 
-    public function handleCheckDiscountAvailability(CheckDiscountAvailability $message)
+    protected function handleCheckDiscountAvailability(CheckDiscountAvailability $message): void
     {
         if (!$this->availabilityDates->equals($message->getAvailabilityDates())) {
             return;
@@ -74,22 +74,22 @@ class DiscountType extends AbstractActor
         }
     }
 
-    public function applyDiscountWithdrawn(DiscountWithdrawn $message)
+    protected function applyDiscountWithdrawn(DiscountWithdrawn $message): void
     {
         $this->available = false;
     }
 
-    public function applyDiscountAvailable(DiscountAvailable $message)
+    protected function applyDiscountAvailable(DiscountAvailable $message): void
     {
         $this->available = true;
     }
 
-    public function handleAddCode(AddCode $command)
+    protected function handleAddCode(AddCode $command): void
     {
         $this->fire(new CodeAdded($this->id(), $command->getCode()));
     }
 
-    protected function applyCodeAdded(CodeAdded $event)
+    protected function applyCodeAdded(CodeAdded $event): void
     {
         $this->codes[] = $event->getCode();
     }

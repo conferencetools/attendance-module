@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Domain\Discounting\ReadModel;
 
 use ConferenceTools\Attendance\Domain\Ticketing\Money;
@@ -87,12 +86,12 @@ class DiscountType
         return new Discount($this->percentage, $perTicket, $perPurchase, ...$this->forTicketIds);
     }
 
-    public function withdraw()
+    public function withdraw(): void
     {
         $this->available = false;
     }
 
-    public function available()
+    public function available(): void
     {
         $this->available = true;
     }
@@ -102,7 +101,7 @@ class DiscountType
         return $this->available;
     }
 
-    public function addCode(string $code)
+    public function addCode(string $code): void
     {
         $this->codes->add(new DiscountCode($this, $code));
     }

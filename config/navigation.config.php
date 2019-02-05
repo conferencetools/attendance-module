@@ -6,6 +6,16 @@ return [
             'route' => 'attendance-admin',
         ],
         [
+            'label' => 'Discounts',
+            'route' => 'attendance-admin/discounts',
+            'pages' => [
+                [
+                    'label' => 'Add',
+                    'route' => 'attendance-admin/discounts/new',
+                ],
+            ],
+        ],
+        [
             'label' => 'Tickets',
             'route' => 'attendance-admin/tickets',
             'pages' => [

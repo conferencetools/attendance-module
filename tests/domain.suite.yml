@@ -1,0 +1,17 @@
+# Codeception Test Suite Configuration
+#
+# Suite for unit or integration tests.
+
+actor: UnitTester
+modules:
+    enabled:
+        - Asserts
+        - \Helper\Unit
+
+coverage:
+    enabled: true
+    include:
+        - src/Domain/*
+    exclude:
+        - src/Domain/*/Command/*
+        - src/Domain/*/Event/*

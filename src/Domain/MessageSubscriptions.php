@@ -3,8 +3,11 @@
 namespace ConferenceTools\Attendance\Domain;
 
 use ConferenceTools\Attendance\Domain\Delegate;
+use ConferenceTools\Attendance\Domain\Discounting\DiscountType;
 use ConferenceTools\Attendance\Domain\Purchasing;
 use ConferenceTools\Attendance\Domain\Ticketing\AvailableTickets;
+use ConferenceTools\Attendance\Domain\Discounting\Command as DiscountingCommand;
+use ConferenceTools\Attendance\Domain\Discounting\Event as DiscountingEvent;
 use ConferenceTools\Attendance\Domain\Ticketing\Command as TicketingCommand;
 use ConferenceTools\Attendance\Domain\Purchasing\Command as PurchasingCommand;
 use ConferenceTools\Attendance\Domain\Delegate\Command as DelegateCommand;
@@ -28,6 +31,16 @@ class MessageSubscriptions
                 Delegate\Delegate::class,
             ],
 
+            DiscountingCommand\CreateDiscount::class => [
+                DiscountType::class,
+            ],
+            DiscountingCommand\AddCode::class => [
+                DiscountType::class,
+            ],
+            DiscountingCommand\CheckDiscountAvailability::class => [
+                DiscountType::class,
+            ],
+
             PurchasingCommand\CheckPurchaseTimeout::class => [
                 Purchasing\Purchase::class,
             ],
@@ -35,6 +48,9 @@ class MessageSubscriptions
                 Purchasing\Purchase::class,
             ],
             PurchasingCommand\AllocateTicketToDelegate::class => [
+                Purchasing\Purchase::class,
+            ],
+            PurchasingCommand\ApplyDiscount::class => [
                 Purchasing\Purchase::class,
             ],
 
@@ -59,6 +75,19 @@ class MessageSubscriptions
                 Delegate\Projector::class,
             ],
 
+            DiscountingEvent\DiscountCreated::class => [
+                Discounting\Projector::class,
+            ],
+            DiscountingEvent\DiscountAvailable::class => [
+                Discounting\Projector::class,
+            ],
+            DiscountingEvent\DiscountWithdrawn::class => [
+                Discounting\Projector::class,
+            ],
+            DiscountingEvent\CodeAdded::class => [
+                Discounting\Projector::class,
+            ],
+
             PurchasingEvent\TicketReservationExpired::class => [
                 AvailableTickets::class,
                 Purchasing\Projector::class,
@@ -75,6 +104,9 @@ class MessageSubscriptions
                 Purchasing\Projector::class,
             ],
             PurchasingEvent\OutstandingPaymentCalculated::class => [
+                Purchasing\Projector::class,
+            ],
+            Purchasing\Event\DiscountApplied::class => [
                 Purchasing\Projector::class,
             ],
 

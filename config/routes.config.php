@@ -167,7 +167,38 @@ $routes['attendance-admin'] = [
                 ],
             ],
 
-        ]
+        ],
+        'discounts' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/discounts',
+                'defaults' => [
+                    'controller' => Controller\Admin\DiscountsController::class,
+                    'action' => 'index'
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'new' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/new',
+                        'defaults' => [
+                            'action' => 'new-discount'
+                        ]
+                    ],
+                ],
+                'add-code' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:discountId/add-code',
+                        'defaults' => [
+                            'action' => 'add-code'
+                        ]
+                    ],
+                ],
+            ],
+        ],
     ]
 ];
 

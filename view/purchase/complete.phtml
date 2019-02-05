@@ -27,6 +27,12 @@ $this->headLink()->appendStylesheet('/css/card.css');
                     <span class="col-xs-8"><strong>Sub Total</strong></span>
                     <span class="col-xs-4"><?= $this->moneyFormat($this->purchase->getTotal(), true) ?></span>
                 </div>
+                <?php if ($this->discount):?>
+                    <div class="row">
+                        <span class="col-xs-8"><strong>Discount applied</strong></span>
+                        <span class="col-xs-4"><?= $this->discount->getName() ?></span>
+                    </div>
+                <?php endif;?>
                 <div class="row">
                     <span class="col-xs-8"><strong>VAT</strong></span>
                     <span class="col-xs-4"><?= $this->moneyFormat($this->purchase->getTotal()->getTax()) ?></span>

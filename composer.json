@@ -15,7 +15,8 @@
     "zendframework/zend-mvc-plugin-flashmessenger": "^1.1@dev",
     "zendframework/zend-math": "^3.0",
     "ext-json": "*",
-    "zendframework/zend-mail": "^2.10@dev"
+    "zendframework/zend-mail": "^2.10@dev",
+    "codeception/codeception": "^2.5"
   },
   "autoload": {
     "psr-4": {

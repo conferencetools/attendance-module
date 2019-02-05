@@ -82,4 +82,9 @@ class AvailabilityDates
 
         return $this->availableFrom <= $now && $now <= $this->availableFrom;
     }
+
+    public function equals(AvailabilityDates $other): bool
+    {
+        return $this->availableFrom === $other->availableFrom && $this->availableUntil === $other->availableUntil;
+    }
 }

@@ -37,6 +37,16 @@ class Purchase
      * @var Price
      */
     private $total;
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $discountId;
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $discountCode;
 
     public function __construct(string $id, string $email)
     {
@@ -93,5 +103,21 @@ class Purchase
     public function paid(): void
     {
         $this->isPaid = true;
+    }
+
+    public function getDiscountId(): ?string
+    {
+        return $this->discountId;
+    }
+
+    public function getDiscountCode(): ?string
+    {
+        return $this->discountCode;
+    }
+
+    public function discountApplied(string $discountId, string $discountCode)
+    {
+        $this->discountCode = $discountCode;
+        $this->discountId = $discountId;
     }
 }

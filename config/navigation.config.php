@@ -26,6 +26,10 @@ return [
             ],
         ],
         [
+            'label' => 'Create Purchase',
+            'route' => 'attendance-admin/purchase',
+        ],
+        [
             'label' => 'Reporting',
             'route' => 'attendance-admin/reports',
             'pages' => [

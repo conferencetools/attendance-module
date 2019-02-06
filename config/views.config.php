@@ -17,6 +17,7 @@ return [
     'attendance/admin/discounts/add-code' => $viewDir . 'admin/discounts/add-code.phtml',
     'attendance/admin/discounts/index' => $viewDir . 'admin/discounts/index.phtml',
     'attendance/admin/reports/index' => $viewDir . 'admin/reports/index.phtml',
+    'attendance/admin/reports/report' => $viewDir . 'admin/reports/report.phtml',
 
     'email/receipt' => $viewDir . 'email/receipt.phtml',
 ];

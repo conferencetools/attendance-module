@@ -37,6 +37,10 @@ return [
                     'label' => 'Catering allergies',
                     'route' => 'attendance-admin/reports/catering/allergies',
                 ],
+                [
+                    'label' => 'Delegates',
+                    'route' => 'attendance-admin/reports/delegates',
+                ],
             ],
         ],
     ],

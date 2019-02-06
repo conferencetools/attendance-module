@@ -4,7 +4,8 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 
 use ConferenceTools\Attendance\Controller\AppController;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
-use ConferenceTools\Attendance\Domain\Reporting\ReadModel\DelegateCatering;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketsForSale;
 use Doctrine\Common\Collections\Criteria;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
@@ -27,13 +28,33 @@ class ReportsController extends AppController
             $data[$record->getPreference()]++;
         }
 
-        $iterator = new \MultipleIterator();
+        $iterator = new class(count($data)) extends \MultipleIterator implements \Countable {
+            private $count;
+
+            public function __construct($count)
+            {
+                $this->count = $count;
+            }
+
+            public function count()
+            {
+                return $this->count;
+            }
+        };
         $iterator->attachIterator(new \ArrayIterator(\array_keys($data)));
         $iterator->attachIterator(new \ArrayIterator(\array_values($data)));
 
-        $csv = $this->createCsvData($iterator);
+        if ((bool) $this->params()->fromQuery('download', false) === true) {
+            $csv = $this->createCsvData($iterator);
+            return $this->makeResponse($csv);
+        }
 
-        return $this->makeResponse($csv);
+        $viewModel = new ViewModel(['report' => $iterator]);
+        $viewModel->setTemplate('attendance/admin/reports/report');
+
+        return $viewModel;
+
+
     }
 
     public function cateringAlergiesAction()
@@ -43,7 +64,7 @@ class ReportsController extends AppController
         $data = [];
 
         foreach ($records as $record) {
-            /** @var DelegateCatering $record */
+            /** @var Delegate $record */
             if (!empty($record->getAllergies())) {
                 $data[] = [
                     'name' => $record->getName(),
@@ -52,9 +73,44 @@ class ReportsController extends AppController
             }
         }
 
-        $csv = $this->createCsvData($data);
+        if ((bool) $this->params()->fromQuery('download', false) === true) {
+            $csv = $this->createCsvData($data);
+            return $this->makeResponse($csv);
+        }
 
-        return $this->makeResponse($csv);
+        $viewModel = new ViewModel(['report' => $data]);
+        $viewModel->setTemplate('attendance/admin/reports/report');
+
+        return $viewModel;
+    }
+
+    public function delegatesAction()
+    {
+        $records = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('isPaid', true)));
+        $tickets = $this->getTickets();
+
+        $data = [];
+
+        foreach ($records as $record) {
+            /** @var Delegate $record */
+            $row = [
+                'name' => $record->getName(),
+                'company' => $record->getCompany(),
+            ];
+
+            $row['tickets'] = implode(', ', \array_map(function ($ticketId) use ($tickets) {return $tickets[$ticketId]->getEvent()->getName();}, $record->getTickets()));
+            $data[] = $row;
+        }
+
+        if ((bool) $this->params()->fromQuery('download', false) === true) {
+            $csv = $this->createCsvData($data);
+            return $this->makeResponse($csv);
+        }
+
+        $viewModel = new ViewModel(['report' => $data]);
+        $viewModel->setTemplate('attendance/admin/reports/report');
+
+        return $viewModel;
     }
 
     /**
@@ -97,5 +153,20 @@ class ReportsController extends AppController
         }
 
         return $response;
+    }
+
+    /**
+     * @return Ticket[]
+     */
+    private function getTickets(): array
+    {
+        $tickets = $this->repository(Ticket::class)->matching(new Criteria());
+        $ticketsIndexed = [];
+
+        foreach ($tickets as $ticket) {
+            $ticketsIndexed[$ticket->getId()] = $ticket;
+        }
+
+        return $ticketsIndexed;
     }
 }

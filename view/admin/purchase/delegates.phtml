@@ -1,0 +1,42 @@
+<?php $this->form->prepare();?>
+<? $this->form($this->form)?>
+<div class="row" >
+    <div class="col-md-8">
+        <form method="post">
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <?php for ($i = 0; $i < $this->delegates; $i++): ?>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="heading_<?=$i?>">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_<?=$i?>" aria-expanded="true" aria-controls="collapse_<?=$i?>">
+                                    Delegate #<?=($i + 1)?>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse_<?=$i?>" class="panel-collapse collapse <?=$i==0?'in':''?>" role="tabpanel" aria-labelledby="heading_<?=$i?>">
+                            <div class="panel-body">
+                                <div style="padding: 15px;">
+                                    <?=$this->formCollection($this->form->get('delegate_' . $i), false) ?>
+                                    <a role="button" class="btn btn-default delegate-next" data-delegate="<?=$i?>">Next</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endfor;?>
+                <?=$this->formHidden($this->form->get('security'))?>
+                <?=$this->formSubmit($this->form->get('continue'))?>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(function (){
+        $('.delegate-next').on('click', function () {
+            var id = parseInt($(this).data('delegate'));
+            console.log(id);
+            console.log('clicked');
+            $('#collapse_' + id).collapse("hide");
+            $('#collapse_' + (id+1)).collapse("show");
+        });
+    });
+</script>

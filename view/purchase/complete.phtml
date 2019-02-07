@@ -58,6 +58,7 @@ $this->headLink()->appendStylesheet('/css/card.css');
             </div>
             <div class="panel-body">
                 <?php foreach ($this->delegates as $delegate): ?>
+                    <?php /** @var \ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate $delegate */?>
                     <div class="row">
                         <span class="col-xs-8"><?= $delegate->getName()?></span>
                         <span class="col-xs-4">
@@ -65,6 +66,12 @@ $this->headLink()->appendStylesheet('/css/card.css');
                                 Edit
                             </a>
                         </span>
+                        <?php
+                            $tickets = $this->tickets;
+                            $delegateTickets = array_map(function (string $ticketId) use ($tickets) {return $tickets[$ticketId]->getTicket()->getName();}, $delegate->getTickets());
+                        ?>
+                        <span class="help-block col-xs-12 col-md-12"><?= implode(', ', $delegateTickets) ?></span>
+
                     </div>
                 <?php endforeach; ?>
             </div>

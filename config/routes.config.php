@@ -88,6 +88,28 @@ $routes['attendance-admin'] = [
         ]
     ],
     'child_routes' => [
+        'purchase' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/purchase',
+                'defaults'=> [
+                    'controller' => Controller\Admin\PurchaseController::class,
+                    'action' => 'index',
+                ]
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'delegates' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/delegates',
+                        'defaults' => [
+                            'action' => 'delegates',
+                        ],
+                    ],
+                ]
+            ]
+        ],
         'reports' => [
             'type' => Literal::class,
             'options' => [

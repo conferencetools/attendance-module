@@ -1,0 +1,37 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-default credit-card-box">
+            <div class="panel-heading display-table" >
+                <div class="row display-tr" >
+                    <h3 class="panel-title display-td" >Reports</h3>
+                    <a class="btn btn-warning" style="float:right" href="?download=true">Download</a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table class="table">
+                            <?php if (count($this->report) === 0): ?>
+                                <tr>
+                                    <td>The report returned no results</td>
+                                </tr>
+                            <?php
+                            else:
+                                foreach ($this->report as $row):
+                                    ?>
+                                    <tr>
+                                        <?php foreach ($row as $column):?>
+                                            <td><?=$this->escapeHtml($column)?></td>
+                                        <?php endforeach;?>
+                                    </tr>
+                                <?php
+                                endforeach;
+                            endif;
+                            ?>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

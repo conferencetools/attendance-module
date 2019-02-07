@@ -1,8 +1,6 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Controller;
-
 
 use Phactor\ReadModel\Repository;
 use Phactor\Zend\ControllerPlugin\MessageBus;

@@ -146,7 +146,16 @@ $routes['attendance-admin'] = [
                             ],
                         ],
                     ]
-                ]
+                ],
+                'delegates' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/delegates',
+                        'defaults' => [
+                            'action' => 'delegates',
+                        ],
+                    ],
+                ],
             ]
         ],
         'tickets' => [

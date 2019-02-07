@@ -11,6 +11,7 @@ use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegat
 use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketsForSale;
 use ConferenceTools\Attendance\Form\DelegatesForm;
 use ConferenceTools\Attendance\Form\NumberOfDelegates;
@@ -42,7 +43,7 @@ class PurchaseController extends AppController
 
         $tickets = $this->getTickets();
         foreach ($tickets as $ticketId => $quantity) {
-            $ticketOptions[$ticketId] = $tickets[$ticketId]->getTicket()->getName();
+            $ticketOptions[$ticketId] = $tickets[$ticketId]->getEvent()->getName();
         }
 
         $form = $this->form(DelegatesForm::class, [
@@ -71,7 +72,7 @@ class PurchaseController extends AppController
                 foreach ($purchaseTickets as $ticketId => $quantity) {
                     $selectedTickets[] = new TicketQuantity(
                         $ticketId,
-                        $tickets[$ticketId]->getTicket(),
+                        $tickets[$ticketId]->getEvent(),
                         $quantity,
                         $tickets[$ticketId]->getPrice()
                     );
@@ -115,12 +116,12 @@ class PurchaseController extends AppController
     }
 
     /**
-     * @return TicketsForSale[]
+     * @return Ticket[]
      */
     private function getTickets(): array
     {
         if ($this->tickets === null) {
-            $tickets = $this->repository(TicketsForSale::class)->matching(new Criteria());
+            $tickets = $this->repository(Ticket::class)->matching(new Criteria());
             $ticketsIndexed = [];
 
             foreach ($tickets as $ticket) {

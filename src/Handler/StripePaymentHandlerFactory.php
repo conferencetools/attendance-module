@@ -1,22 +1,20 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Handler;
 
-
+use Cartalyst\Stripe\Stripe;
 use Phactor\Identity\Generator;
 use Phactor\Message\Bus;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use ZfrStripe\Client\StripeClient;
 
 class StripePaymentHandlerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new StripePaymentHandler($container->get(StripeClient::class), $container->get(Bus::class), $container->get(Generator::class));
+        $config = $container->get('Config');
+        $stripeClient = Stripe::make($config['zfr_stripe']['secret_key']);
+
+        return new StripePaymentHandler($stripeClient, $container->get(Bus::class), $container->get(Generator::class));
     }
 }

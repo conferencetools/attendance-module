@@ -4,6 +4,8 @@
 namespace ConferenceTools\Attendance\Handler;
 
 
+use Cartalyst\Stripe\Exception\CardErrorException;
+use Cartalyst\Stripe\Stripe;
 use Phactor\Identity\Generator;
 use Phactor\Message\ActorIdentity;
 use Phactor\Message\Bus;
@@ -11,8 +13,6 @@ use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
 use ConferenceTools\Attendance\Domain\Payment\Command\TakePayment;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
-use ZfrStripe\Client\StripeClient;
-use ZfrStripe\Exception\CardErrorException;
 
 class StripePaymentHandler implements Handler
 {
@@ -36,7 +36,7 @@ class StripePaymentHandler implements Handler
     private $identityGenerator;
     private $currency = 'GBP';
 
-    public function __construct(StripeClient $stripeClient, Bus $messageBus, Generator $identityGenerator)
+    public function __construct(Stripe $stripeClient, Bus $messageBus, Generator $identityGenerator)
     {
         $this->stripeClient = $stripeClient;
         $this->messageBus = $messageBus;
@@ -48,7 +48,7 @@ class StripePaymentHandler implements Handler
         /** @var TakePayment $message */
         $message = $domainMessage->getMessage();
         try {
-            $this->stripeClient->createCharge([
+            $this->stripeClient->charges()->create([
                 "amount" => $message->getAmount()->getGross()->getAmount(),
                 "currency" => $this->currency,
                 'source' => $message->getPaymentData(),
@@ -72,8 +72,7 @@ class StripePaymentHandler implements Handler
 
     private function getDetailedErrorMessage(CardErrorException $e)
     {
-        $response = $e->getResponse();
-        $errors = json_decode($response->getBody(true), true);
+        $errors = $e->getRawOutput();
         $code = isset($errors['error']['code']) ? $errors['error']['code'] : 'processing_error';
         $code = isset(static::$cardErrorMessages[$code]) ? $code : 'processing_error';
 

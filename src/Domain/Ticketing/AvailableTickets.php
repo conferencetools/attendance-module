@@ -66,6 +66,8 @@ class AvailableTickets implements Handler
     {
         /** @var Ticket $entity */
         $entity = $this->repository->get($message->getTicketId());
-        $entity->increaseRemainingBy($message->getQuantity());
+        if ($entity !== null) {
+            $entity->increaseRemainingBy($message->getQuantity());
+        }
     }
 }

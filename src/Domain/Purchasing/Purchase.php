@@ -28,7 +28,7 @@ class Purchase extends AbstractActor
 
     protected function handlePurchaseTickets(PurchaseTickets $command)
     {
-        $this->fire(new PurchaseStartedBy($this->id(), $command->getEmail()));
+        $this->fire(new PurchaseStartedBy($this->id(), $command->getEmail(), $command->getDelegates()));
         /** @var Price $total */
         $total = null;
 

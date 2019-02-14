@@ -44,8 +44,12 @@ class PurchaseController extends AppController
                 $data = $form->getData();
                 if ($this->validateTicketQuantity($data['quantity']) && $this->validateDiscountCode($data['discount_code'])) {
 
+                    $minDelegates = PHP_INT_MAX;
+                    $maxDelegates = 0;
+
                     foreach ($data['quantity'] as $ticketId => $quantity) {
                         $quantity = (int)$quantity;
+
                         if ($quantity > 0) {
                             $selectedTickets[] = new TicketQuantity(
                                 $ticketId,
@@ -54,10 +58,14 @@ class PurchaseController extends AppController
                                 $tickets[$ticketId]->getPrice()
                             );
                         }
+
+                        $minDelegates = min($minDelegates, $quantity);
+                        $maxDelegates += $quantity;
                     }
 
-                    //@TODO capture GDPR confirmation?
-                    $messages = $this->messageBus()->fire(new PurchaseTickets($data['purchase_email'], ...$selectedTickets));
+                    $forDelegates = min($maxDelegates, max($minDelegates, (int) $data['delegates']));
+
+                    $messages = $this->messageBus()->fire(new PurchaseTickets($data['purchase_email'], $forDelegates, ...$selectedTickets));
                     $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
 
                     if (!empty($data['discount_code'])) {

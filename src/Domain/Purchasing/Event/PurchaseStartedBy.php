@@ -17,11 +17,16 @@ class PurchaseStartedBy
      * @Jms\Type("string")
      */
     private $email;
+    /**
+     * @Jms\Type("int")
+     */
+    private $delegates = -1;
 
-    public function __construct(string $id, string $email)
+    public function __construct(string $id, string $email, int $delegates)
     {
         $this->id = $id;
         $this->email = $email;
+        $this->delegates = $delegates;
     }
 
     public function getId(): string
@@ -32,5 +37,10 @@ class PurchaseStartedBy
     public function getEmail(): string
     {
         return $this->email;
+    }
+
+    public function getDelegates(): int
+    {
+        return $this->delegates;
     }
 }

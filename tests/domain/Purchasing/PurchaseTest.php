@@ -109,6 +109,7 @@ class PurchaseTest extends \Codeception\Test\Unit
     {
         return new PurchaseTickets(
             'test@email.com',
+            1,
             new TicketQuantity(
                 'ticketId',
                 new Event(
@@ -124,7 +125,7 @@ class PurchaseTest extends \Codeception\Test\Unit
 
     private function purchaseStartedByEvent(): PurchaseStartedBy
     {
-        return new PurchaseStartedBy($this->actorId, 'test@email.com');
+        return new PurchaseStartedBy($this->actorId, 'test@email.com', 1);
     }
 
     private function checkPurchaseTimeoutEvent(): CheckPurchaseTimeout

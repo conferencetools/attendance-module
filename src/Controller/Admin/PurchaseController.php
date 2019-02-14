@@ -78,7 +78,7 @@ class PurchaseController extends AppController
                     );
                 }
 
-                $messages = $this->messageBus()->fire(new PurchaseTickets($email, ...$selectedTickets));
+                $messages = $this->messageBus()->fire(new PurchaseTickets($email, (int) $delegates, ...$selectedTickets));
                 $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
 
                 for ($i = 0; $i < $delegates; $i++) {

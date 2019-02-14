@@ -9,7 +9,9 @@ use Zend\Form\Element\Text;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\Validator\Digits;
 use Zend\Validator\EmailAddress;
+use Zend\Validator\GreaterThan;
 use Zend\Validator\NotEmpty;
 
 class PurchaseForm extends Form implements InputFilterProviderInterface
@@ -30,6 +32,18 @@ class PurchaseForm extends Form implements InputFilterProviderInterface
             'name' => 'purchase_email',
             'options' => [
                 'label' => 'Email',
+                'label_attributes' => ['class' => 'col-sm-4 control-label'],
+                'twb-layout' => TwbBundleForm::LAYOUT_HORIZONTAL,
+                'column-size' => 'sm-8',
+            ],
+            'attributes' => ['class' => 'form-control', 'placeholder' => 'Your receipt will be emailed to this address']
+        ]);
+
+        $this->add([
+            'type' => Text::class,
+            'name' => 'delegates',
+            'options' => [
+                'label' => 'Number of delegates',
                 'label_attributes' => ['class' => 'col-sm-4 control-label'],
                 'twb-layout' => TwbBundleForm::LAYOUT_HORIZONTAL,
                 'column-size' => 'sm-8',
@@ -60,6 +74,10 @@ class PurchaseForm extends Form implements InputFilterProviderInterface
                     ['name' => NotEmpty::class],
                     ['name' => EmailAddress::class],
                 ]
+            ],
+            'delegates' => [
+                'allow_empty' => true,
+                'required' => true,
             ],
             'discount_code' => [
                 'allow_empty' => true,

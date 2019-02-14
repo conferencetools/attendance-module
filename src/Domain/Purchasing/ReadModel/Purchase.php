@@ -47,12 +47,17 @@ class Purchase
      * @var string
      */
     private $discountCode;
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $delegates;
 
-    public function __construct(string $id, string $email)
+    public function __construct(string $id, string $email, int $delegates)
     {
         $this->id = $id;
         $this->email = $email;
         $this->total = Price::fromNetCost(new Money(0), new TaxRate(0));
+        $this->delegates = $delegates;
     }
 
     public function getId(): string
@@ -77,6 +82,10 @@ class Purchase
 
     public function getMaxDelegates(): int
     {
+        if ($this->delegates > 0) {
+            return $this->delegates;
+        }
+
         $delegates = 0;
         foreach ($this->getTickets() as $ticketId => $quantity) {
             $delegates += $quantity;

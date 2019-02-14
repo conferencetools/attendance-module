@@ -38,8 +38,12 @@ class RegisterDelegate
      * @Jms\Type("string")
      */
     private $purchaseId;
+    /**
+     * @Jms\Type("string")
+     */
+    private $delegateType;
 
-    public function __construct(string $purchaseId, string $name, string $email, string $company, DietaryRequirements $dietaryRequirements, string $requirements)
+    public function __construct(string $purchaseId, string $name, string $email, string $company, DietaryRequirements $dietaryRequirements, string $requirements, string $delegateType)
     {
         $this->email = $email;
         $this->company = $company;
@@ -47,6 +51,7 @@ class RegisterDelegate
         $this->purchaseId = $purchaseId;
         $this->name = $name;
         $this->dietaryRequirements = $dietaryRequirements;
+        $this->delegateType = $delegateType;
     }
 
     public function getPurchaseId(): string
@@ -77,5 +82,10 @@ class RegisterDelegate
     public function getRequirements(): string
     {
         return $this->requirements;
+    }
+
+    public function getDelegateType(): string
+    {
+        return $this->delegateType;
     }
 }

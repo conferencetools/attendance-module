@@ -40,6 +40,7 @@ class PurchaseController extends AppController
         $queryData = $form->getData();
         $delegates = $queryData['delegates'];
         $email = $queryData['email'];
+        $delegateType = $queryData['delegateType'];
 
         $tickets = $this->getTickets();
         foreach ($tickets as $ticketId => $quantity) {
@@ -96,7 +97,8 @@ class PurchaseController extends AppController
                         $delegate['email'],
                         $delegate['company'],
                         $dietaryRequirements,
-                        $delegate['requirements']
+                        $delegate['requirements'],
+                        $delegateType
                     );
 
                     $messages = $this->messageBus()->fire($command);

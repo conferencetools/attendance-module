@@ -53,7 +53,8 @@ class Projector implements Handler
             $event->getEmail(),
             $event->getCompany(),
             $event->getDietaryRequirements(),
-            $event->getRequirements()
+            $event->getRequirements(),
+            $event->getDelegateType()
         );
 
         $this->repository->add($delegate);

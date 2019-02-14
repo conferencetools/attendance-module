@@ -141,7 +141,8 @@ class PurchaseController extends AppController
                             $delegate['email'],
                             $delegate['company'],
                             $dietaryRequirements,
-                            $delegate['requirements']
+                            $delegate['requirements'],
+                            'delegate'
                         );
 
                         //@TODO should message bus should reuse the correlation id between subsequent command dispatches? (or add metadata requestId)

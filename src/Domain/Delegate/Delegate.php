@@ -19,6 +19,7 @@ class Delegate extends AbstractActor
     private $tickets;
     private $dietaryRequirements;
     private $name;
+    private $delegateType;
 
     protected function handleRegisterDelegate(RegisterDelegate $command)
     {
@@ -29,7 +30,8 @@ class Delegate extends AbstractActor
             $command->getEmail(),
             $command->getCompany(),
             $command->getDietaryRequirements(),
-            $command->getRequirements()
+            $command->getRequirements(),
+            $command->getDelegateType()
         ));
     }
 
@@ -41,6 +43,7 @@ class Delegate extends AbstractActor
         $this->email = $event->getEmail();
         $this->company = $event->getCompany();
         $this->requirements = $event->getRequirements();
+        $this->delegateType = $event->getDelegateType();
     }
 
     protected function handleUpdateDelegateDetails(UpdateDelegateDetails $command)

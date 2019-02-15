@@ -19,16 +19,16 @@
                                 <?php
                                 else:
                                     foreach ($this->tickets as $id => $ticket):
-                                        /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketsForSale $ticket */
+                                        /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket $ticket */
                                         ?>
                                         <tr>
                                             <td class="col-md-9 col-xs-6">
-                                                <span class="col-xs-12 col-md-6"><?= $ticket->getTicket()->getName() ?></span>
+                                                <span class="col-xs-12 col-md-6"><?= $ticket->getEvent()->getName() ?></span>
                                                 <span class="hidden-xs col-md-6">
                                                     <?= $ticket->getRemaining() ?> remaining
                                                 </span>
-                                                <?php if ( ! empty($ticket->getTicket()->getDescription())): ?>
-                                                    <span class="help-block col-xs-12 col-md-12"><?= $ticket->getTicket()->getDescription() ?></span>
+                                                <?php if ( ! empty($ticket->getEvent()->getDescription())): ?>
+                                                    <span class="help-block col-xs-12 col-md-12"><?= $ticket->getEvent()->getDescription() ?></span>
                                                 <?php endif ?>
                                             </td>
                                             <td class="col-md-3 col-xs-6">

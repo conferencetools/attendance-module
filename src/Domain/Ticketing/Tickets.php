@@ -4,6 +4,8 @@
 namespace ConferenceTools\Attendance\Domain\Ticketing;
 
 
+use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
@@ -34,6 +36,12 @@ class Tickets implements Handler
             case $event instanceof TicketsOnSale:
                 $this->onSale($event);
                 break;
+            case $event instanceof TicketsReserved:
+                $this->ticketsReserved($event);
+                break;
+            case $event instanceof TicketReservationExpired:
+                $this->ticketsExpired($event);
+                break;
         }
 
         $this->repository->commit();
@@ -57,5 +65,21 @@ class Tickets implements Handler
         /** @var Ticket $ticket */
         $ticket = $this->repository->get($event->getId());
         $ticket->onSale();
+    }
+
+    private function ticketsReserved(TicketsReserved $message)
+    {
+        /** @var Ticket $entity */
+        $entity = $this->repository->get($message->getTicketId());
+        $entity->decreaseRemainingBy($message->getQuantity());
+    }
+
+    private function ticketsExpired(TicketReservationExpired $message)
+    {
+        /** @var Ticket $entity */
+        $entity = $this->repository->get($message->getTicketId());
+        if ($entity !== null) {
+            $entity->increaseRemainingBy($message->getQuantity());
+        }
     }
 }

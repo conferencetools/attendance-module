@@ -25,6 +25,10 @@ class Ticket
      */
     private $quantity;
     /**
+     * @ORM\Column(type="integer")
+     */
+    private $remaining = 0;
+    /**
      * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Price")
      * @var Price
      */
@@ -44,6 +48,7 @@ class Ticket
         $this->id = $id;
         $this->event = $event;
         $this->quantity = $quantity;
+        $this->remaining = $quantity;
         $this->price = $price;
         $this->availabilityDates = $availabilityDates;
     }
@@ -86,5 +91,25 @@ class Ticket
     public function isOnSale()
     {
         return $this->onSale;
+    }
+
+    public function getRemaining(): int
+    {
+        return $this->remaining;
+    }
+
+    public function remaining(): int
+    {
+        return $this->remaining;
+    }
+
+    public function decreaseRemainingBy(int $quantity): void
+    {
+        $this->remaining -= $quantity;
+    }
+
+    public function increaseRemainingBy(int $quantity): void
+    {
+        $this->remaining+= $quantity;
     }
 }

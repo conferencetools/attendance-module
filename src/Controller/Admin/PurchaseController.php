@@ -12,7 +12,6 @@ use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
-use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketsForSale;
 use ConferenceTools\Attendance\Form\DelegatesForm;
 use ConferenceTools\Attendance\Form\NumberOfDelegates;
 use Doctrine\Common\Collections\Criteria;

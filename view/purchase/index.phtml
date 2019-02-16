@@ -21,23 +21,25 @@
                                     foreach ($this->tickets as $id => $ticket):
                                         /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket $ticket */
                                         ?>
-                                        <tr>
-                                            <td class="col-md-9 col-xs-6">
-                                                <span class="col-xs-12 col-md-6"><?= $ticket->getEvent()->getName() ?></span>
-                                                <span class="hidden-xs col-md-6">
-                                                    <?= $ticket->getRemaining() ?> remaining
-                                                </span>
-                                                <?php if ( ! empty($ticket->getEvent()->getDescription())): ?>
-                                                    <span class="help-block col-xs-12 col-md-12"><?= $ticket->getEvent()->getDescription() ?></span>
-                                                <?php endif ?>
-                                            </td>
-                                            <td class="col-md-3 col-xs-6">
-                                                <span class="col-xs-6"><?= $this->moneyFormat($ticket->getPrice()) ?></span>
-                                                <span class="col-xs-6">
-                                                    <?=$this->formInput($this->form->get('quantity')->get($ticket->getId()))?>
-                                                </span>
-                                            </td>
-                                        </tr>
+                                        <?php if ($ticket->getRemaining() > 0):?>
+                                            <tr>
+                                                <td class="col-md-9 col-xs-6">
+                                                    <span class="col-xs-12 col-md-6"><?= $ticket->getEvent()->getName() ?></span>
+                                                    <span class="hidden-xs col-md-6">
+                                                        <?= $ticket->getRemaining() ?> remaining
+                                                    </span>
+                                                    <?php if ( ! empty($ticket->getEvent()->getDescription())): ?>
+                                                        <span class="help-block col-xs-12 col-md-12"><?= $ticket->getEvent()->getDescription() ?></span>
+                                                    <?php endif ?>
+                                                </td>
+                                                <td class="col-md-3 col-xs-6">
+                                                    <span class="col-xs-6"><?= $this->moneyFormat($ticket->getPrice()) ?></span>
+                                                    <span class="col-xs-6">
+                                                        <?=$this->formInput($this->form->get('quantity')->get($ticket->getId()))?>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
                                     <?php
                                     endforeach;
                                 endif;

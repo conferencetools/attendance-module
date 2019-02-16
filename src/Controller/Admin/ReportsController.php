@@ -5,7 +5,6 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 use ConferenceTools\Attendance\Controller\AppController;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
-use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketsForSale;
 use Doctrine\Common\Collections\Criteria;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;

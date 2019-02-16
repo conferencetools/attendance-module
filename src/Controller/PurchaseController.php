@@ -17,7 +17,7 @@ use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
-use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\TicketsForSale;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Form\DelegatesForm;
 use ConferenceTools\Attendance\Form\PaymentForm;
 use ConferenceTools\Attendance\Form\PurchaseForm;
@@ -49,7 +49,7 @@ class PurchaseController extends AppController
                         if ($quantity > 0) {
                             $selectedTickets[] = new TicketQuantity(
                                 $ticketId,
-                                $tickets[$ticketId]->getTicket(),
+                                $tickets[$ticketId]->getEvent(),
                                 $quantity,
                                 $tickets[$ticketId]->getPrice()
                             );
@@ -104,7 +104,7 @@ class PurchaseController extends AppController
         }
 
         foreach ($purchase->getTickets() as $ticketId => $quantity) {
-            $ticketOptions[$ticketId] = $tickets[$ticketId]->getTicket()->getName();
+            $ticketOptions[$ticketId] = $tickets[$ticketId]->getEvent()->getName();
         }
 
         $maxDelegates = $purchase->getMaxDelegates();
@@ -223,12 +223,12 @@ class PurchaseController extends AppController
     }
 
     /**
-     * @return TicketsForSale[]
+     * @return Ticket[]
      */
     private function getTickets(): array
     {
         if ($this->tickets === null) {
-            $tickets = $this->repository(TicketsForSale::class)->matching(new Criteria());
+            $tickets = $this->repository(Ticket::class)->matching(Criteria::create()->where(Criteria::expr()->eq('onSale', true)));
             $ticketsIndexed = [];
 
             foreach ($tickets as $ticket) {
@@ -282,14 +282,14 @@ class PurchaseController extends AppController
         foreach ($purchasedTickets as $ticketId => $quantity) {
             if ($quantity < 0) {
                 $this->flashMessenger()->addErrorMessage(
-                    sprintf('You have allocated too many %s tickets.', $tickets[$ticketId]->getTicket()->getName())
+                    sprintf('You have allocated too many %s tickets.', $tickets[$ticketId]->getEvent()->getName())
                 );
                 $valid = false;
             }
 
             if ($quantity > 0) {
                 $this->flashMessenger()->addErrorMessage(
-                    sprintf('You have left %s tickets unallocated.', $tickets[$ticketId]->getTicket()->getName())
+                    sprintf('You have left %s tickets unallocated.', $tickets[$ticketId]->getEvent()->getName())
                 );
                 $valid = false;
             }

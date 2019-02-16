@@ -48,7 +48,7 @@ class Purchase
      */
     private $discountCode;
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer")
      */
     private $delegates;
 

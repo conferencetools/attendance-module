@@ -52,7 +52,7 @@ class Delegate
      */
     private $isPaid = false;
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string")
      */
     private $delegateType;
 

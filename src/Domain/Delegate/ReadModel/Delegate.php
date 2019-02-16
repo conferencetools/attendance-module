@@ -51,9 +51,20 @@ class Delegate
      * @ORM\Column(type="boolean")
      */
     private $isPaid = false;
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $delegateType;
 
-    public function __construct($id, $purchaseId, $name, $email, $company, DietaryRequirements $dietaryRequirements, $requirements)
-    {
+    public function __construct(
+        string $id,
+        string $purchaseId,
+        string $name,
+        string $email,
+        string $company, DietaryRequirements $dietaryRequirements,
+        string $requirements,
+        string $delegateType
+    ) {
         $this->id = $id;
         $this->name = $name;
         $this->email = $email;
@@ -62,6 +73,7 @@ class Delegate
         $this->purchaseId = $purchaseId;
         $this->allergies = $dietaryRequirements->getAllergies();
         $this->preference = $dietaryRequirements->getPreference();
+        $this->delegateType = $delegateType;
     }
 
     public function addTicket($ticketId)
@@ -79,47 +91,47 @@ class Delegate
         $this->requirements = $requirements;
     }
 
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function getCompany()
+    public function getCompany(): string
     {
         return $this->company;
     }
 
-    public function getRequirements()
+    public function getRequirements(): string
     {
         return $this->requirements;
     }
 
-    public function getPurchaseId()
+    public function getPurchaseId(): string
     {
         return $this->purchaseId;
     }
 
-    public function getTickets()
+    public function getTickets(): array
     {
         return $this->tickets;
     }
 
-    public function getAllergies()
+    public function getAllergies(): string
     {
         return $this->allergies;
     }
 
-    public function getPreference()
+    public function getPreference(): string
     {
         return $this->preference;
     }
@@ -127,5 +139,10 @@ class Delegate
     public function purchasePaid(): void
     {
         $this->isPaid = true;
+    }
+
+    public function getDelegateType(): string
+    {
+        return $this->delegateType;
     }
 }

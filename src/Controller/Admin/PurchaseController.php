@@ -39,6 +39,7 @@ class PurchaseController extends AppController
         $queryData = $form->getData();
         $delegates = $queryData['delegates'];
         $email = $queryData['email'];
+        $delegateType = $queryData['delegateType'];
 
         $tickets = $this->getTickets();
         foreach ($tickets as $ticketId => $quantity) {
@@ -77,7 +78,7 @@ class PurchaseController extends AppController
                     );
                 }
 
-                $messages = $this->messageBus()->fire(new PurchaseTickets($email, ...$selectedTickets));
+                $messages = $this->messageBus()->fire(new PurchaseTickets($email, (int) $delegates, ...$selectedTickets));
                 $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
 
                 for ($i = 0; $i < $delegates; $i++) {
@@ -95,7 +96,8 @@ class PurchaseController extends AppController
                         $delegate['email'],
                         $delegate['company'],
                         $dietaryRequirements,
-                        $delegate['requirements']
+                        $delegate['requirements'],
+                        $delegateType
                     );
 
                     $messages = $this->messageBus()->fire($command);

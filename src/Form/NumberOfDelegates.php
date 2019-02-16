@@ -21,6 +21,14 @@ class NumberOfDelegates extends Form implements InputFilterProviderInterface
     {
         $this->add([
             'type' => Text::class,
+            'name' => 'delegateType',
+            'options' => [
+                'label' => 'Delegate Type',
+            ],
+        ]);
+
+        $this->add([
+            'type' => Text::class,
             'name' => 'delegates',
             'options' => [
                 'label' => 'Number of Delegates',
@@ -47,6 +55,13 @@ class NumberOfDelegates extends Form implements InputFilterProviderInterface
                 'validators' => [
                     ['name' => NotEmpty::class],
                     ['name' => EmailAddress::class],
+                ]
+            ],
+            'delegateType' => [
+                'allow_empty' => false,
+                'required' => true,
+                'validators' => [
+                    ['name' => NotEmpty::class],
                 ]
             ],
             'delegates' => [

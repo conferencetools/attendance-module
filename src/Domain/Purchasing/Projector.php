@@ -60,7 +60,7 @@ class Projector implements Handler
 
     private function purchaseStartedBy(PurchaseStartedBy $event)
     {
-        $entity = new Purchase($event->getId(), $event->getEmail());
+        $entity = new Purchase($event->getId(), $event->getEmail(), $event->getDelegates());
         $this->repository->add($entity);
     }
 

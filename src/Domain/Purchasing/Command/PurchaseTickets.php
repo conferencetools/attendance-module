@@ -19,10 +19,16 @@ class PurchaseTickets
      */
     private $email;
 
-    public function __construct(string $email, TicketQuantity ...$tickets)
+    /**
+     * @Jms\Type("int")
+     */
+    private $delegates = -1;
+
+    public function __construct(string $email, $delegates, TicketQuantity ...$tickets)
     {
         $this->tickets = $tickets;
         $this->email = $email;
+        $this->delegates = $delegates;
     }
 
     public function getTickets(): array
@@ -33,5 +39,10 @@ class PurchaseTickets
     public function getEmail(): string
     {
         return $this->email;
+    }
+
+    public function getDelegates(): int
+    {
+        return $this->delegates;
     }
 }

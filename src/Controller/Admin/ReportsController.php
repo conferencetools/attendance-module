@@ -56,6 +56,49 @@ class ReportsController extends AppController
 
     }
 
+    public function salesAction()
+    {
+        $records = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('isPaid', true)));
+        $tickets = $this->getTickets();
+
+        $data = [];
+
+        foreach ($records as $record) {
+            /** @var Delegate $record */
+            foreach ($record->getTickets() as $ticketId) {
+                $data[$tickets[$ticketId]->getEvent()->getCode()]++;
+            }
+        }
+
+        $iterator = new class(count($data)) extends \MultipleIterator implements \Countable {
+            private $count;
+
+            public function __construct($count)
+            {
+                $this->count = $count;
+            }
+
+            public function count()
+            {
+                return $this->count;
+            }
+        };
+        $iterator->attachIterator(new \ArrayIterator(\array_keys($data)));
+        $iterator->attachIterator(new \ArrayIterator(\array_values($data)));
+
+        if ((bool) $this->params()->fromQuery('download', false) === true) {
+            $csv = $this->createCsvData($iterator);
+            return $this->makeResponse($csv);
+        }
+
+        $viewModel = new ViewModel(['report' => $iterator]);
+        $viewModel->setTemplate('attendance/admin/reports/report');
+
+        return $viewModel;
+
+
+    }
+
     public function cateringAlergiesAction()
     {
         $records = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('isPaid', true)));

@@ -45,6 +45,10 @@ return [
                     'label' => 'Delegates',
                     'route' => 'attendance-admin/reports/delegates',
                 ],
+                [
+                    'label' => 'Sales',
+                    'route' => 'attendance-admin/reports/sales',
+                ],
             ],
         ],
     ],

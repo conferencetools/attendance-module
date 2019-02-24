@@ -8,6 +8,7 @@ return [
         [
             'label' => 'Discounts',
             'route' => 'attendance-admin/discounts',
+            'permission' => 'discounts',
             'pages' => [
                 [
                     'label' => 'Add',
@@ -18,6 +19,7 @@ return [
         [
             'label' => 'Tickets',
             'route' => 'attendance-admin/tickets',
+            'permission' => 'tickets',
             'pages' => [
                 [
                     'label' => 'Add',
@@ -28,10 +30,12 @@ return [
         [
             'label' => 'Create Purchase',
             'route' => 'attendance-admin/purchase',
+            'permission' => 'orders',
         ],
         [
             'label' => 'Reporting',
             'route' => 'attendance-admin/reports',
+            'permission' => 'reports',
             'pages' => [
                 [
                     'label' => 'Catering preferences',

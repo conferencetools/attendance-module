@@ -95,6 +95,7 @@ $routes['attendance-admin'] = [
                 'defaults'=> [
                     'controller' => Controller\Admin\PurchaseController::class,
                     'action' => 'index',
+                    'requiresPermission' => 'orders',
                 ]
             ],
             'may_terminate' => true,
@@ -117,6 +118,7 @@ $routes['attendance-admin'] = [
                 'defaults'=> [
                     'controller' => Controller\Admin\ReportsController::class,
                     'action' => 'index',
+                    'requiresPermission' => 'reports',
                 ]
             ],
             'may_terminate' => true,
@@ -173,7 +175,8 @@ $routes['attendance-admin'] = [
                 'route' => '/tickets',
                 'defaults' => [
                     'controller' => Controller\Admin\TicketsController::class,
-                    'action' => 'index'
+                    'action' => 'index',
+                    'requiresPermission' => 'tickets',
                 ],
             ],
             'may_terminate' => true,
@@ -214,7 +217,8 @@ $routes['attendance-admin'] = [
                 'route' => '/discounts',
                 'defaults' => [
                     'controller' => Controller\Admin\DiscountsController::class,
-                    'action' => 'index'
+                    'action' => 'index',
+                    'requiresPermission' => 'discounts',
                 ],
             ],
             'may_terminate' => true,

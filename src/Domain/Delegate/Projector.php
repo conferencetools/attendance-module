@@ -80,7 +80,9 @@ class Projector implements Handler
 
     private function paymentMade(PaymentMade $event): void
     {
-        $delegate = $this->repository->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $event->getActorId())))->first();
-        $delegate->purchasePaid();
+        $delegates = $this->repository->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $event->getActorId())));
+        foreach ($delegates as $delegate) {
+            $delegate->purchasePaid();
+        }
     }
 }

@@ -2,6 +2,14 @@
 
 return [
     'asset_manager' => require __DIR__ . '/asset.config.php',
+    'auth' => [
+        'permissions' => [
+            'tickets' => 'Ticket management',
+            'orders' => 'Order management',
+            'discounts' => 'Discount management',
+            'reports' => 'View reports',
+        ]
+    ],
     'controllers' => require __DIR__ . '/controllers.config.php',
     'controller_plugins' => [
         'factories' => [

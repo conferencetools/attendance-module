@@ -33,6 +33,11 @@ return [
             'permission' => 'orders',
         ],
         [
+            'label' => 'Checkin',
+            'route' => 'attendance-admin/checkin',
+            //'permission' => 'orders',
+        ],
+        [
             'label' => 'Reporting',
             'route' => 'attendance-admin/reports',
             'permission' => 'reports',

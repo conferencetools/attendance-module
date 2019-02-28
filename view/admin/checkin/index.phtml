@@ -1,0 +1,80 @@
+<?php
+$this->inlineScript()
+    ->appendFile('/js/instascan.min.js')
+    ->appendFile('/js/readqr.js');
+?>
+<div id="qr" style="display:none" class="panel panel-default">
+    <div class="panel-heading display-table credit-card-box">
+        <div class="row display-tr">
+            <h3 class="panel-title display-td">Scan QR code</h3>
+            <div class="display-td"></div>
+        </div>
+    </div>
+    <div class="panel-body" style="padding: 30px">
+        <video id="preview" style="display:block; margin:auto"></video>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading display-table credit-card-box" >
+        <div class="row display-tr" >
+            <h3 class="panel-title display-td" >Search</h3>
+            <div class="display-td" ></div>
+        </div>
+    </div>
+    <div class="panel-body" style="padding: 30px">
+        <?php echo $this->form($this->form);?>
+    </div>
+</div>
+<div class="panel panel-default credit-card-box">
+    <div class="panel-heading display-table" >
+        <div class="row display-tr" >
+            <h3 class="panel-title display-td" >Results</h3>
+            <div class="display-td" ></div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped table-hover">
+
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Tickets</th>
+                <th>Delegate Email</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($this->results as $delegate):?>
+                    <?php /** @var \ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate $delegate */?>
+                    <tr>
+                        <td><?=$this->escapeHtml($delegate->getName())?></td>
+                        <td>
+                            <?php
+                            $displayTickets = [];
+                            foreach ($delegate->getTickets() as $ticket) {
+                                $displayTickets[] = $this->tickets[$ticket]->getEvent()->getName();
+                            }
+                            echo implode(', ', $displayTickets);
+                            ?>
+
+                        </td>
+                        <td>
+                            <?=$this->escapeHtml($delegate->getEmail())?>
+                            <?php /** @TODO if email !== purchase email, display purchase email as well */ ?>
+                        </td>
+                        <td>
+                            <?php if(true or $delegate->checkedIn()):?>
+                                Checked In
+                            <?php else:?>
+                                <a href="<?='#'//$this->url('checkin/checkin', ['delegateId' => $delegate->getDelegateId()], ['force_canonical' => true])?>">Check in</a>
+                            <?php endif?>
+                        </td>
+                    </tr>
+                <?php endforeach;?>
+
+            </tbody>
+
+        </table>
+    </div>
+</div>

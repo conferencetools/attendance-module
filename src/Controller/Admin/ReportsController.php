@@ -227,19 +227,4 @@ class ReportsController extends AppController
 
         return $response;
     }
-
-    /**
-     * @return Ticket[]
-     */
-    private function getTickets(): array
-    {
-        $tickets = $this->repository(Ticket::class)->matching(new Criteria());
-        $ticketsIndexed = [];
-
-        foreach ($tickets as $ticket) {
-            $ticketsIndexed[$ticket->getId()] = $ticket;
-        }
-
-        return $ticketsIndexed;
-    }
 }

@@ -19,7 +19,6 @@ use Zend\View\Model\ViewModel;
 
 class PurchaseController extends AppController
 {
-    private $tickets;
 
     public function indexAction()
     {
@@ -116,22 +115,4 @@ class PurchaseController extends AppController
         return new ViewModel(['form' =>  $form, 'tickets' => $tickets, 'delegates' => $delegates]);
     }
 
-    /**
-     * @return Ticket[]
-     */
-    private function getTickets(): array
-    {
-        if ($this->tickets === null) {
-            $tickets = $this->repository(Ticket::class)->matching(new Criteria());
-            $ticketsIndexed = [];
-
-            foreach ($tickets as $ticket) {
-                $ticketsIndexed[$ticket->getId()] = $ticket;
-            }
-
-            $this->tickets = $ticketsIndexed;
-        }
-
-        return $this->tickets;
-    }
 }

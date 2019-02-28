@@ -111,6 +111,17 @@ $routes['attendance-admin'] = [
                 ]
             ]
         ],
+        'checkin' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/checkin',
+                'defaults'=> [
+                    'controller' => Controller\Admin\CheckinController::class,
+                    'action' => 'index',
+                    //'requiresPermission' => 'reports',
+                ]
+            ]
+        ],
         'reports' => [
             'type' => Literal::class,
             'options' => [

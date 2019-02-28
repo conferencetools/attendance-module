@@ -23,7 +23,9 @@ class PurchaseForm extends Form implements InputFilterProviderInterface
         $fieldset = new Fieldset('quantity');
 
         foreach ($tickets as $ticketId => $ticket) {
-            $fieldset->add((new Number($ticketId))->setAttributes(['class' => 'form-control','min' => 0,'max' => $ticket->getRemaining(), 'value' => 0]));
+            if ($ticket->getRemaining() > 0) {
+                $fieldset->add((new Number($ticketId))->setAttributes(['class' => 'form-control', 'min' => 0, 'max' => $ticket->getRemaining(), 'value' => 0]));
+            }
         }
 
         $this->add($fieldset);
@@ -48,7 +50,7 @@ class PurchaseForm extends Form implements InputFilterProviderInterface
                 'twb-layout' => TwbBundleForm::LAYOUT_HORIZONTAL,
                 'column-size' => 'sm-8',
             ],
-            'attributes' => ['class' => 'form-control', 'placeholder' => 'Your receipt will be emailed to this address']
+            'attributes' => ['class' => 'form-control', 'placeholder' => 'Number of delegates the tickets are for']
         ]);
 
         $this->add([

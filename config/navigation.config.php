@@ -33,9 +33,9 @@ return [
             'permission' => 'orders',
         ],
         [
-            'label' => 'Checkin',
+            'label' => 'Check in delegates',
             'route' => 'attendance-admin/checkin',
-            //'permission' => 'orders',
+            'permission' => 'checkin',
         ],
         [
             'label' => 'Reporting',

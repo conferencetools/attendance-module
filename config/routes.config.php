@@ -118,7 +118,7 @@ $routes['attendance-admin'] = [
                 'defaults'=> [
                     'controller' => Controller\Admin\CheckinController::class,
                     'action' => 'index',
-                    //'requiresPermission' => 'reports',
+                    'requiresPermission' => 'checkin',
                 ]
             ],
             'may_terminate' => true,

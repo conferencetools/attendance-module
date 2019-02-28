@@ -61,13 +61,15 @@ $this->inlineScript()
                         </td>
                         <td>
                             <?=$this->escapeHtml($delegate->getEmail())?>
-                            <?php /** @TODO if email !== purchase email, display purchase email as well */ ?>
+                            <?php if ($delegate->getEmail() !== $delegate->getPurchaserEmail()): ?>
+                            , <?=$this->escapeHtml($delegate->getPurchaserEmail())?>
+                            <?php endif?>
                         </td>
                         <td>
-                            <?php if(true or $delegate->checkedIn()):?>
+                            <?php if ($delegate->checkedIn()):?>
                                 Checked In
                             <?php else:?>
-                                <a href="<?='#'//$this->url('checkin/checkin', ['delegateId' => $delegate->getDelegateId()], ['force_canonical' => true])?>">Check in</a>
+                                <a href="<?=$this->url('attendance-admin/checkin/checkin', ['delegateId' => $delegate->getId()])?>">Check in</a>
                             <?php endif?>
                         </td>
                     </tr>

@@ -2,10 +2,12 @@
 
 namespace ConferenceTools\AttendanceTest\Domain\Delegate;
 
+use ConferenceTools\Attendance\Domain\Delegate\Command\CheckIn;
 use ConferenceTools\Attendance\Domain\Delegate\Command\RegisterDelegate;
 use ConferenceTools\Attendance\Domain\Delegate\Command\UpdateDelegateDetails;
 use ConferenceTools\Attendance\Domain\Delegate\Delegate;
 use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
+use ConferenceTools\Attendance\Domain\Delegate\Event\CheckedIn;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateDetailsUpdated;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
 use Phactor\Test\ActorHelper;
@@ -64,10 +66,33 @@ class DelegateTest extends \Codeception\Test\Unit
         $this->helper->expectNoMoreMessages();
     }
 
+    public function testCheckInDelegate()
+    {
+        $this->helper->given([$this->delegateRegisteredEvent()]);
+        $this->helper->when(new CheckIn(
+            $this->actorId
+        ));
+        $this->helper->expect(
+            new CheckedIn(
+                $this->actorId
+            )
+        );
+        $this->helper->expectNoMoreMessages();
+    }
+
+    public function testDoubleCheckInDelegate()
+    {
+        $this->helper->given([$this->delegateRegisteredEvent(), new CheckedIn($this->actorId)]);
+        $this->helper->when(new CheckIn(
+            $this->actorId
+        ));
+        $this->helper->expectNoMoreMessages();
+    }
+
     /**
      * @return DelegateRegistered
      */
-    public function delegateRegisteredEvent(): DelegateRegistered
+    private function delegateRegisteredEvent(): DelegateRegistered
     {
         return new DelegateRegistered(
             $this->actorId,

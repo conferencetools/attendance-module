@@ -3,7 +3,9 @@
 namespace ConferenceTools\Attendance\Domain\Delegate;
 
 
+use ConferenceTools\Attendance\Domain\Delegate\Command\CheckIn;
 use ConferenceTools\Attendance\Domain\Delegate\Command\UpdateDelegateDetails;
+use ConferenceTools\Attendance\Domain\Delegate\Event\CheckedIn;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateDetailsUpdated;
 use Phactor\Actor\AbstractActor;
 use ConferenceTools\Attendance\Domain\Delegate\Command\RegisterDelegate;
@@ -20,6 +22,7 @@ class Delegate extends AbstractActor
     private $dietaryRequirements;
     private $name;
     private $delegateType;
+    private $checkedIn = false;
 
     protected function handleRegisterDelegate(RegisterDelegate $command)
     {
@@ -70,5 +73,17 @@ class Delegate extends AbstractActor
     protected function applyTicketAllocatedToDelegate(TicketAllocatedToDelegate $event)
     {
         $this->tickets[] = $event->getTicketId();
+    }
+
+    protected function handleCheckIn(CheckIn $command)
+    {
+        if (!$this->checkedIn) {
+            $this->fire(new CheckedIn($this->id()));
+        }
+    }
+
+    protected function applyCheckedIn(CheckedIn $event)
+    {
+        $this->checkedIn = true;
     }
 }

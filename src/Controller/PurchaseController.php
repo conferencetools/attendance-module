@@ -27,7 +27,7 @@ use Zend\View\Model\ViewModel;
 
 class PurchaseController extends AppController
 {
-    private $tickets;
+    protected $tickets;
 
     public function indexAction()
     {

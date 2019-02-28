@@ -120,7 +120,19 @@ $routes['attendance-admin'] = [
                     'action' => 'index',
                     //'requiresPermission' => 'reports',
                 ]
-            ]
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'checkin' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:delegateId',
+                        'defaults' => [
+                            'action' => 'checkin'
+                        ],
+                    ],
+                ],
+            ],
         ],
         'reports' => [
             'type' => Literal::class,

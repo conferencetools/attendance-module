@@ -3,6 +3,7 @@
 namespace ConferenceTools\Attendance\Controller\Admin;
 
 use ConferenceTools\Attendance\Controller\AppController;
+use ConferenceTools\Attendance\Domain\Delegate\Command\CheckIn;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Form\DelegateSearchForm;
 use Doctrine\Common\Collections\Criteria;
@@ -20,7 +21,7 @@ class CheckinController extends AppController
             $form->setData($data);
             if ($form->isValid()) {
                 $data = $form->getData();
-                //$data['purchaserEmail'] = $data['email'];
+                $data['purchaserEmail'] = $data['email'];
 
                 $expressions = [];
 
@@ -50,5 +51,14 @@ class CheckinController extends AppController
         }
 
         return new ViewModel(['form' => $form, 'results' => $results, 'tickets' => $this->getTickets()]);
+    }
+
+    public function checkinAction()
+    {
+        $delegateId = $this->params()->fromRoute('delegateId');
+        $this->messageBus()->fire(new CheckIn($delegateId));
+        $this->flashMessenger()->addInfoMessage('Delegate checked in');
+
+        return $this->redirect()->toRoute('attendance-admin/checkin');
     }
 }

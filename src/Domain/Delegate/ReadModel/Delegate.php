@@ -55,10 +55,19 @@ class Delegate
      * @ORM\Column(type="string")
      */
     private $delegateType;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $purchaserEmail;
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $checkedIn = false;
 
     public function __construct(
         string $id,
         string $purchaseId,
+        string $purchaserEmail,
         string $name,
         string $email,
         string $company, DietaryRequirements $dietaryRequirements,
@@ -74,6 +83,7 @@ class Delegate
         $this->allergies = $dietaryRequirements->getAllergies();
         $this->preference = $dietaryRequirements->getPreference();
         $this->delegateType = $delegateType;
+        $this->purchaserEmail = $purchaserEmail;
     }
 
     public function addTicket($ticketId)
@@ -144,5 +154,20 @@ class Delegate
     public function getDelegateType(): string
     {
         return $this->delegateType;
+    }
+
+    public function getPurchaserEmail(): string
+    {
+        return $this->purchaserEmail;
+    }
+
+    public function checkIn(): void
+    {
+        $this->checkedIn = true;
+    }
+
+    public function checkedIn(): bool
+    {
+        return $this->checkedIn;
     }
 }

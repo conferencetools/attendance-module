@@ -4,6 +4,7 @@ namespace ConferenceTools\Attendance\Domain;
 
 use ConferenceTools\Attendance\Domain\Delegate;
 use ConferenceTools\Attendance\Domain\Discounting\DiscountType;
+use ConferenceTools\Attendance\Domain\Prizes\Prize;
 use ConferenceTools\Attendance\Domain\Purchasing;
 use ConferenceTools\Attendance\Domain\Discounting\Command as DiscountingCommand;
 use ConferenceTools\Attendance\Domain\Discounting\Event as DiscountingEvent;
@@ -38,6 +39,19 @@ class MessageSubscriptions
             ],
             DiscountingCommand\CheckDiscountAvailability::class => [
                 DiscountType::class,
+            ],
+
+            Prizes\Command\ChooseWinner::class => [
+                Prizes\Prize::class,
+            ],
+            Prizes\Command\GiveawayPrize::class => [
+                Prizes\Prize::class,
+            ],
+            Prizes\Command\WinnerIs::class => [
+                Prizes\Prize::class,
+            ],
+            Prizes\Command\ReplaceWinner::class => [
+                Prizes\Prize::class,
             ],
 
             PurchasingCommand\CheckPurchaseTimeout::class => [
@@ -85,6 +99,13 @@ class MessageSubscriptions
             ],
             DiscountingEvent\CodeAdded::class => [
                 Discounting\Projector::class,
+            ],
+
+            Prizes\Event\PrizeGiveaway::class => [
+                Prizes\Projector::class,
+            ],
+            Prizes\Event\WinnerChosen::class => [
+                Prizes\Projector::class,
             ],
 
             PurchasingEvent\TicketReservationExpired::class => [

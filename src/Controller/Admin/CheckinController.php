@@ -15,6 +15,7 @@ class CheckinController extends AppController
     {
         $form = $this->form(DelegateSearchForm::class);
         $results = [];
+        $hasScanned = false;
 
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
@@ -47,10 +48,11 @@ class CheckinController extends AppController
                 }
 
                 $results = $this->repository(Delegate::class)->matching($criteria);
+                $hasScanned = true;
             }
         }
 
-        return new ViewModel(['form' => $form, 'results' => $results, 'tickets' => $this->getTickets()]);
+        return new ViewModel(['form' => $form, 'results' => $results, 'tickets' => $this->getTickets(), 'hasScanned' => $hasScanned]);
     }
 
     public function checkinAction()

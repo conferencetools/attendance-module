@@ -1,8 +1,4 @@
-<?php
-$this->inlineScript()
-    ->appendFile('/js/instascan.min.js')
-    ->appendFile('/js/readqr.js');
-?>
+
 <div id="qr" style="display:none" class="panel panel-default">
     <div class="panel-heading display-table credit-card-box">
         <div class="row display-tr">
@@ -11,7 +7,8 @@ $this->inlineScript()
         </div>
     </div>
     <div class="panel-body" style="padding: 30px">
-        <video id="preview" style="display:block; margin:auto"></video>
+        <button id="scan-again" class="btn btn-info">Scan again</button>
+        <video id="preview" style="display:none; margin:auto; width: 100%"></video>
     </div>
 </div>
 
@@ -80,3 +77,35 @@ $this->inlineScript()
         </table>
     </div>
 </div>
+<script type="module">
+    import QrScanner from "/js/qr-scanner.min.js";
+    QrScanner.WORKER_PATH = '/js/qr-scanner-worker.min.js';
+    QrScanner.hasCamera().then(hasCamera => {
+        if (hasCamera) {
+            $('#qr').show()
+        }
+    });
+    const video = document.getElementById('preview');
+    const scanner = new QrScanner(video, result => setResult(result));
+
+    function setResult(result) {
+        if (result.length > 0) {
+            $('input[name="id"]').val(result);
+            $('#qr').hide();
+            $('button[name="submit"]').click();
+            scanner.stop();
+        }
+    }
+    function startScanning() {
+        $('#preview').show();
+        $('#scan-again').hide();
+        scanner.start();
+    }
+
+    $('#scan-again').bind('click', startScanning);
+
+    <?php if (!$this->hasScanned):?>
+        startScanning();
+    <?endif;?>
+
+</script>

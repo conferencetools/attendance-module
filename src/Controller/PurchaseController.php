@@ -228,16 +228,20 @@ class PurchaseController extends AppController
         }
 
         $delegates = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $purchaseId)));
-        return new ViewModel(['purchase' => $purchase, 'discount' => $discount, 'tickets' => $this->getTickets(), 'delegates' => $delegates]);
+        return new ViewModel(['purchase' => $purchase, 'discount' => $discount, 'tickets' => $this->getTickets(false), 'delegates' => $delegates]);
     }
 
     /**
      * @return Ticket[]
      */
-    private function getTickets(): array
+    private function getTickets($onlyOnSale = true): array
     {
         if ($this->tickets === null) {
-            $tickets = $this->repository(Ticket::class)->matching(Criteria::create()->where(Criteria::expr()->eq('onSale', true)));
+            $criteria = Criteria::create();
+            if ($onlyOnSale) {
+                $criteria->where(Criteria::expr()->eq('onSale', true));
+            }
+            $tickets = $this->repository(Ticket::class)->matching($criteria);
             $ticketsIndexed = [];
 
             foreach ($tickets as $ticket) {

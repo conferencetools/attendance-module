@@ -90,7 +90,7 @@ class PurchaseController extends AppController
 
     public function delegatesAction()
     {
-        $tickets = $this->getTickets();
+        $tickets = $this->getTickets(false);
         $purchaseId = $this->params()->fromRoute('purchaseId');
 
         /** @var Purchase $purchase*/
@@ -206,7 +206,7 @@ class PurchaseController extends AppController
             }
         }
 
-        return new ViewModel(['form' => $form, 'purchase' => $purchase, 'discount' => $discount, 'tickets' => $this->getTickets()]);
+        return new ViewModel(['form' => $form, 'purchase' => $purchase, 'discount' => $discount, 'tickets' => $this->getTickets(false)]);
     }
 
     public function completeAction()

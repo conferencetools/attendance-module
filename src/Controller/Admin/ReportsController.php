@@ -4,6 +4,7 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 
 use ConferenceTools\Attendance\Controller\AppController;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
+use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use Doctrine\Common\Collections\Criteria;
 use Zend\Http\Response;
@@ -138,6 +139,7 @@ class ReportsController extends AppController
             $row = [
                 'name' => $record->getName(),
                 'company' => $record->getCompany(),
+                'type' => $record->getDelegateType(),
             ];
 
             $row['tickets'] = implode(', ', \array_map(function ($ticketId) use ($tickets) {return $tickets[$ticketId]->getEvent()->getName();}, $record->getTickets()));
@@ -149,7 +151,36 @@ class ReportsController extends AppController
             return $this->makeResponse($csv);
         }
 
-        $viewModel = new ViewModel(['report' => $data]);
+        $viewModel = new ViewModel(['report' => $data, 'header' => ['Name', 'Company', 'Delegate type', 'Tickets']]);
+        $viewModel->setTemplate('attendance/admin/reports/report');
+
+        return $viewModel;
+    }
+
+    public function purchasesAction()
+    {
+        $records = $this->repository(Purchase::class)->matching(Criteria::create());
+
+        $data = [];
+
+        foreach ($records as $record) {
+            /** @var Purchase $record */
+            $row = [
+                'email' => $record->getEmail(),
+                'code' => $record->getDiscountCode(),
+                'delegates' => $record->getMaxDelegates(),
+                'paid' => $record->isPaid() ? 'Yes' : 'No',
+            ];
+
+            $data[] = $row;
+        }
+
+        if ((bool) $this->params()->fromQuery('download', false) === true) {
+            $csv = $this->createCsvData($data);
+            return $this->makeResponse($csv);
+        }
+
+        $viewModel = new ViewModel(['report' => $data, 'header' => ['Email', 'Discount code', 'Delegates', 'Paid']]);
         $viewModel->setTemplate('attendance/admin/reports/report');
 
         return $viewModel;

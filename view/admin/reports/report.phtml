@@ -17,7 +17,16 @@
                                 </tr>
                             <?php
                             else:
-                                foreach ($this->report as $row):
+                                if (isset($this->header)):?>
+                                    <tr>
+                                        <?php foreach ($this->header as $heading): ?>
+                                            <th><?=$heading?></th>
+                                        <?php endforeach;?>
+                                    </tr>
+                                <?php endif;?>
+
+
+                                <?php foreach ($this->report as $row):
                                     ?>
                                     <tr>
                                         <?php foreach ($row as $column):?>

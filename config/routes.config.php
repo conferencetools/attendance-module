@@ -62,6 +62,18 @@ $routes = [
                         'action' => 'update-details',
                     ]
                 ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'qrcode' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/qrcode',
+                            'defaults' => [
+                                'action' => 'qr-code',
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ]
     ],

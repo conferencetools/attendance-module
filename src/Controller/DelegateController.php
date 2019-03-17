@@ -1,14 +1,15 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Controller;
 
-
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use ConferenceTools\Attendance\Domain\Delegate\Command\UpdateDelegateDetails;
 use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Form\DelegateForm;
 use GeneratedHydrator\Configuration;
+use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
 class DelegateController extends AppController
@@ -44,5 +45,29 @@ class DelegateController extends AppController
         }
 
         return new ViewModel(['form' => $form]);
+    }
+
+    public function qrCodeAction()
+    {
+        $delegateId = $this->params()->fromRoute('delegateId');
+        $renderer = new QRCode(new QROptions(['outputType' => QRCode::OUTPUT_IMAGE_PNG, 'imageBase64' => false]));
+        $delegate = $this->repository(Delegate::class)->get($delegateId);
+
+        if (!($delegate instanceof Delegate)) {
+            return $this->notFoundAction();
+        }
+
+        $png = $renderer->render($delegateId);
+
+        $response = $this->getResponse();
+        if ($response instanceof Response) {
+            $response->setContent($png);
+            $headers = $response->getHeaders();
+            $headers->addHeaderLine('Content-Type', 'image/png');
+            $headers->addHeaderLine('Accept-Ranges', 'bytes');
+            $headers->addHeaderLine('Content-Length', strlen($png));
+        }
+
+        return $response;
     }
 }

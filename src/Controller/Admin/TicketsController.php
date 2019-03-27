@@ -5,6 +5,9 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 
 
 use ConferenceTools\Attendance\Controller\AppController;
+use ConferenceTools\Attendance\Domain\Delegate\Command\SendTicketEmail;
+use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
+use ConferenceTools\Attendance\Domain\Discounting\Command\CreateDiscount;
 use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
@@ -14,6 +17,7 @@ use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
+use ConferenceTools\Attendance\Form\ConfirmationForm;
 use ConferenceTools\Attendance\Form\TicketForm;
 use Doctrine\Common\Collections\Criteria;
 use Zend\Form\Element\DateTime;
@@ -74,6 +78,35 @@ class TicketsController extends AppController
         $this->messageBus()->fire($command);
 
         return $this->redirect()->toRoute('attendance-admin/tickets');
+    }
+
+    public function sendTicketEmailsAction()
+    {
+        $form = $this->form(ConfirmationForm::class);
+
+        if ($this->getRequest()->isPost()) {
+            $form->setData($this->params()->fromPost());
+            if ($form->isValid()) {
+                $data = $form->getData();
+                $delegates = $this->repository(Delegate::class)->matching(Criteria::create());
+                if ($data['confirm'] !== null) {
+                    foreach ($delegates as $delegate) {
+                        /** @var Delegate $delegate */
+                        $command = new SendTicketEmail($delegate->getId());
+                        $this->messageBus()->fire($command);
+                    }
+                    $this->flashMessenger()->addInfoMessage('Emails sent out');
+                } else {
+                    $this->flashMessenger()->addInfoMessage('Action cancelled');
+                }
+
+                return $this->redirect()->toRoute('attendance-admin/tickets');
+            }
+        }
+
+        $viewModel = new ViewModel(['form' => $form, 'action' => 'send out ticket emails to all delegates']);
+        $viewModel->setTemplate('attendance/admin/confirmation-form');
+        return $viewModel;
     }
 
     private function makeAvailableDates(string $from, string $until)

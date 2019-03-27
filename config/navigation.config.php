@@ -25,6 +25,10 @@ return [
                     'label' => 'Add',
                     'route' => 'attendance-admin/tickets/new',
                 ],
+                [
+                    'label' => 'Send Tickets',
+                    'route' => 'attendance-admin/tickets/send',
+                ],
             ],
         ],
         [

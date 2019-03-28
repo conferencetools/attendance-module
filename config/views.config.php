@@ -11,6 +11,7 @@ return [
     'attendance/delegate/update-details' => $viewDir . 'delegate/update-details.phtml',
 
     'attendance/admin/index/index' => $viewDir . 'admin/index/index.phtml',
+    'attendance/admin/checkin/index' => $viewDir . 'admin/checkin/index.phtml',
     'attendance/admin/tickets/new-ticket' => $viewDir . 'admin/tickets/new-ticket.phtml',
     'attendance/admin/tickets/index' => $viewDir . 'admin/tickets/index.phtml',
     'attendance/admin/discounts/new-discount' => $viewDir . 'admin/discounts/new-discount.phtml',
@@ -20,6 +21,7 @@ return [
     'attendance/admin/purchase/index' => $viewDir . 'admin/purchase/index.phtml',
     'attendance/admin/reports/index' => $viewDir . 'admin/reports/index.phtml',
     'attendance/admin/reports/report' => $viewDir . 'admin/reports/report.phtml',
+    'attendance/admin/confirmation-form' => $viewDir . 'admin/confirmation-form.phtml',
 
     'email/receipt' => $viewDir . 'email/receipt.phtml',
 ];

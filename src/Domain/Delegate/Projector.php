@@ -4,8 +4,10 @@
 namespace ConferenceTools\Attendance\Domain\Delegate;
 
 
+use ConferenceTools\Attendance\Domain\Delegate\Event\CheckedIn;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateDetailsUpdated;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
+use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use Doctrine\Common\Collections\Criteria;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
@@ -16,10 +18,12 @@ use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketAllocatedToDelegate
 class Projector implements Handler
 {
     private $repository;
+    private $purchaseRepository;
 
-    public function __construct(Repository $repository)
+    public function __construct(Repository $repository, Repository $purchaseRepository)
     {
         $this->repository = $repository;
+        $this->purchaseRepository = $purchaseRepository;
     }
 
     public function handle(DomainMessage $message)
@@ -38,6 +42,9 @@ class Projector implements Handler
             case $event instanceof PaymentMade:
                 $this->paymentMade($event);
                 break;
+            case $event instanceof CheckedIn:
+                $this->checkIn($event);
+                break;
 
         }
 
@@ -46,9 +53,13 @@ class Projector implements Handler
 
     private function delegateRegistered(DelegateRegistered $event): void
     {
+        /** @var Purchase $purchase */
+        $purchase = $this->purchaseRepository->get($event->getPurchaseId());
+
         $delegate = new ReadModel\Delegate(
             $event->getId(),
             $event->getPurchaseId(),
+            $purchase->getEmail(),
             $event->getName(),
             $event->getEmail(),
             $event->getCompany(),
@@ -62,13 +73,13 @@ class Projector implements Handler
 
     private function ticketAllocated(TicketAllocatedToDelegate $event): void
     {
-        $delegate = $this->repository->get($event->getDelegateId());
+        $delegate = $this->fetchDelegate($event->getDelegateId());
         $delegate->addTicket($event->getTicketId());
     }
 
     private function updateDetails(DelegateDetailsUpdated $event)
     {
-        $delegate = $this->repository->get($event->getDelegateId());
+        $delegate = $this->fetchDelegate($event->getDelegateId());
         $delegate->updateDetails(
             $event->getName(),
             $event->getEmail(),
@@ -84,5 +95,17 @@ class Projector implements Handler
         foreach ($delegates as $delegate) {
             $delegate->purchasePaid();
         }
+    }
+
+    private function checkIn(CheckedIn $event)
+    {
+        $delegate = $this->fetchDelegate($event->getId());
+        $delegate->checkIn();
+    }
+
+    private function fetchDelegate(string $delegateId): ReadModel\Delegate
+    {
+        $delegate = $this->repository->get($delegateId);
+        return $delegate;
     }
 }

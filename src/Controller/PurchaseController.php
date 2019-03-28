@@ -27,7 +27,7 @@ use Zend\View\Model\ViewModel;
 
 class PurchaseController extends AppController
 {
-    private $tickets;
+    protected $tickets;
 
     public function indexAction()
     {
@@ -234,7 +234,7 @@ class PurchaseController extends AppController
     /**
      * @return Ticket[]
      */
-    private function getTickets($onlyOnSale = true): array
+    protected function getTickets($onlyOnSale = true): array
     {
         if ($this->tickets === null) {
             $criteria = Criteria::create();

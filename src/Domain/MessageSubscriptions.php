@@ -29,6 +29,9 @@ class MessageSubscriptions
             DelegateCommand\UpdateDelegateDetails::class => [
                 Delegate\Delegate::class,
             ],
+            DelegateCommand\CheckIn::class => [
+                Delegate\Delegate::class,
+            ],
 
             DiscountingCommand\CreateDiscount::class => [
                 DiscountType::class,
@@ -71,6 +74,9 @@ class MessageSubscriptions
                 Delegate\Projector::class,
             ],
             DelegateEvent\DelegateDetailsUpdated::class => [
+                Delegate\Projector::class,
+            ],
+            DelegateEvent\CheckedIn::class => [
                 Delegate\Projector::class,
             ],
 

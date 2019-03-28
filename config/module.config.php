@@ -8,6 +8,7 @@ return [
             'orders' => 'Order management',
             'discounts' => 'Discount management',
             'reports' => 'View reports',
+            'checkin' => 'Check in Delegates',
         ]
     ],
     'controllers' => require __DIR__ . '/controllers.config.php',

@@ -25,12 +25,21 @@ return [
                     'label' => 'Add',
                     'route' => 'attendance-admin/tickets/new',
                 ],
+                [
+                    'label' => 'Send Tickets',
+                    'route' => 'attendance-admin/tickets/send',
+                ],
             ],
         ],
         [
             'label' => 'Create Purchase',
             'route' => 'attendance-admin/purchase',
             'permission' => 'orders',
+        ],
+        [
+            'label' => 'Check in delegates',
+            'route' => 'attendance-admin/checkin',
+            'permission' => 'checkin',
         ],
         [
             'label' => 'Reporting',

@@ -5,7 +5,6 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 use ConferenceTools\Attendance\Controller\AppController;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
-use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use Doctrine\Common\Collections\Criteria;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
@@ -226,20 +225,5 @@ class ReportsController extends AppController
         }
 
         return $response;
-    }
-
-    /**
-     * @return Ticket[]
-     */
-    private function getTickets(): array
-    {
-        $tickets = $this->repository(Ticket::class)->matching(new Criteria());
-        $ticketsIndexed = [];
-
-        foreach ($tickets as $ticket) {
-            $ticketsIndexed[$ticket->getId()] = $ticket;
-        }
-
-        return $ticketsIndexed;
     }
 }

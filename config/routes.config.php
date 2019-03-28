@@ -62,6 +62,18 @@ $routes = [
                         'action' => 'update-details',
                     ]
                 ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'qrcode' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/qrcode',
+                            'defaults' => [
+                                'action' => 'qr-code',
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ]
     ],
@@ -110,6 +122,29 @@ $routes['attendance-admin'] = [
                     ],
                 ]
             ]
+        ],
+        'checkin' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/checkin',
+                'defaults'=> [
+                    'controller' => Controller\Admin\CheckinController::class,
+                    'action' => 'index',
+                    'requiresPermission' => 'checkin',
+                ]
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'checkin' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:delegateId',
+                        'defaults' => [
+                            'action' => 'checkin'
+                        ],
+                    ],
+                ],
+            ],
         ],
         'reports' => [
             'type' => Literal::class,
@@ -215,6 +250,15 @@ $routes['attendance-admin'] = [
                         'defaults' => [
                             'action' => 'put-on-sale',
                         ]
+                    ],
+                ],
+                'send' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/send',
+                        'defaults' => [
+                            'action' => 'send-ticket-emails',
+                        ],
                     ],
                 ],
             ],

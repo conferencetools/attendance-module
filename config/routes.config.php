@@ -192,6 +192,18 @@ $routes['attendance-admin'] = [
                             'action' => 'delegates',
                         ],
                     ],
+                    'may_terminate' => true,
+                    'child_routes' => [
+                        'checkedIn' => [
+                            'type' => Literal::class,
+                            'options' => [
+                                'route' => '/checked-in',
+                                'defaults' => [
+                                    'action' => 'checked-in-delegates',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'sales' => [
                     'type' => Literal::class,

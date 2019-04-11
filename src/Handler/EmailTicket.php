@@ -52,13 +52,8 @@ class EmailTicket implements Handler
         /** @var Delegate $delegate */
         $delegate = $this->delegateRepository->get($message->getDelegateId());
 
-        $emailAddress = $delegate->getEmail();
-        if (empty($emailAddress)) {
-            $emailAddress = $delegate->getPurchaserEmail();
-        }
-
         $viewModel = new ViewModel(['delegate' => $delegate, 'config'=> $this->config]);
-        $viewModel->setTemplate('email/receipt');
+        $viewModel->setTemplate('email/ticket');
 
         $response = new Response();
         $this->view->setResponse($response);
@@ -66,7 +61,7 @@ class EmailTicket implements Handler
         $html = $response->getContent();
 
         $emailMessage = $this->buildMessage($html);
-        $emailMessage->setTo($emailAddress);
+        $emailMessage->setTo($delegate->getContactEmail());
 
         $this->mail->send($emailMessage);
     }

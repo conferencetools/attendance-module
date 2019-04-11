@@ -139,9 +139,10 @@ class ReportsController extends AppController
                 'name' => $record->getName(),
                 'company' => $record->getCompany(),
                 'type' => $record->getDelegateType(),
+                'email' => $record->getContactEmail(),
             ];
 
-            $row['tickets'] = implode(', ', \array_map(function ($ticketId) use ($tickets) {return $tickets[$ticketId]->getEvent()->getName();}, $record->getTickets()));
+            $row['tickets'] = implode('; ', \array_map(function ($ticketId) use ($tickets) {return $tickets[$ticketId]->getEvent()->getName();}, $record->getTickets()));
             $data[] = $row;
         }
 
@@ -150,7 +151,43 @@ class ReportsController extends AppController
             return $this->makeResponse($csv);
         }
 
-        $viewModel = new ViewModel(['report' => $data, 'header' => ['Name', 'Company', 'Delegate type', 'Tickets']]);
+        $viewModel = new ViewModel(['report' => $data, 'header' => ['Name', 'Company', 'Delegate type', 'Email', 'Tickets']]);
+        $viewModel->setTemplate('attendance/admin/reports/report');
+
+        return $viewModel;
+    }
+
+    public function checkedInDelegatesAction()
+    {
+        $records = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('checkedIn', true)));
+        $tickets = $this->getTickets();
+
+        $data = [];
+
+        foreach ($records as $record) {
+            /** @var Delegate $record */
+            $email = $record->getEmail();
+            if (empty($email)) {
+                $email = $record->getPurchaserEmail();
+            }
+
+            $row = [
+                'name' => $record->getName(),
+                'company' => $record->getCompany(),
+                'type' => $record->getDelegateType(),
+                'email' => $email,
+            ];
+
+            $row['tickets'] = implode('; ', \array_map(function ($ticketId) use ($tickets) {return $tickets[$ticketId]->getEvent()->getName();}, $record->getTickets()));
+            $data[] = $row;
+        }
+
+        if ((bool) $this->params()->fromQuery('download', false) === true) {
+            $csv = $this->createCsvData($data);
+            return $this->makeResponse($csv);
+        }
+
+        $viewModel = new ViewModel(['report' => $data, 'header' => ['Name', 'Company', 'Delegate type', 'Email', 'Tickets']]);
         $viewModel->setTemplate('attendance/admin/reports/report');
 
         return $viewModel;

@@ -24,4 +24,5 @@ return [
     'attendance/admin/confirmation-form' => $viewDir . 'admin/confirmation-form.phtml',
 
     'email/receipt' => $viewDir . 'email/receipt.phtml',
+    'email/ticket' => $viewDir . 'email/ticket.phtml',
 ];

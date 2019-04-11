@@ -59,6 +59,10 @@ return [
                     'route' => 'attendance-admin/reports/delegates',
                 ],
                 [
+                    'label' => 'Checked In Delegates',
+                    'route' => 'attendance-admin/reports/delegates/checkedIn',
+                ],
+                [
                     'label' => 'Purchases',
                     'route' => 'attendance-admin/reports/purchases',
                 ],

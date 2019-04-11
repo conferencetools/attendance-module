@@ -18,6 +18,7 @@ use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
 use ConferenceTools\Attendance\Form\ConfirmationForm;
+use ConferenceTools\Attendance\Form\SendTicketsForm;
 use ConferenceTools\Attendance\Form\TicketForm;
 use Doctrine\Common\Collections\Criteria;
 use Zend\Form\Element\DateTime;
@@ -82,23 +83,21 @@ class TicketsController extends AppController
 
     public function sendTicketEmailsAction()
     {
-        $form = $this->form(ConfirmationForm::class);
+        $form = $this->form(SendTicketsForm::class, ['ticketOptions' => $this->getTickets()]);
 
         if ($this->getRequest()->isPost()) {
             $form->setData($this->params()->fromPost());
             if ($form->isValid()) {
                 $data = $form->getData();
-                $delegates = $this->repository(Delegate::class)->matching(Criteria::create());
-                if ($data['confirm'] !== null) {
-                    foreach ($delegates as $delegate) {
-                        /** @var Delegate $delegate */
+                $delegates = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('isPaid', true)));
+                foreach ($delegates as $delegate) {
+                    /** @var Delegate $delegate */
+                    if (!empty(array_intersect($delegate->getTickets(), $data['tickets']))) {
                         $command = new SendTicketEmail($delegate->getId());
                         $this->messageBus()->fire($command);
                     }
-                    $this->flashMessenger()->addInfoMessage('Emails sent out');
-                } else {
-                    $this->flashMessenger()->addInfoMessage('Action cancelled');
                 }
+                $this->flashMessenger()->addInfoMessage('Emails sent out');
 
                 return $this->redirect()->toRoute('attendance-admin/tickets');
             }

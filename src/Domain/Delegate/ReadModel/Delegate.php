@@ -170,4 +170,13 @@ class Delegate
     {
         return $this->checkedIn;
     }
+
+    public function getContactEmail(): string
+    {
+        if (empty($this->email)) {
+            return $this->purchaserEmail;
+        }
+
+        return $this->email;
+    }
 }

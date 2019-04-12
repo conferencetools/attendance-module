@@ -22,6 +22,7 @@ return [
     'attendance/admin/reports/index' => $viewDir . 'admin/reports/index.phtml',
     'attendance/admin/reports/report' => $viewDir . 'admin/reports/report.phtml',
     'attendance/admin/confirmation-form' => $viewDir . 'admin/confirmation-form.phtml',
+    'attendance/admin/form' => $viewDir . 'admin/form.phtml',
 
     'email/receipt' => $viewDir . 'email/receipt.phtml',
     'email/ticket' => $viewDir . 'email/ticket.phtml',

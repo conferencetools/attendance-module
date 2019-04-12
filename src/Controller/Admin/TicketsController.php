@@ -83,7 +83,11 @@ class TicketsController extends AppController
 
     public function sendTicketEmailsAction()
     {
-        $form = $this->form(SendTicketsForm::class, ['ticketOptions' => $this->getTickets()]);
+        $tickets = $this->getTickets();
+        foreach ($tickets as $ticketId => $quantity) {
+            $ticketOptions[$ticketId] = $tickets[$ticketId]->getEvent()->getName();
+        }
+        $form = $this->form(SendTicketsForm::class, ['ticketOptions' => $ticketOptions]);
 
         if ($this->getRequest()->isPost()) {
             $form->setData($this->params()->fromPost());
@@ -103,8 +107,8 @@ class TicketsController extends AppController
             }
         }
 
-        $viewModel = new ViewModel(['form' => $form, 'action' => 'send out ticket emails to all delegates']);
-        $viewModel->setTemplate('attendance/admin/confirmation-form');
+        $viewModel = new ViewModel(['form' => $form, 'action' => 'Send out ticket emails']);
+        $viewModel->setTemplate('attendance/admin/form');
         return $viewModel;
     }
 

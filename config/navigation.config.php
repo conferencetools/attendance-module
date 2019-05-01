@@ -17,6 +17,17 @@ return [
             ],
         ],
         [
+            'label' => 'Events',
+            'route' => 'attendance-admin/events',
+            'permission' => 'tickets',
+            'pages' => [
+                [
+                    'label' => 'Add',
+                    'route' => 'attendance-admin/events/new',
+                ],
+            ],
+        ],
+        [
             'label' => 'Tickets',
             'route' => 'attendance-admin/tickets',
             'permission' => 'tickets',

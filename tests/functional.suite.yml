@@ -6,9 +6,11 @@
 # Remove this suite if you don't use frameworks
 
 actor: FunctionalTester
+extensions:
+  enabled:
+    - \ConferenceTools\Attendance\Test\Functional\DBManager
 modules:
     enabled:
-        # add a framework module here
         - \Helper\Functional
         - ZF2:
               config: tests/functional/config/application.config.php

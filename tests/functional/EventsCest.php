@@ -6,23 +6,12 @@ use Symfony\Component\Console\Output\NullOutput;
 
 class EventsCest
 {
-    public function _before(FunctionalTester $I)
-    {
-        /** @var Symfony\Component\Console\Application $application */
-        $application = $I->grabServiceFromContainer('doctrine.cli');
-        $application->setAutoExit(false);
-        if (file_exists(__DIR__ . '/../_data/db.sqlite')) {
-            unlink(__DIR__ . '/../_data/db.sqlite');
-        }
-        $application->run(new ArrayInput(['command' => 'orm:schema-tool:create']), new NullOutput());
-    }
-
-    // tests
-
     public function testNoEvent(FunctionalTester $I)
     {
         $I->amOnPage('/admin/events');
         $I->see('You haven\'t created any events yet.');
+        $I->seeLink('Events', '/admin/events');
+        $I->seeLink('Add', '/admin/events/new');
     }
 
     public function testCreateEvent(FunctionalTester $I)

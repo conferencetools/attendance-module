@@ -315,7 +315,7 @@ $routes['attendance-admin'] = [
                 'defaults' => [
                     'controller' => Controller\Admin\EventsController::class,
                     'action' => 'index',
-                    'requiresPermission' => 'events',
+                    'requiresPermission' => 'tickets',
                 ],
             ],
             'may_terminate' => true,

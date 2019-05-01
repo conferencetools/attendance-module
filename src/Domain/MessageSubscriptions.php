@@ -68,6 +68,9 @@ class MessageSubscriptions
             TicketingCommand\PutOnSale::class => [
                 Ticket::class,
             ],
+            Ticketing\Command\CreateEvent::class => [
+                Ticketing\EventActor::class,
+            ],
 
             //################## Events #######################
             DelegateEvent\DelegateRegistered::class => [
@@ -123,6 +126,9 @@ class MessageSubscriptions
             ],
             TicketingEvent\TicketsReleased::class => [
                 Tickets::class,
+            ],
+            Ticketing\Event\EventCreated::class => [
+                Ticketing\EventProjector::class,
             ],
 
             PaymentEvent\PaymentMade::class => [

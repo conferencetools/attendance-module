@@ -308,6 +308,29 @@ $routes['attendance-admin'] = [
                 ],
             ],
         ],
+        'events' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/events',
+                'defaults' => [
+                    'controller' => Controller\Admin\EventsController::class,
+                    'action' => 'index',
+                    'requiresPermission' => 'events',
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'new' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/new',
+                        'defaults' => [
+                            'action' => 'new-event'
+                        ]
+                    ],
+                ],
+            ],
+        ],
     ]
 ];
 

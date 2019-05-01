@@ -10,3 +10,5 @@ modules:
     enabled:
         # add a framework module here
         - \Helper\Functional
+        - ZF2:
+              config: tests/functional/config/application.config.php

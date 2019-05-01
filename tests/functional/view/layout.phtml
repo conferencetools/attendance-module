@@ -37,19 +37,7 @@
         <?= $this->flashMessenger()->renderCurrent($namespace, ['alert', $class]) ?>
         <?= $this->flashMessenger()->render($namespace, ['alert', $class]) ?>
     <?php endforeach?>
-    <div class="row">
-        <div class="col-md-2">
-            <div class="panel panel-default credit-card-box">
-                <div class="panel-heading"><h3 class="panel-title">Menu</h3></div>
-                <div class="panel-body">
-                    <?=$this->navigation('navigation')->menu()->setUlClass('nav nav-pils nav-stacked')->render();?>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-10">
-            <?= $this->content ?>
-        </div>
-    </div>
+    <?= $this->content ?>
 </div>
 <?= $this->inlineScript() ?>
 </body>

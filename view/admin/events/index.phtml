@@ -1,0 +1,48 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-default credit-card-box">
+            <div class="panel-heading display-table" >
+                <div class="row display-tr" >
+                    <h3 class="panel-title display-td" >Tickets</h3>
+                    <a class="btn btn-success" style="float:right" href="<?=$this->url('attendance-admin/tickets/new')?>">Add</a>
+                </div>
+            </div>
+            <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="table">
+                                <?php if (count($this->events) === 0): ?>
+                                    <tr>
+                                        <td>You haven't created any events yet.</td>
+                                    </tr>
+                                <?php
+                                else:
+                                    foreach ($this->events as $id => $event):
+                                        /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event $event */
+                                        ?>
+                                        <tr>
+                                            <td class="col-md-6 col-xs-6">
+                                                <span class="col-xs-12 col-md-6"><?= $event->getName()?></span>
+                                                <span class="hidden-xs col-md-6">
+                                                    <?= $event->getCapacity() ?>
+                                                </span>
+                                                <?php if ( ! empty($event->getDescription())): ?>
+                                                    <span class="help-block col-xs-12 col-md-12"><?= $event->getDescription() ?></span>
+                                                <?php endif ?>
+                                            </td>
+                                            <td class="col-md-3 col-xs-3">
+                                                <span class="col-xs-6"><?= $event->getCapacity() ?></span>
+                                            </td>
+                                            <!-- @TODO add buttons for editing, adding tickets etc -->
+                                        </tr>
+                                    <?php
+                                    endforeach;
+                                endif;
+                                ?>
+                            </table>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>

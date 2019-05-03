@@ -6,6 +6,12 @@
 # Remove this suite if you don't use frameworks
 
 actor: FunctionalTester
+coverage:
+  enabled: true
+  include:
+    - src/*
+  exclude:
+    - src/Domain/*
 extensions:
   enabled:
     - \ConferenceTools\Attendance\Test\Functional\DBManager

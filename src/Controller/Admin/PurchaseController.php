@@ -71,7 +71,6 @@ class PurchaseController extends AppController
                 foreach ($purchaseTickets as $ticketId => $quantity) {
                     $selectedTickets[] = new TicketQuantity(
                         $ticketId,
-                        $tickets[$ticketId]->getEvent(),
                         $quantity,
                         $tickets[$ticketId]->getPrice()
                     );

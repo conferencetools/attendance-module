@@ -7,3 +7,10 @@ modules:
     enabled:
         - Asserts
         - \Helper\Unit
+coverage:
+    enabled: true
+    include:
+        - src/*
+    exclude:
+        - src/Domain/*/Command/*
+        - src/Domain/*/Event/*

@@ -5,6 +5,7 @@ namespace ConferenceTools\AttendanceTest\Domain\Ticketing;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
+use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Domain\Ticketing\Tickets;
 use ConferenceTools\Attendance\Domain\Ticketing\Event;
@@ -30,7 +31,8 @@ class TicketsTest extends \Codeception\Test\Unit
     {
         $this->helper->when(new Event\TicketsReleased(
             'id',
-            new Event('ticket', 'Ticket', 'A Ticket description'),
+            'eventId',
+            new Descriptor('Ticket', 'A Ticket description'),
             10,
             AvailabilityDates::always(),
             Price::fromNetCost(new Money(10000), new TaxRate(20))
@@ -43,12 +45,7 @@ class TicketsTest extends \Codeception\Test\Unit
     {
         $this->helper->given($this->ticketEntity());
 
-        $this->helper->when(new Event\TicketsOnSale(
-            '0',
-            new Event('ticket', 'Ticket', 'A Ticket description'),
-            10,
-            Price::fromNetCost(new Money(10000), new TaxRate(20))
-        ));
+        $this->helper->when(new Event\TicketsOnSale('0'));
 
         $ticket = $this->ticketEntity();
         $ticket->onSale();
@@ -109,7 +106,8 @@ class TicketsTest extends \Codeception\Test\Unit
     {
         $ticket = new Ticket(
             'id',
-            new Event('ticket', 'Ticket', 'A Ticket description'),
+            'eventId',
+            new Descriptor('Ticket', 'A Ticket description'),
             10,
             Price::fromNetCost(new Money(10000), new TaxRate(20)),
             AvailabilityDates::always()

@@ -19,10 +19,11 @@ class Ticket extends AbstractActor
      * @var AvailabilityDates
      */
     private $availabilityDates;
-    private $event;
+    private $descriptor;
     private $quantity;
     private $onSale = false;
     private $price;
+    private $eventId;
 
     protected function handleReleaseTicket(ReleaseTicket $command)
     {
@@ -30,14 +31,15 @@ class Ticket extends AbstractActor
 
         $this->fire(new TicketsReleased(
             $this->id(),
-            $command->getTicket(),
+            $command->getEventId(),
+            $command->getDescriptor(),
             $command->getQuantity(),
             $availabilityDates,
             $command->getPrice()
         ));
 
         if ($availabilityDates->availableNow()) {
-            $this->fire(new TicketsOnSale($this->id(), $command->getTicket(), $command->getQuantity(), $command->getPrice()));
+            $this->fire(new TicketsOnSale($this->id()));
             $availableUntil = $availabilityDates->getAvailableUntil();
 
             if ($availableUntil instanceof \DateTime) {
@@ -54,8 +56,9 @@ class Ticket extends AbstractActor
 
     protected function applyTicketsReleased(TicketsReleased $event)
     {
+        $this->eventId = $event->getEventId();
         $this->availabilityDates = $event->getAvailabilityDates();
-        $this->event = $event->getEvent();
+        $this->descriptor = $event->getDescriptor();
         $this->quantity = $event->getQuantity();
         $this->price = $event->getPrice();
     }
@@ -70,7 +73,7 @@ class Ticket extends AbstractActor
     protected function handlePutOnSale(PutOnSale $command)
     {
         if (!$this->onSale) {
-            $this->fire(new TicketsOnSale($this->id(), $this->event, $this->quantity, $this->price));
+            $this->fire(new TicketsOnSale($this->id()));
         }
     }
 
@@ -82,7 +85,7 @@ class Ticket extends AbstractActor
     protected function handleCheckTicketAvailability(CheckTicketAvailability $command)
     {
         if (!$this->onSale && $this->availabilityDates->availableNow()) {
-            $this->fire(new TicketsOnSale($this->id(), $this->event, $this->quantity, $this->price));
+            $this->fire(new TicketsOnSale($this->id()));
             $availableUntil = $this->availabilityDates->getAvailableUntil();
 
             if ($availableUntil instanceof \DateTime) {

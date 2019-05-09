@@ -53,7 +53,6 @@ class PurchaseController extends AppController
                         if ($quantity > 0) {
                             $selectedTickets[] = new TicketQuantity(
                                 $ticketId,
-                                $tickets[$ticketId]->getEvent(),
                                 $quantity,
                                 $tickets[$ticketId]->getPrice()
                             );
@@ -112,7 +111,7 @@ class PurchaseController extends AppController
         }
 
         foreach ($purchase->getTickets() as $ticketId => $quantity) {
-            $ticketOptions[$ticketId] = $tickets[$ticketId]->getEvent()->getName();
+            $ticketOptions[$ticketId] = $tickets[$ticketId]->getDescriptor()->getName();
         }
 
         $maxDelegates = $purchase->getMaxDelegates();
@@ -295,14 +294,14 @@ class PurchaseController extends AppController
         foreach ($purchasedTickets as $ticketId => $quantity) {
             if ($quantity < 0) {
                 $this->flashMessenger()->addErrorMessage(
-                    sprintf('You have allocated too many %s tickets.', $tickets[$ticketId]->getEvent()->getName())
+                    sprintf('You have allocated too many %s tickets.', $tickets[$ticketId]->getDescriptor()->getName())
                 );
                 $valid = false;
             }
 
             if ($quantity > 0) {
                 $this->flashMessenger()->addErrorMessage(
-                    sprintf('You have left %s tickets unallocated.', $tickets[$ticketId]->getEvent()->getName())
+                    sprintf('You have left %s tickets unallocated.', $tickets[$ticketId]->getDescriptor()->getName())
                 );
                 $valid = false;
             }

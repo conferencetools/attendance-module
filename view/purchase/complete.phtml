@@ -15,10 +15,10 @@ $this->headLink()->appendStylesheet('/css/card.css');
             <div class="panel-body">
                 <?php foreach ($this->purchase->getTickets() as $ticketId => $quantity): ?>
                     <div class="row">
-                        <span class="col-xs-12 col-md-8"><?= $this->tickets[$ticketId]->getEvent()->getName() ?></span>
+                        <span class="col-xs-12 col-md-8"><?= $this->tickets[$ticketId]->getDescriptor()->getName() ?></span>
                         <span class="col-xs-12 col-md-4"><?= $quantity ?></span>
-                        <?php if ( ! empty($this->tickets[$ticketId]->getEvent()->getDescription())): ?>
-                            <span class="help-block col-xs-12 col-md-12"><?= $this->tickets[$ticketId]->getEvent()->getDescription() ?></span>
+                        <?php if ( ! empty($this->tickets[$ticketId]->getDescriptor()->getDescription())): ?>
+                            <span class="help-block col-xs-12 col-md-12"><?= $this->tickets[$ticketId]->getDescriptor()->getDescription() ?></span>
                         <?php endif ?>
                     </div>
                 <?php endforeach; ?>

@@ -16,7 +16,6 @@ use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Purchasing\Purchase;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
-use ConferenceTools\Attendance\Domain\Ticketing\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
@@ -112,11 +111,6 @@ class PurchaseTest extends \Codeception\Test\Unit
             1,
             new TicketQuantity(
                 'ticketId',
-                new Event(
-                    'eventcode',
-                    'Awesome Event',
-                    'Description'
-                ),
                 1,
                 Price::fromNetCost(new Money(10000), new TaxRate(20))
             )

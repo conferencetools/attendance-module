@@ -6,7 +6,7 @@ use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
-use ConferenceTools\Attendance\Domain\Ticketing\Event;
+use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
@@ -34,24 +34,21 @@ class TicketTest extends \Codeception\Test\Unit
     public function testReleaseTicket()
     {
         $this->helper->when(new ReleaseTicket(
-            new Event('ticket', 'Ticket', 'A Ticket description'),
+            'eventId',
+            new Descriptor('Ticket', 'A Ticket description'),
             10,
             AvailabilityDates::always(),
             Price::fromNetCost(new Money(10000), new TaxRate(20))
         ));
         $this->helper->expect(new TicketsReleased(
             $this->actorId,
-            new Event('ticket', 'Ticket', 'A Ticket description'),
+            'eventId',
+            new Descriptor('Ticket', 'A Ticket description'),
             10,
             AvailabilityDates::always(),
             Price::fromNetCost(new Money(10000), new TaxRate(20))
         ));
-        $this->helper->expect(new TicketsOnSale(
-            $this->actorId,
-            new Event('ticket', 'Ticket', 'A Ticket description'),
-            10,
-            Price::fromNetCost(new Money(10000), new TaxRate(20))
-        ));
+        $this->helper->expect(new TicketsOnSale($this->actorId));
         $this->helper->expectNoMoreMessages();
     }
 
@@ -71,12 +68,7 @@ class TicketTest extends \Codeception\Test\Unit
 
         $this->helper->given($messages);
         $this->helper->when(new PutOnSale($this->actorId));
-        $this->helper->expect(new TicketsOnSale(
-            $this->actorId,
-            new Event('ticket', 'Ticket', 'A Ticket description'),
-            10,
-            Price::fromNetCost(new Money(10000), new TaxRate(20))
-        ));
+        $this->helper->expect(new TicketsOnSale($this->actorId));
         $this->helper->expectNoMoreMessages();
     }
 
@@ -86,12 +78,7 @@ class TicketTest extends \Codeception\Test\Unit
         $messages[] = new WithdrawFromSale($this->actorId);
         $messages[] = new TicketsWithdrawnFromSale($this->actorId);
         $messages[] = new PutOnSale($this->actorId);
-        $messages[] = new TicketsOnSale(
-            $this->actorId,
-            new Event('ticket', 'Ticket', 'A Ticket description'),
-            10,
-            Price::fromNetCost(new Money(10000), new TaxRate(20))
-        );
+        $messages[] = new TicketsOnSale($this->actorId);
 
         $this->helper->given($messages);
         $this->helper->when(new WithdrawFromSale($this->actorId));
@@ -103,24 +90,21 @@ class TicketTest extends \Codeception\Test\Unit
     {
         return [
             new ReleaseTicket(
-                new Event('ticket', 'Ticket', 'A Ticket description'),
+                'eventId',
+                new Descriptor('Ticket', 'A Ticket description'),
                 10,
                 AvailabilityDates::always(),
                 Price::fromNetCost(new Money(10000), new TaxRate(20))
             ),
             new TicketsReleased(
                 $this->actorId,
-                new Event('ticket', 'Ticket', 'A Ticket description'),
+                'eventId',
+                new Descriptor('Ticket', 'A Ticket description'),
                 10,
                 AvailabilityDates::always(),
                 Price::fromNetCost(new Money(10000), new TaxRate(20))
             ),
-            new TicketsOnSale(
-                $this->actorId,
-                new Event('ticket', 'Ticket', 'A Ticket description'),
-                10,
-                Price::fromNetCost(new Money(10000), new TaxRate(20))
-            )
+            new TicketsOnSale($this->actorId)
         ];
     }
 }

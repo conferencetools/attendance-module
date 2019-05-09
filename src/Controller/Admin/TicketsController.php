@@ -7,17 +7,16 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 use ConferenceTools\Attendance\Controller\AppController;
 use ConferenceTools\Attendance\Domain\Delegate\Command\SendTicketEmail;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
-use ConferenceTools\Attendance\Domain\Discounting\Command\CreateDiscount;
 use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
-use ConferenceTools\Attendance\Domain\Ticketing\Event;
+use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
-use ConferenceTools\Attendance\Form\ConfirmationForm;
 use ConferenceTools\Attendance\Form\SendTicketsForm;
 use ConferenceTools\Attendance\Form\TicketForm;
 use Doctrine\Common\Collections\Criteria;
@@ -42,14 +41,17 @@ class TicketsController extends AppController
 
     public function newTicketAction()
     {
-        $form = $this->form(TicketForm::class);
+        $events = $this->indexBy($this->repository(Event::class)->matching(new Criteria()));
+
+        $form = $this->form(TicketForm::class, ['eventOptions' => array_map(function(Event $event) { return $event->getName();}, $events)]);
 
         if ($this->getRequest()->isPost()) {
             $form->setData($this->params()->fromPost());
             if ($form->isValid()) {
                 $data = $form->getData();
                 $command = new ReleaseTicket(
-                    new Event($data['code'], $data['name'], $data['description']),
+                    $data['eventId'],
+                    new Descriptor($data['name'], $data['description']),
                     $data['quantity'],
                     $this->makeAvailableDates($data['from'], $data['until']),
                     $this->makePrice($data['price'], $data['grossOrNet'])

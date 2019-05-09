@@ -19,24 +19,25 @@ class TicketForm extends Form implements InputFilterProviderInterface
     public function init()
     {
         $this->add([
-            'type' => Text::class,
-            'name' => 'code',
+            'type' => Radio::class,
+            'name' => 'eventId',
             'options' => [
-                'label' => 'Event code',
+                'label' => 'Event',
+                'value_options' => $this->getOption('eventOptions')
             ],
         ]);
         $this->add([
             'type' => Text::class,
             'name' => 'name',
             'options' => [
-                'label' => 'Event name',
+                'label' => 'Ticket name',
             ],
         ]);
         $this->add([
             'type' => Text::class,
             'name' => 'description',
             'options' => [
-                'label' => 'Event description',
+                'label' => 'Ticket description',
             ],
         ]);
 
@@ -87,7 +88,7 @@ class TicketForm extends Form implements InputFilterProviderInterface
     public function getInputFilterSpecification()
     {
         return [
-            'code' => [
+            'eventId' => [
                 'allow_empty' => false,
                 'required' => true,
             ],

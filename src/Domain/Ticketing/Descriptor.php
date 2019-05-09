@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Domain\Ticketing;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -9,37 +8,23 @@ use JMS\Serializer\Annotation as Jms;
 /**
  * @ORM\Embeddable()
  */
-class Event
+class Descriptor
 {
     /**
      * @ORM\Column(type="string")
      * @Jms\Type("string")
-     * @var string
-     */
-    private $code;
-    /**
-     * @ORM\Column(type="string")
-     * @Jms\Type("string")
-     * @var string
      */
     private $name;
     /**
      * @ORM\Column(type="string")
      * @Jms\Type("string")
-     * @var string
      */
     private $description;
 
-    public function __construct(string $code, string $name, string $description)
+    public function __construct(string $name, string $description)
     {
-        $this->code = $code;
         $this->name = $name;
         $this->description = $description;
-    }
-
-    public function getCode(): string
-    {
-        return $this->code;
     }
 
     public function getName(): string

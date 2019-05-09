@@ -38,4 +38,14 @@ abstract class AppController extends AbstractActionController
 
         return $this->tickets;
     }
+
+    protected function indexBy(iterable $entities, string $by = 'getId'): array
+    {
+        $indexed = [];
+        foreach ($entities as $entity) {
+            $indexed[$entity->$by()] = $entity;
+        }
+
+        return $indexed;
+    }
 }

@@ -7,7 +7,7 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 use ConferenceTools\Attendance\Controller\AppController;
 use ConferenceTools\Attendance\Domain\Delegate\Command\SendTicketEmail;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
-use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ScheduleSaleDate;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
@@ -16,6 +16,7 @@ use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
+use ConferenceTools\Attendance\Form\DateTimeForm;
 use ConferenceTools\Attendance\Form\SendTicketsForm;
 use ConferenceTools\Attendance\Form\TicketForm;
 use Doctrine\Common\Collections\Criteria;
@@ -74,10 +75,23 @@ class TicketsController extends AppController
     public function putOnSaleAction()
     {
         $ticketId = $this->params()->fromRoute('ticketId');
-        $command = new PutOnSale($ticketId);
-        $this->messageBus()->fire($command);
+        $form = $this->form(DateTimeForm::class, ['fieldLabel' => 'On sale from']);
 
-        return $this->redirect()->toRoute('attendance-admin/tickets');
+        if ($this->getRequest()->isPost()) {
+            $form->setData($this->params()->fromPost());
+            if ($form->isValid()) {
+                $data = $form->getData();
+                $command = new ScheduleSaleDate($ticketId, new \DateTime($data['datetime']));
+                $this->messageBus()->fire($command);
+
+                return $this->redirect()->toRoute('attendance-admin/tickets');
+            }
+        }
+
+        $viewModel = new ViewModel(['form' => $form, 'action' => 'Put tickets on sale']);
+        $viewModel->setTemplate('attendance/admin/form');
+        return $viewModel;
+
     }
 
     public function sendTicketEmailsAction()

@@ -2,10 +2,12 @@
 
 namespace ConferenceTools\AttendanceTest\Domain\Ticketing;
 
-use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ScheduleSaleDate;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\SaleDateScheduled;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ShouldTicketBePutOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
@@ -56,33 +58,75 @@ class TicketTest extends \Codeception\Test\Unit
         $this->helper->expectNoMoreMessages();
     }
 
-    public function testWithdrawTicketsOnSale()
+    public function testScheduleTicketOnSale()
     {
-        $messages = $this->ticketIsOnSale();
-        $messages[] = new WithdrawFromSale($this->actorId);
-        $messages[] = new TicketsWithdrawnFromSale($this->actorId);
+        $onSaleFrom = new \DateTime();
+        $messages = $this->ticketReleased();
 
         $this->helper->given($messages);
-        $this->helper->when(new PutOnSale($this->actorId));
+        $this->helper->when(new ScheduleSaleDate($this->actorId, $onSaleFrom));
+        $this->helper->expect(new SaleDateScheduled($this->actorId, $onSaleFrom));
+        $this->helper->expect(new ShouldTicketBePutOnSale($this->actorId, $onSaleFrom));
+        $this->helper->expectNoMoreMessages();
+    }
+
+    public function testScheduleTicketOnSaleAlreadyOnSale()
+    {
+        $onSaleFrom = new \DateTime();
+        $messages = $this->ticketIsOnSale();
+
+        $this->helper->given($messages);
+        $this->helper->when(new ScheduleSaleDate($this->actorId, $onSaleFrom));
+        $this->helper->expectNoMoreMessages();
+    }
+
+    public function testShouldTicketsBeOnSaleSuccess()
+    {
+        $onSaleFrom = new \DateTime();
+
+        $messages = $this->ticketReleased();
+        $messages[] = new SaleDateScheduled($this->actorId, $onSaleFrom);
+
+        $this->helper->given($messages);
+        $this->helper->when(new ShouldTicketBePutOnSale($this->actorId, $onSaleFrom));
         $this->helper->expect(new TicketsOnSale($this->actorId));
         $this->helper->expectNoMoreMessages();
     }
 
-    public function testWithdrawTicketsOnSaleWithdraw()
+    public function testShouldTicketsBeOnSaleAlreadyOnSale()
     {
-        $messages = $this->ticketIsOnSale();
-        $messages[] = new WithdrawFromSale($this->actorId);
-        $messages[] = new TicketsWithdrawnFromSale($this->actorId);
-        $messages[] = new PutOnSale($this->actorId);
+        $onSaleFrom = new \DateTime();
+
+        $messages = $this->ticketReleased();
+        $messages[] = new SaleDateScheduled($this->actorId, $onSaleFrom);
         $messages[] = new TicketsOnSale($this->actorId);
 
         $this->helper->given($messages);
-        $this->helper->when(new WithdrawFromSale($this->actorId));
-        $this->helper->expect(new TicketsWithdrawnFromSale($this->actorId));
+        $this->helper->when(new ShouldTicketBePutOnSale($this->actorId, $onSaleFrom));
         $this->helper->expectNoMoreMessages();
     }
 
-    private function ticketIsOnSale()
+    public function testShouldTicketsBeOnSaleDifferentDate()
+    {
+        $onSaleFrom = new \DateTime();
+
+        $messages = $this->ticketReleased();
+        $messages[] = new SaleDateScheduled($this->actorId, $onSaleFrom);
+
+        $this->helper->given($messages);
+        $this->helper->when(new ShouldTicketBePutOnSale($this->actorId, (clone $onSaleFrom)->add(new \DateInterval('P1D'))));
+        $this->helper->expectNoMoreMessages();
+    }
+
+    private function ticketIsOnSale(): array
+    {
+        $ticketMessages = $this->ticketReleased();
+        $ticketMessages[] = new TicketsOnSale($this->actorId);
+
+        return $ticketMessages;
+    }
+
+    private function ticketReleased(): array
     {
         return [
             new ReleaseTicket(
@@ -98,7 +142,6 @@ class TicketTest extends \Codeception\Test\Unit
                 10,
                 Price::fromNetCost(new Money(10000), new TaxRate(20))
             ),
-            new TicketsOnSale($this->actorId)
         ];
     }
 }

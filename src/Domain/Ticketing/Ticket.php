@@ -4,8 +4,10 @@
 namespace ConferenceTools\Attendance\Domain\Ticketing;
 
 
-use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ScheduleSaleDate;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\SaleDateScheduled;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ShouldTicketBePutOnSale;
 use Phactor\Actor\AbstractActor;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\CheckTicketAvailability;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
@@ -20,6 +22,7 @@ class Ticket extends AbstractActor
     private $onSale = false;
     private $price;
     private $eventId;
+    private $putOnSaleOn;
 
     protected function handleReleaseTicket(ReleaseTicket $command)
     {
@@ -47,9 +50,22 @@ class Ticket extends AbstractActor
         }
     }
 
-    protected function handlePutOnSale(PutOnSale $command)
+    protected function handleScheduleSaleDate(ScheduleSaleDate $command)
     {
         if (!$this->onSale) {
+            $this->schedule(new ShouldTicketBePutOnSale($this->id(), $command->getWhen()), $command->getWhen());
+            $this->fire(new SaleDateScheduled($this->id(), $command->getWhen()));
+        }
+    }
+
+    protected function applySaleDateScheduled(SaleDateScheduled $event)
+    {
+        $this->putOnSaleOn = $event->getWhen();
+    }
+
+    protected function handleShouldTicketBePutOnSale(ShouldTicketBePutOnSale $command)
+    {
+        if (!$this->onSale && $this->putOnSaleOn == $command->getWhen()) {
             $this->fire(new TicketsOnSale($this->id()));
         }
     }

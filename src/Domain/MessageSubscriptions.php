@@ -65,11 +65,14 @@ class MessageSubscriptions
             TicketingCommand\WithdrawFromSale::class => [
                 Ticket::class,
             ],
-            TicketingCommand\PutOnSale::class => [
+            TicketingCommand\ScheduleSaleDate::class => [
                 Ticket::class,
             ],
             Ticketing\Command\CreateEvent::class => [
                 Ticketing\EventActor::class,
+            ],
+            Ticketing\Command\ShouldTicketBePutOnSale::class => [
+                Ticket::class,
             ],
 
             //################## Events #######################

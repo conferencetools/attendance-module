@@ -2,7 +2,6 @@
 
 namespace ConferenceTools\Attendance\Domain\Ticketing\ReadModel;
 
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,18 +23,15 @@ class Ticket
     private $remaining = 0;
     /** @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Price") */
     private $price;
-    /** @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates") */
-    private $availabilityDates;
     /** @ORM\Column(type="boolean") */
     private $onSale = false;
 
-    public function __construct(string $id, string $eventId, Descriptor $descriptor, int $quantity, Price $price, AvailabilityDates $availabilityDates)
+    public function __construct(string $id, string $eventId, Descriptor $descriptor, int $quantity, Price $price)
     {
         $this->id = $id;
         $this->quantity = $quantity;
         $this->remaining = $quantity;
         $this->price = $price;
-        $this->availabilityDates = $availabilityDates;
         $this->eventId = $eventId;
         $this->descriptor = $descriptor;
     }
@@ -63,11 +59,6 @@ class Ticket
     public function getPrice(): Price
     {
         return $this->price;
-    }
-
-    public function getAvailabilityDates(): AvailabilityDates
-    {
-        return $this->availabilityDates;
     }
 
     public function withdraw()

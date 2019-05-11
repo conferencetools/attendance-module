@@ -48,20 +48,6 @@ class TicketForm extends Form implements InputFilterProviderInterface
                 'label' => 'Ticket quantity',
             ],
         ]);
-        $this->add([
-            'type' => DateTime::class,
-            'name' => 'from',
-            'options' => [
-                'label' => 'On sale from',
-            ],
-        ]);
-        $this->add([
-            'type' => DateTime::class,
-            'name' => 'until',
-            'options' => [
-                'label' => 'On sale until',
-            ],
-        ]);
 
         $this->add([
             'type' => Radio::class,
@@ -95,12 +81,6 @@ class TicketForm extends Form implements InputFilterProviderInterface
             'name' => [
                 'allow_empty' => false,
                 'required' => true,
-            ],
-            'from' => [
-                'allow_empty' => true,
-            ],
-            'until' => [
-                'allow_empty' => true,
             ],
             'quantity' => [
                 'allow_empty' => false,

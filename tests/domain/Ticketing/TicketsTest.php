@@ -4,7 +4,6 @@ namespace ConferenceTools\AttendanceTest\Domain\Ticketing;
 
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Domain\Ticketing\Tickets;
@@ -34,7 +33,6 @@ class TicketsTest extends \Codeception\Test\Unit
             'eventId',
             new Descriptor('Ticket', 'A Ticket description'),
             10,
-            AvailabilityDates::always(),
             Price::fromNetCost(new Money(10000), new TaxRate(20))
         ));
 
@@ -109,8 +107,7 @@ class TicketsTest extends \Codeception\Test\Unit
             'eventId',
             new Descriptor('Ticket', 'A Ticket description'),
             10,
-            Price::fromNetCost(new Money(10000), new TaxRate(20)),
-            AvailabilityDates::always()
+            Price::fromNetCost(new Money(10000), new TaxRate(20))
         );
         return $ticket;
     }

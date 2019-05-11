@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ConferenceTools\Attendance\Domain\Ticketing;
+namespace ConferenceTools\Attendance\Domain\Discounting;
 
 use JMS\Serializer\Annotation as Jms;
 use Doctrine\ORM\Mapping as ORM;

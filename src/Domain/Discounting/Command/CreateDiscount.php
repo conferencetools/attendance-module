@@ -3,7 +3,7 @@
 namespace ConferenceTools\Attendance\Domain\Discounting\Command;
 
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
+use ConferenceTools\Attendance\Domain\Discounting\AvailabilityDates;
 use JMS\Serializer\Annotation as Jms;
 
 class CreateDiscount

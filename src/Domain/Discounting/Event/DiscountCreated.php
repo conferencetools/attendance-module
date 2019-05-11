@@ -4,7 +4,7 @@ namespace ConferenceTools\Attendance\Domain\Discounting\Event;
 
 use JMS\Serializer\Annotation as Jms;
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
+use ConferenceTools\Attendance\Domain\Discounting\AvailabilityDates;
 
 class DiscountCreated
 {

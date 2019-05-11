@@ -15,10 +15,6 @@ use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
 
 class Ticket extends AbstractActor
 {
-    /**
-     * @var AvailabilityDates
-     */
-    private $availabilityDates;
     private $descriptor;
     private $quantity;
     private $onSale = false;
@@ -27,37 +23,18 @@ class Ticket extends AbstractActor
 
     protected function handleReleaseTicket(ReleaseTicket $command)
     {
-        $availabilityDates = $command->getAvailableDates();
-
         $this->fire(new TicketsReleased(
             $this->id(),
             $command->getEventId(),
             $command->getDescriptor(),
             $command->getQuantity(),
-            $availabilityDates,
             $command->getPrice()
         ));
-
-        if ($availabilityDates->availableNow()) {
-            $this->fire(new TicketsOnSale($this->id()));
-            $availableUntil = $availabilityDates->getAvailableUntil();
-
-            if ($availableUntil instanceof \DateTime) {
-                $this->schedule(new CheckTicketAvailability($this->id()), $availableUntil);
-            }
-        } else {
-            $availableFrom = $availabilityDates->getAvailableFrom();
-
-            if ($availableFrom instanceof \DateTime) {
-                $this->schedule(new CheckTicketAvailability($this->id()), $availableFrom);
-            }
-        }
     }
 
     protected function applyTicketsReleased(TicketsReleased $event)
     {
         $this->eventId = $event->getEventId();
-        $this->availabilityDates = $event->getAvailabilityDates();
         $this->descriptor = $event->getDescriptor();
         $this->quantity = $event->getQuantity();
         $this->price = $event->getPrice();

@@ -4,8 +4,6 @@
 use Phactor\Identity\Generator;
 use Phactor\Message\Bus;
 use Phactor\Message\MessageFirer;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
 
 class TicketsCest
 {
@@ -37,8 +35,6 @@ class TicketsCest
                 'name' => $name,
                 'description' => $description,
                 'quantity' => 50,
-                'from' => (new \DateTime())->add(new \DateInterval('P1D'))->format('Y-m-d\TH:iP'),
-                'until' => (new \DateTime())->add(new \DateInterval('P2D'))->format('Y-m-d\TH:iP'),
                 'grossOrNet' => 'gross',
                 'price' => 300,
             ]

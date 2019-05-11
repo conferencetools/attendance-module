@@ -2,7 +2,7 @@
 
 namespace ConferenceTools\Attendance\Domain\Discounting\Command;
 
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
+use ConferenceTools\Attendance\Domain\Discounting\AvailabilityDates;
 use JMS\Serializer\Annotation as Jms;
 use Phactor\Message\HasActorId;
 

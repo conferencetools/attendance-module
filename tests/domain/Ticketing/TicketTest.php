@@ -2,7 +2,6 @@
 
 namespace ConferenceTools\AttendanceTest\Domain\Ticketing;
 
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
@@ -37,7 +36,6 @@ class TicketTest extends \Codeception\Test\Unit
             'eventId',
             new Descriptor('Ticket', 'A Ticket description'),
             10,
-            AvailabilityDates::always(),
             Price::fromNetCost(new Money(10000), new TaxRate(20))
         ));
         $this->helper->expect(new TicketsReleased(
@@ -45,10 +43,8 @@ class TicketTest extends \Codeception\Test\Unit
             'eventId',
             new Descriptor('Ticket', 'A Ticket description'),
             10,
-            AvailabilityDates::always(),
             Price::fromNetCost(new Money(10000), new TaxRate(20))
         ));
-        $this->helper->expect(new TicketsOnSale($this->actorId));
         $this->helper->expectNoMoreMessages();
     }
 
@@ -93,7 +89,6 @@ class TicketTest extends \Codeception\Test\Unit
                 'eventId',
                 new Descriptor('Ticket', 'A Ticket description'),
                 10,
-                AvailabilityDates::always(),
                 Price::fromNetCost(new Money(10000), new TaxRate(20))
             ),
             new TicketsReleased(
@@ -101,7 +96,6 @@ class TicketTest extends \Codeception\Test\Unit
                 'eventId',
                 new Descriptor('Ticket', 'A Ticket description'),
                 10,
-                AvailabilityDates::always(),
                 Price::fromNetCost(new Money(10000), new TaxRate(20))
             ),
             new TicketsOnSale($this->actorId)

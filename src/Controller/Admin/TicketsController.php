@@ -7,7 +7,6 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 use ConferenceTools\Attendance\Controller\AppController;
 use ConferenceTools\Attendance\Domain\Delegate\Command\SendTicketEmail;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
@@ -20,7 +19,6 @@ use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
 use ConferenceTools\Attendance\Form\SendTicketsForm;
 use ConferenceTools\Attendance\Form\TicketForm;
 use Doctrine\Common\Collections\Criteria;
-use Zend\Form\Element\DateTime;
 use Zend\View\Model\ViewModel;
 
 class TicketsController extends AppController
@@ -53,7 +51,6 @@ class TicketsController extends AppController
                     $data['eventId'],
                     new Descriptor($data['name'], $data['description']),
                     $data['quantity'],
-                    $this->makeAvailableDates($data['from'], $data['until']),
                     $this->makePrice($data['price'], $data['grossOrNet'])
                 );
                 $this->messageBus()->fire($command);
@@ -112,27 +109,6 @@ class TicketsController extends AppController
         $viewModel = new ViewModel(['form' => $form, 'action' => 'Send out ticket emails']);
         $viewModel->setTemplate('attendance/admin/form');
         return $viewModel;
-    }
-
-    private function makeAvailableDates(string $from, string $until)
-    {
-        $timezone = new \DateTimeZone('UTC');
-        if ($from === '') {
-            if ($until === '') {
-                return AvailabilityDates::always();
-            }
-
-            return AvailabilityDates::until(\DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $until, $timezone));
-        }
-
-        if ($until === '') {
-            return AvailabilityDates::after(\DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $from, $timezone));
-        }
-
-        return AvailabilityDates::between(
-            \DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $from, $timezone),
-            \DateTime::createFromFormat(DateTime::DATETIME_FORMAT, $until, $timezone)
-        );
     }
 
     private function makePrice($price, $grossOrNet)

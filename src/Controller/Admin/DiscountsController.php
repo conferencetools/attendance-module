@@ -9,7 +9,7 @@ use ConferenceTools\Attendance\Domain\Discounting\Command\AddCode;
 use ConferenceTools\Attendance\Domain\Discounting\Command\CreateDiscount;
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType;
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
+use ConferenceTools\Attendance\Domain\Discounting\AvailabilityDates;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;

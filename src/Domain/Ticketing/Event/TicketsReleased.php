@@ -6,7 +6,6 @@ namespace ConferenceTools\Attendance\Domain\Ticketing\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use JMS\Serializer\Annotation as Jms;
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
 
 class TicketsReleased
 {
@@ -18,16 +17,13 @@ class TicketsReleased
     private $descriptor;
     /** @Jms\Type("integer") */
     private $quantity;
-    /** @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates") */
-    private $availabilityDates;
     /** @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price") */
     private $price;
 
-    public function __construct(string $id, string $eventId, Descriptor $descriptor, int $quantity, AvailabilityDates $availabilityDates, Price $price)
+    public function __construct(string $id, string $eventId, Descriptor $descriptor, int $quantity, Price $price)
     {
         $this->id = $id;
         $this->quantity = $quantity;
-        $this->availabilityDates = $availabilityDates;
         $this->price = $price;
         $this->eventId = $eventId;
         $this->descriptor = $descriptor;
@@ -51,11 +47,6 @@ class TicketsReleased
     public function getQuantity(): int
     {
         return $this->quantity;
-    }
-
-    public function getAvailabilityDates(): AvailabilityDates
-    {
-        return $this->availabilityDates;
     }
 
     public function getPrice(): Price

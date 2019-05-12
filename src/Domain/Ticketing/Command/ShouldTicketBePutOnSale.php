@@ -24,11 +24,6 @@ class ShouldTicketBePutOnSale implements HasActorId
         return $this->id;
     }
 
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
     public function getWhen(): \DateTime
     {
         return $this->when;

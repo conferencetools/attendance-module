@@ -6,9 +6,7 @@ use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- */
+/** @ORM\Entity() */
 class Ticket
 {
     /** @ORM\Id @ORM\Column(type="string") */
@@ -77,11 +75,6 @@ class Ticket
     }
 
     public function getRemaining(): int
-    {
-        return $this->remaining;
-    }
-
-    public function remaining(): int
     {
         return $this->remaining;
     }

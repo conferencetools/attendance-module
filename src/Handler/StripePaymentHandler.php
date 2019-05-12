@@ -49,7 +49,7 @@ class StripePaymentHandler implements Handler
         $message = $domainMessage->getMessage();
         try {
             $this->stripeClient->charges()->create([
-                "amount" => $message->getAmount()->getGross()->getAmount(),
+                "amount" => $message->getAmount()->getGross(),
                 "currency" => $this->currency,
                 'source' => $message->getPaymentData(),
                 'metadata' => [

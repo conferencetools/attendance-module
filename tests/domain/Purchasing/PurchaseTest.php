@@ -16,7 +16,6 @@ use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Purchasing\Purchase;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
-use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use Phactor\Test\ActorHelper;
 
@@ -57,7 +56,7 @@ class PurchaseTest extends \Codeception\Test\Unit
         ));
 
         $this->helper->expect(new DiscountApplied($this->actorId, 'discountId', 'discountCode'));
-        $this->helper->expect(new OutstandingPaymentCalculated($this->actorId, Price::fromNetCost(new Money(9000), 20)));
+        $this->helper->expect(new OutstandingPaymentCalculated($this->actorId, Price::fromNetCost(9000, 20)));
     }
 
     public function testAssignTicketToDelegate()
@@ -111,7 +110,7 @@ class PurchaseTest extends \Codeception\Test\Unit
             new TicketQuantity(
                 'ticketId',
                 1,
-                Price::fromNetCost(new Money(10000), 20)
+                Price::fromNetCost(10000, 20)
             )
         );
     }
@@ -128,7 +127,7 @@ class PurchaseTest extends \Codeception\Test\Unit
 
     private function outstandingPaymentCalculatedEvent(): OutstandingPaymentCalculated
     {
-        return new OutstandingPaymentCalculated($this->actorId, Price::fromNetCost(new Money(10000), 20));
+        return new OutstandingPaymentCalculated($this->actorId, Price::fromNetCost(10000, 20));
     }
 
     private function ticketsReservedEvent(): TicketsReserved

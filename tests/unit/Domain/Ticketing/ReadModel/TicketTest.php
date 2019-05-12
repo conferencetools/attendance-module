@@ -3,7 +3,6 @@
 namespace ConferenceTools\AttendanceTest\Domain\Ticketing\ReadModel;
 
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
-use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 
@@ -18,7 +17,7 @@ class TicketTest extends \Codeception\Test\Unit
         $eventId = 'eventId';
         $descriptor = new Descriptor('name', 'description');
         $quantity = 10;
-        $price = Price::fromNetCost(new Money(100), 20);
+        $price = Price::fromNetCost(100, 20);
         $sut = new Ticket($ticketId, $eventId, $descriptor, $quantity, $price);
 
         $this->tester->assertEquals($ticketId, $sut->getId());
@@ -64,7 +63,7 @@ class TicketTest extends \Codeception\Test\Unit
         $eventId = 'eventId';
         $descriptor = new Descriptor('name', 'description');
         $quantity = 10;
-        $price = Price::fromNetCost(new Money(100), 20);
+        $price = Price::fromNetCost(100, 20);
         return new Ticket($ticketId, $eventId, $descriptor, $quantity, $price);
     }
 }

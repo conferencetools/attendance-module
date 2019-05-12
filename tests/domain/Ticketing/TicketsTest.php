@@ -8,7 +8,6 @@ use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Domain\Ticketing\Tickets;
 use ConferenceTools\Attendance\Domain\Ticketing\Event;
-use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use Phactor\Test\ProjectorHelper;
 
@@ -32,7 +31,7 @@ class TicketsTest extends \Codeception\Test\Unit
             'eventId',
             new Descriptor('Ticket', 'A Ticket description'),
             10,
-            Price::fromNetCost(new Money(10000), 20)
+            Price::fromNetCost(10000, 20)
         ));
 
         $this->helper->expect($this->ticketEntity());
@@ -106,7 +105,7 @@ class TicketsTest extends \Codeception\Test\Unit
             'eventId',
             new Descriptor('Ticket', 'A Ticket description'),
             10,
-            Price::fromNetCost(new Money(10000), 20)
+            Price::fromNetCost(10000, 20)
         );
         return $ticket;
     }

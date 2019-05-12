@@ -10,7 +10,6 @@ use ConferenceTools\Attendance\Domain\Discounting\Command\CreateDiscount;
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType;
 use ConferenceTools\Attendance\Domain\Discounting\AvailabilityDates;
-use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Form\DiscountCodeForm;
@@ -105,10 +104,10 @@ class DiscountsController extends AppController
     private function makePrice($price, $grossOrNet)
     {
         if ($grossOrNet === 'gross') {
-            return Price::fromGrossCost(new Money($price), $this->taxRate);
+            return Price::fromGrossCost($price, $this->taxRate);
         }
 
-        return Price::fromNetCost(new Money($price), $this->taxRate);
+        return Price::fromNetCost($price, $this->taxRate);
     }
 
     private function makeDiscount($data): Discount

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Domain\Ticketing;
-
 
 use ConferenceTools\Attendance\Domain\Ticketing\Command\CreateEvent;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\EventCreated;

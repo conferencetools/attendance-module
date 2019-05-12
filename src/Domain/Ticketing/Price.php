@@ -12,9 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Price
 {
     /**
-     * @var Money
-     * @ORM\Embedded(class="ConferenceTools\Attendance\Domain\Ticketing\Money")
-     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Money")
+     * @Jms\Type("integer")
+     * @ORM\Column(type="integer")
      */
     private $net;
 
@@ -24,13 +23,13 @@ class Price
      */
     private $taxRate;
 
-    private function __construct(Money $net, int $taxRate)
+    private function __construct(int $net, int $taxRate)
     {
         $this->net = $net;
         $this->taxRate = $taxRate;
     }
 
-    public function getNet(): Money
+    public function getNet(): int
     {
         return $this->net;
     }
@@ -40,26 +39,26 @@ class Price
         return $this->taxRate;
     }
 
-    public function getGross(): Money
+    public function getGross(): int
     {
-        return $this->calculateGross($this->net);
+        return $this->net + $this->calculateTax();
     }
 
-    public function getTax(): Money
+    public function getTax(): int
     {
-        return $this->calculateTaxFromNet($this->net);
+        return $this->calculateTax();
     }
 
-    public static function fromNetCost(Money $net, int $taxRate)
+    public static function fromNetCost(int $net, int $taxRate)
     {
         return new static($net, $taxRate);
     }
 
-    public static function fromGrossCost(Money $gross, int $taxRate)
+    public static function fromGrossCost(int $gross, int $taxRate)
     {
         $inverseTaxRate = 1 / (1 + self::convertPercentageToFloat($taxRate));
 
-        $net = $gross->subtract($gross->multiply($inverseTaxRate));
+        $net = ceil($gross * $inverseTaxRate);
 
         return new static($net, $taxRate);
     }
@@ -78,15 +77,15 @@ class Price
 
     public function equals(Price $other): bool
     {
-        return ($this->isSameTaxRate($other) && $other->net->equals($this->net));
+        return ($this->isSameTaxRate($other) && $other->net === $this->net);
     }
 
     public function compare(Price $other): int
     {
         $this->assertSameTaxRate($other);
-        if ($this->net->lessThan($other->net)) {
+        if ($this->net < $other->net) {
             return -1;
-        } elseif ($this->net->equals($other->net)) {
+        } elseif ($this->net === $other->net) {
             return 0;
         } else {
             return 1;
@@ -107,19 +106,19 @@ class Price
     {
         $this->assertSameTaxRate($addend);
 
-        return new self($this->net->add($addend->net), $this->taxRate);
+        return new self($this->net + $addend->net, $this->taxRate);
     }
 
     public function subtract(Price $subtrahend): Price
     {
         $this->assertSameTaxRate($subtrahend);
 
-        return new self($this->net->subtract($subtrahend->net), $this->taxRate);
+        return new self($this->net - $subtrahend->net, $this->taxRate);
     }
 
     public function multiply($multiple): Price
     {
-        return new self($this->net->multiply($multiple), $this->taxRate);
+        return new self((int) ceil($this->net * $multiple), $this->taxRate);
     }
 
     private static function convertPercentageToFloat(int $percentage): float
@@ -127,13 +126,8 @@ class Price
         return (float) ($percentage / 100);
     }
 
-    private function calculateTaxFromNet(Money $net): Money
+    private function calculateTax(): int
     {
-        return $net->multiply(self::convertPercentageToFloat($this->taxRate));
-    }
-
-    private function calculateGross(Money $net): Money
-    {
-        return $net->add($this->calculateTaxFromNet($net));
+        return $this->multiply(self::convertPercentageToFloat($this->taxRate))->net;
     }
 }

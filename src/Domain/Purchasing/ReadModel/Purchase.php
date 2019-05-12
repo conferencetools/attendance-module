@@ -1,7 +1,7 @@
 <?php
 
 namespace ConferenceTools\Attendance\Domain\Purchasing\ReadModel;
-use ConferenceTools\Attendance\Domain\Ticketing\Money;
+
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -55,7 +55,7 @@ class Purchase
     {
         $this->id = $id;
         $this->email = $email;
-        $this->total = Price::fromNetCost(new Money(0), 0);
+        $this->total = Price::fromNetCost(0, 0);
         $this->delegates = $delegates;
     }
 

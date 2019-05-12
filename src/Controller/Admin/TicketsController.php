@@ -11,7 +11,6 @@ use ConferenceTools\Attendance\Domain\Ticketing\Command\ScheduleSaleDate;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
-use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
@@ -122,10 +121,10 @@ class TicketsController extends AppController
     private function makePrice($price, $grossOrNet)
     {
         if ($grossOrNet === 'gross') {
-            return Price::fromGrossCost(new Money($price), $this->taxRate);
+            return Price::fromGrossCost($price, $this->taxRate);
         }
 
-        return Price::fromNetCost(new Money($price), $this->taxRate);
+        return Price::fromNetCost($price, $this->taxRate);
     }
 
 }

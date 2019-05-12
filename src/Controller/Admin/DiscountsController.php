@@ -10,29 +10,18 @@ use ConferenceTools\Attendance\Domain\Discounting\Command\CreateDiscount;
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType;
 use ConferenceTools\Attendance\Domain\Discounting\AvailabilityDates;
-use ConferenceTools\Attendance\Domain\Ticketing\Command\ScheduleSaleDate;
-use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
-use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
-use ConferenceTools\Attendance\Domain\Ticketing\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
-use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
 use ConferenceTools\Attendance\Form\DiscountCodeForm;
 use ConferenceTools\Attendance\Form\DiscountForm;
-use ConferenceTools\Attendance\Form\TicketForm;
 use Doctrine\Common\Collections\Criteria;
 use Zend\Form\Element\DateTime;
 use Zend\View\Model\ViewModel;
 
 class DiscountsController extends AppController
 {
-    private $taxRate;
-
-    public function __construct(/*TaxRate $taxRate*/)
-    {
-        $this->taxRate = new TaxRate(20);
-    }
+    private $taxRate = 20;
 
     public function indexAction()
     {

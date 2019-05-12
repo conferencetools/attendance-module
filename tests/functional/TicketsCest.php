@@ -6,7 +6,6 @@ use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
-use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
 use Phactor\Identity\Generator;
 use Phactor\Message\Bus;
 use Phactor\Message\MessageFirer;
@@ -56,7 +55,7 @@ class TicketsCest
             $eventId,
             new Descriptor('name', 'description'),
             100,
-            Price::fromNetCost(new Money(50), new TaxRate(20))
+            Price::fromNetCost(new Money(50), 20)
         ));
         $ticketId = $events[1]->getMessage()->getId();
 

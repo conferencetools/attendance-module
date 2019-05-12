@@ -15,7 +15,6 @@ use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
-use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
 use ConferenceTools\Attendance\Form\DateTimeForm;
 use ConferenceTools\Attendance\Form\SendTicketsForm;
 use ConferenceTools\Attendance\Form\TicketForm;
@@ -24,12 +23,7 @@ use Zend\View\Model\ViewModel;
 
 class TicketsController extends AppController
 {
-    private $taxRate;
-
-    public function __construct(/*TaxRate $taxRate*/)
-    {
-        $this->taxRate = new TaxRate(20);
-    }
+    private $taxRate = 20;
 
     public function indexAction()
     {

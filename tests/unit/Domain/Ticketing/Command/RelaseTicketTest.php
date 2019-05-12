@@ -6,7 +6,6 @@ use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
-use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
 use ConferenceTools\Attendance\Test\Unit\MessageTestAbstract;
 
 class ReleaseTicketTest extends MessageTestAbstract
@@ -16,7 +15,7 @@ class ReleaseTicketTest extends MessageTestAbstract
         $eventId = 'eventId';
         $descriptor = new Descriptor('name', 'description');
         $quantity = 10;
-        $price = Price::fromNetCost(new Money(100), new TaxRate(20));
+        $price = Price::fromNetCost(new Money(100), 20);
 
         $fixture = new ReleaseTicket($eventId, $descriptor, $quantity, $price);
         $data = $this->getSerializer()->toArray($fixture);

@@ -4,7 +4,6 @@ namespace ConferenceTools\Attendance\Domain\Discounting\ReadModel;
 
 use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
-use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
@@ -60,9 +59,9 @@ class DiscountType
         $this->name = $name;
         $this->percentage = $discount->getPercentage();
         $this->perTicket_net = $discount->getPerTicket() === null ? null : $discount->getPerTicket()->getNet()->getAmount();
-        $this->perTicket_tax = $discount->getPerTicket() === null ? null : $discount->getPerTicket()->getTaxRate()->getPercentage();
+        $this->perTicket_tax = $discount->getPerTicket() === null ? null : $discount->getPerTicket()->getTaxRate();
         $this->perPurchase_net = $discount->getPerPurchase() === null ? null : $discount->getPerPurchase()->getNet()->getAmount();
-        $this->perPurchase_tax = $discount->getPerPurchase() === null ? null : $discount->getPerPurchase()->getTaxRate()->getPercentage();
+        $this->perPurchase_tax = $discount->getPerPurchase() === null ? null : $discount->getPerPurchase()->getTaxRate();
         $this->forTicketIds = $discount->getForTicketIds();
         $this->available = $available;
         $this->codes = new ArrayCollection();
@@ -80,8 +79,8 @@ class DiscountType
 
     public function getDiscount(): Discount
     {
-        $perTicket = $this->perTicket_net !== null ? Price::fromNetCost(new Money($this->perTicket_net), new TaxRate($this->perTicket_tax)) : null;
-        $perPurchase = $this->perPurchase_net !== null ? Price::fromNetCost(new Money($this->perPurchase_net), new TaxRate($this->perPurchase_tax)) : null;
+        $perTicket = $this->perTicket_net !== null ? Price::fromNetCost(new Money($this->perTicket_net), $this->perTicket_tax) : null;
+        $perPurchase = $this->perPurchase_net !== null ? Price::fromNetCost(new Money($this->perPurchase_net), $this->perPurchase_tax) : null;
 
         return new Discount($this->percentage, $perTicket, $perPurchase, ...$this->forTicketIds);
     }

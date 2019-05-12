@@ -13,7 +13,6 @@ use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
-use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
 use ConferenceTools\Attendance\Domain\Ticketing\Ticket;
 use Phactor\Test\ActorHelper;
 
@@ -38,14 +37,14 @@ class TicketTest extends \Codeception\Test\Unit
             'eventId',
             new Descriptor('Ticket', 'A Ticket description'),
             10,
-            Price::fromNetCost(new Money(10000), new TaxRate(20))
+            Price::fromNetCost(new Money(10000), 20)
         ));
         $this->helper->expect(new TicketsReleased(
             $this->actorId,
             'eventId',
             new Descriptor('Ticket', 'A Ticket description'),
             10,
-            Price::fromNetCost(new Money(10000), new TaxRate(20))
+            Price::fromNetCost(new Money(10000), 20)
         ));
         $this->helper->expectNoMoreMessages();
     }
@@ -133,14 +132,14 @@ class TicketTest extends \Codeception\Test\Unit
                 'eventId',
                 new Descriptor('Ticket', 'A Ticket description'),
                 10,
-                Price::fromNetCost(new Money(10000), new TaxRate(20))
+                Price::fromNetCost(new Money(10000), 20)
             ),
             new TicketsReleased(
                 $this->actorId,
                 'eventId',
                 new Descriptor('Ticket', 'A Ticket description'),
                 10,
-                Price::fromNetCost(new Money(10000), new TaxRate(20))
+                Price::fromNetCost(new Money(10000), 20)
             ),
         ];
     }

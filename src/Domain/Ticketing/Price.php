@@ -19,66 +19,56 @@ class Price
     private $net;
 
     /**
-     * @var TaxRate
-     * @ORM\Embedded(class="ConferenceTools\Attendance\Domain\Ticketing\TaxRate")
-     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\TaxRate")
+     * @Jms\Type("integer")
+     * @ORM\Column(type="integer")
      */
     private $taxRate;
 
-    private function __construct(Money $net, TaxRate $taxRate)
+    private function __construct(Money $net, int $taxRate)
     {
         $this->net = $net;
         $this->taxRate = $taxRate;
     }
 
-    /**
-     * @return Money
-     */
     public function getNet(): Money
     {
         return $this->net;
     }
 
-    /**
-     * @return TaxRate
-     */
-    public function getTaxRate(): TaxRate
+    public function getTaxRate(): int
     {
         return $this->taxRate;
     }
 
     public function getGross(): Money
     {
-        return $this->taxRate->calculateGross($this->net);
+        return $this->calculateGross($this->net);
     }
 
     public function getTax(): Money
     {
-        return $this->taxRate->calculateTaxFromNet($this->net);
+        return $this->calculateTaxFromNet($this->net);
     }
 
-    public static function fromNetCost(Money $net, TaxRate $taxRate)
+    public static function fromNetCost(Money $net, int $taxRate)
     {
         return new static($net, $taxRate);
     }
 
-    public static function fromGrossCost(Money $gross, TaxRate $taxRate)
+    public static function fromGrossCost(Money $gross, int $taxRate)
     {
-        return new static($taxRate->calculateNet($gross), $taxRate);
+        $inverseTaxRate = 1 / (1 + self::convertPercentageToFloat($taxRate));
+
+        $net = $gross->subtract($gross->multiply($inverseTaxRate));
+
+        return new static($net, $taxRate);
     }
 
-    /**
-     * @param Price $other
-     * @return bool
-     */
     public function isSameTaxRate(Price $other): bool
     {
-        return $this->taxRate->equals($other->taxRate);
+        return $this->taxRate === $other->taxRate;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
     private function assertSameTaxRate(Price $other)
     {
         if (!$this->isSameTaxRate($other)) {
@@ -86,19 +76,11 @@ class Price
         }
     }
 
-    /**
-     * @param Price $other
-     * @return bool
-     */
     public function equals(Price $other): bool
     {
         return ($this->isSameTaxRate($other) && $other->net->equals($this->net));
     }
 
-    /**
-     * @param Price $other
-     * @return int
-     */
     public function compare(Price $other): int
     {
         $this->assertSameTaxRate($other);
@@ -111,19 +93,11 @@ class Price
         }
     }
 
-    /**
-     * @param Price $other
-     * @return bool
-     */
     public function greaterThan(Price $other): bool
     {
         return 1 === $this->compare($other);
     }
 
-    /**
-     * @param Price $other
-     * @return bool
-     */
     public function lessThan(Price $other): bool
     {
         return -1 === $this->compare($other);
@@ -146,5 +120,20 @@ class Price
     public function multiply($multiple): Price
     {
         return new self($this->net->multiply($multiple), $this->taxRate);
+    }
+
+    private static function convertPercentageToFloat(int $percentage): float
+    {
+        return (float) ($percentage / 100);
+    }
+
+    private function calculateTaxFromNet(Money $net): Money
+    {
+        return $net->multiply(self::convertPercentageToFloat($this->taxRate));
+    }
+
+    private function calculateGross(Money $net): Money
+    {
+        return $net->add($this->calculateTaxFromNet($net));
     }
 }

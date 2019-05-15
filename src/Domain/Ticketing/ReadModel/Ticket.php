@@ -23,6 +23,10 @@ class Ticket
     private $price;
     /** @ORM\Column(type="boolean") */
     private $onSale = false;
+    /** @ORM\Column(type="datetime", nullable=true) */
+    private $onSaleFrom;
+    /** @ORM\Column(type="datetime", nullable=true) */
+    private $withdrawFrom;
 
     public function __construct(string $id, string $eventId, Descriptor $descriptor, int $quantity, Price $price)
     {
@@ -87,5 +91,25 @@ class Ticket
     public function increaseRemainingBy(int $quantity): void
     {
         $this->remaining+= $quantity;
+    }
+
+    public function getOnSaleFrom(): ?\DateTime
+    {
+        return $this->onSaleFrom;
+    }
+
+    public function onSaleFrom(\DateTime $when)
+    {
+        $this->onSaleFrom = $when;
+    }
+
+    public function getWithdrawFrom(): ?\DateTime
+    {
+        return $this->withdrawFrom;
+    }
+
+    public function withdrawFrom(\DateTime $when)
+    {
+        $this->withdrawFrom = $when;
     }
 }

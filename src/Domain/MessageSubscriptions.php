@@ -130,6 +130,12 @@ class MessageSubscriptions
             TicketingEvent\TicketsReleased::class => [
                 Tickets::class,
             ],
+            TicketingEvent\SaleDateScheduled::class => [
+                Tickets::class,
+            ],
+            TicketingEvent\WithdrawDateScheduled::class => [
+                Tickets::class,
+            ],
             Ticketing\Event\EventCreated::class => [
                 Ticketing\EventProjector::class,
             ],

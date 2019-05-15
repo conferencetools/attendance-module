@@ -98,6 +98,40 @@ class TicketsTest extends \Codeception\Test\Unit
         $this->helper->expect($expected);
     }
 
+    public function testTicketsWithdrawnDateScheduled()
+    {
+        $ticket = $this->ticketEntity();
+        $this->helper->given($ticket);
+
+        $from = new \DateTime();
+
+        $this->helper->when(new Event\WithdrawDateScheduled(
+            '0',
+            $from
+        ));
+
+        $expected = $this->ticketEntity();
+        $expected->withdrawFrom($from);
+        $this->helper->expect($expected);
+    }
+
+    public function testTicketsSaleDateScheduled()
+    {
+        $ticket = $this->ticketEntity();
+        $this->helper->given($ticket);
+
+        $from = new \DateTime();
+
+        $this->helper->when(new Event\SaleDateScheduled(
+            '0',
+            $from
+        ));
+
+        $expected = $this->ticketEntity();
+        $expected->onSaleFrom($from);
+        $this->helper->expect($expected);
+    }
+
     private function ticketEntity(): Ticket
     {
         $ticket = new Ticket(

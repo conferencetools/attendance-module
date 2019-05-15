@@ -21,28 +21,31 @@
                                         /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket $ticket */
                                         ?>
                                         <tr>
-                                            <td class="col-md-6 col-xs-6">
-                                                <span class="col-xs-12 col-md-6"><?= $ticket->getDescriptor()->getName() ?></span>
-                                                <span class="hidden-xs col-md-6">
+                                            <td class="col-md-4 col-xs-4">
+                                                <span class="col-xs-12 col-md-8"><?= $ticket->getDescriptor()->getName() ?></span>
+                                                <span class="hidden-xs col-md-4">
                                                     <?= $ticket->getQuantity() ?>
                                                 </span>
                                                 <?php if ( ! empty($ticket->getDescriptor()->getDescription())): ?>
                                                     <span class="help-block col-xs-12 col-md-12"><?= $ticket->getDescriptor()->getDescription() ?></span>
                                                 <?php endif ?>
                                             </td>
-                                            <td class="col-md-3 col-xs-3">
+                                            <td class="col-md-2 col-xs-2">
                                                 <span class="col-xs-6"><?= $this->moneyFormat($ticket->getPrice()) ?></span>
                                             </td>
-                                            <td class="col-md-3 col-xs-3">
-                                                <?php if ($ticket->isOnSale()): ?>
+                                            <td class="col-md-6 col-xs-6">
                                                 <a class="btn btn-danger" href="<?=$this->url('attendance-admin/tickets/withdraw', ['ticketId' => $ticket->getId()])?>">
                                                     Withdraw
                                                 </a>
-                                                <?php else:?>
+                                                <?php if (!$ticket->isOnSale()): ?>
                                                     <a class="btn btn-warning" href="<?=$this->url('attendance-admin/tickets/put-on-sale', ['ticketId' => $ticket->getId()])?>">
                                                         Put on Sale
                                                     </a>
                                                 <?php endif;?>
+                                                <span class="help-block col-md-12">
+                                                    On sale from: <?=($ticket->getOnSaleFrom() === null? 'N/A': $ticket->getOnSaleFrom()->format('Y-m-d h:i'))?>
+                                                    until: <?=($ticket->getWithdrawFrom() === null? 'N/A': $ticket->getWithdrawFrom()->format('Y-m-d h:i'))?>
+                                                </span>
                                             </td>
                                         </tr>
                                     <?php

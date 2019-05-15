@@ -6,6 +6,8 @@ namespace ConferenceTools\Attendance\Domain\Ticketing;
 
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ScheduleSaleDate;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\SaleDateScheduled;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
@@ -43,6 +45,12 @@ class Tickets implements Handler
             case $event instanceof TicketReservationExpired:
                 $this->ticketsExpired($event);
                 break;
+            case $event instanceof SaleDateScheduled:
+                $this->saleDateScheduled($event);
+                break;
+            case $event instanceof WithdrawDateScheduled:
+                $this->withdrawDateScheduled($event);
+
         }
 
         $this->repository->commit();
@@ -81,6 +89,24 @@ class Tickets implements Handler
         $entity = $this->repository->get($message->getTicketId());
         if ($entity !== null) {
             $entity->increaseRemainingBy($message->getQuantity());
+        }
+    }
+
+    private function saleDateScheduled(SaleDateScheduled $message)
+    {
+        /** @var Ticket $entity */
+        $entity = $this->repository->get($message->getId());
+        if ($entity !== null) {
+            $entity->onSaleFrom($message->getWhen());
+        }
+    }
+
+    private function withdrawDateScheduled(WithdrawDateScheduled $message)
+    {
+        /** @var Ticket $entity */
+        $entity = $this->repository->get($message->getId());
+        if ($entity !== null) {
+            $entity->withdrawFrom($message->getWhen());
         }
     }
 }

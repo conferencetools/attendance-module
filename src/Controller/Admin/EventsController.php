@@ -4,6 +4,7 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 
 use ConferenceTools\Attendance\Controller\AppController;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\CreateEvent;
+use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
 use ConferenceTools\Attendance\Form\EventForm;
 use Doctrine\Common\Collections\Criteria;
@@ -27,8 +28,7 @@ class EventsController extends AppController
             if ($form->isValid()) {
                 $data = $form->getData();
                 $command = new CreateEvent(
-                    $data['name'],
-                    $data['description'],
+                    new Descriptor($data['name'], $data['description']),
                     $data['capacity'],
                     new \DateTime($data['startsOn']),
                     new \DateTime($data['endsOn'])

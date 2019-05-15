@@ -112,7 +112,7 @@ class TicketsCest
 
     private function createEvent(FunctionalTester $I): string
     {
-        $events = $this->bus->fire(new CreateEvent('event', 'event', 10, new \DateTime(), new \DateTime()));
+        $events = $this->bus->fire(new CreateEvent(new Descriptor('event', 'description'), 10, new \DateTime(), new \DateTime()));
         $eventId = $events[1]->getMessage()->getId();
         return $eventId;
     }

@@ -34,8 +34,7 @@ class EventProjector implements Handler
         $this->repository->add(
             new Event(
                 $event->getId(),
-                $event->getName(),
-                $event->getDescription(),
+                $event->getDescriptor(),
                 $event->getCapacity(),
                 $event->getStartsOn(),
                 $event->getEndsOn()

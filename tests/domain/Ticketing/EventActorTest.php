@@ -1,6 +1,7 @@
 <?php
 
 use ConferenceTools\Attendance\Domain\Ticketing\Command\CreateEvent;
+use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\EventCreated;
 use ConferenceTools\Attendance\Domain\Ticketing\EventActor;
 use Phactor\Test\ActorHelper;
@@ -26,8 +27,7 @@ class EventActorTest extends \Codeception\Test\Unit
         $endDate = (new \DateTime())->add(new \DateInterval('P2D'));
         $this->helper->when(
             new CreateEvent(
-                'event',
-                'description',
+                new Descriptor('event', 'description'),
                 50,
                 $startDate,
                 $endDate
@@ -36,8 +36,7 @@ class EventActorTest extends \Codeception\Test\Unit
 
         $this->helper->expect(new EventCreated(
             $this->actorId,
-            'event',
-            'description',
+            new Descriptor('event', 'description'),
             50,
             $startDate,
             $endDate

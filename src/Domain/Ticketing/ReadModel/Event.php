@@ -3,6 +3,7 @@
 
 namespace ConferenceTools\Attendance\Domain\Ticketing\ReadModel;
 
+use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -23,11 +24,11 @@ class Event
     /** @ORM\Column(type="datetime") */
     private $endsOn;
 
-    public function __construct(string $id, string $name, string $description, int $capacity, \DateTime $startsOn, \DateTime $endsOn)
+    public function __construct(string $id, Descriptor $descriptor, int $capacity, \DateTime $startsOn, \DateTime $endsOn)
     {
         $this->id = $id;
-        $this->name = $name;
-        $this->description = $description;
+        $this->name = $descriptor->getName();
+        $this->description = $descriptor->getDescription();
         $this->capacity = $capacity;
         $this->startsOn = $startsOn;
         $this->endsOn = $endsOn;
@@ -36,6 +37,11 @@ class Event
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getDescriptor(): Descriptor
+    {
+        return new Descriptor($this->name, $this->description);
     }
 
     public function getName(): string

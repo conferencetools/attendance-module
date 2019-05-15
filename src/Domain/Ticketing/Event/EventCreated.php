@@ -3,31 +3,30 @@ declare(strict_types=1);
 
 namespace ConferenceTools\Attendance\Domain\Ticketing\Event;
 
+use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use JMS\Serializer\Annotation as Jms;
+use phpDocumentor\Reflection\DocBlock\Description;
 
 class EventCreated
 {
     /** @Jms\Type("string") */
     private $id;
-    /** @Jms\Type("string") */
-    private $name;
-    /** @Jms\Type("string") */
-    private $description;
     /** @Jms\Type("integer") */
     private $capacity;
     /** @Jms\Type("DateTime") */
     private $startsOn;
     /** @Jms\Type("DateTime") */
     private $endsOn;
+    /** @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Descriptor") */
+    private $descriptor;
 
-    public function __construct(string $id, string $name, string $description, int $capacity, \DateTime $startsOn, \DateTime $endsOn)
+    public function __construct(string $id, Descriptor $descriptor, int $capacity, \DateTime $startsOn, \DateTime $endsOn)
     {
         $this->id = $id;
-        $this->name = $name;
-        $this->description = $description;
         $this->capacity = $capacity;
         $this->startsOn = $startsOn;
         $this->endsOn = $endsOn;
+        $this->descriptor = $descriptor;
     }
 
     public function getId(): string
@@ -35,14 +34,9 @@ class EventCreated
         return $this->id;
     }
 
-    public function getName(): string
+    public function getDescriptor(): Descriptor
     {
-        return $this->name;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
+        return $this->descriptor;
     }
 
     public function getCapacity(): int

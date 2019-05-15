@@ -12,8 +12,7 @@ class EventActor extends AbstractActor
     {
         $this->fire(new EventCreated(
             $this->id(),
-            $command->getName(),
-            $command->getDescription(),
+            $command->getDescriptor(),
             $command->getCapacity(),
             $command->getStartsOn(),
             $command->getEndsOn()

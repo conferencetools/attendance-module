@@ -59,10 +59,7 @@ class MessageSubscriptions
             TicketingCommand\ReleaseTicket::class => [
                 Ticket::class,
             ],
-            TicketingCommand\CheckTicketAvailability::class => [
-                Ticket::class,
-            ],
-            TicketingCommand\WithdrawFromSale::class => [
+            TicketingCommand\ScheduleWithdrawDate::class => [
                 Ticket::class,
             ],
             TicketingCommand\ScheduleSaleDate::class => [
@@ -72,6 +69,9 @@ class MessageSubscriptions
                 Ticketing\EventActor::class,
             ],
             Ticketing\Command\ShouldTicketBePutOnSale::class => [
+                Ticket::class,
+            ],
+            Ticketing\Command\ShouldTicketBeWithdrawn::class => [
                 Ticket::class,
             ],
 

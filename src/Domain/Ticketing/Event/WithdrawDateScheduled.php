@@ -1,21 +1,30 @@
 <?php
 
+
 namespace ConferenceTools\Attendance\Domain\Ticketing\Event;
 
 use JMS\Serializer\Annotation as Jms;
 
-class TicketsWithdrawnFromSale
+class WithdrawDateScheduled
 {
     /** @Jms\Type("string") */
     private $id;
+    /** @Jms\Type("DateTime")*/
+    private $when;
 
-    public function __construct(string $id)
+    public function __construct(string $id, \DateTime $when)
     {
         $this->id = $id;
+        $this->when = $when;
     }
 
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getWhen(): \DateTime
+    {
+        return $this->when;
     }
 }

@@ -4,13 +4,15 @@ namespace ConferenceTools\AttendanceTest\Domain\Ticketing;
 
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ScheduleSaleDate;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
-use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ScheduleWithdrawDate;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ShouldTicketBeWithdrawn;
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\SaleDateScheduled;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ShouldTicketBePutOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\WithdrawDateScheduled;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\Ticket;
 use Phactor\Test\ActorHelper;
@@ -50,9 +52,11 @@ class TicketTest extends \Codeception\Test\Unit
 
     public function testWithdrawTickets()
     {
+        $withdrawFrom = new \DateTime();
         $this->helper->given($this->ticketIsOnSale());
-        $this->helper->when(new WithdrawFromSale($this->actorId));
-        $this->helper->expect(new TicketsWithdrawnFromSale($this->actorId));
+        $this->helper->when(new ScheduleWithdrawDate($this->actorId, $withdrawFrom));
+        $this->helper->expect(new WithdrawDateScheduled($this->actorId, $withdrawFrom));
+        $this->helper->expect(new ShouldTicketBeWithdrawn($this->actorId, $withdrawFrom));
         $this->helper->expectNoMoreMessages();
     }
 
@@ -113,6 +117,44 @@ class TicketTest extends \Codeception\Test\Unit
 
         $this->helper->given($messages);
         $this->helper->when(new ShouldTicketBePutOnSale($this->actorId, (clone $onSaleFrom)->add(new \DateInterval('P1D'))));
+        $this->helper->expectNoMoreMessages();
+    }
+
+    public function testShouldTicketsBeWithdrawnSuccess()
+    {
+        $onSaleFrom = new \DateTime();
+
+        $messages = $this->ticketIsOnSale();
+        $messages[] = new WithdrawDateScheduled($this->actorId, $onSaleFrom);
+
+        $this->helper->given($messages);
+        $this->helper->when(new ShouldTicketBeWithdrawn($this->actorId, $onSaleFrom));
+        $this->helper->expect(new TicketsWithdrawnFromSale($this->actorId));
+        $this->helper->expectNoMoreMessages();
+    }
+
+    public function testShouldTicketsBeWithdrawnAlreadyOnSale()
+    {
+        $onSaleFrom = new \DateTime();
+
+        $messages = $this->ticketReleased();
+        $messages[] = new WithdrawDateScheduled($this->actorId, $onSaleFrom);
+
+        $this->helper->given($messages);
+        $this->helper->when(new ShouldTicketBeWithdrawn($this->actorId, $onSaleFrom));
+        $this->helper->expectNoMoreMessages();
+    }
+
+    public function testShouldTicketsBeWithdrawnDifferentDate()
+    {
+        $onSaleFrom = new \DateTime();
+
+        $messages = $this->ticketReleased();
+        $messages[] = new TicketsOnSale($this->actorId);
+        $messages[] = new WithdrawDateScheduled($this->actorId, $onSaleFrom);
+
+        $this->helper->given($messages);
+        $this->helper->when(new ShouldTicketBeWithdrawn($this->actorId, (clone $onSaleFrom)->add(new \DateInterval('P1D'))));
         $this->helper->expectNoMoreMessages();
     }
 

@@ -9,6 +9,7 @@ use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\WithdrawDateScheduled;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;

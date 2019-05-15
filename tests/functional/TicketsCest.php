@@ -11,6 +11,18 @@ use Phactor\Message\MessageFirer;
 
 class TicketsCest
 {
+    /** @var MessageFirer */
+    private $bus;
+
+    public function _before(FunctionalTester $I)
+    {
+        /** @var Bus $bus */
+        $messageBus = $I->grabServiceFromContainer(Bus::class);
+        $identityGenerator = $I->grabServiceFromContainer(Generator::class);
+
+        $this->bus = new MessageFirer($identityGenerator, $messageBus);
+    }
+
     public function testNoTickets(FunctionalTester $I)
     {
         $I->amOnPage('/admin/tickets');
@@ -46,17 +58,7 @@ class TicketsCest
     public function testPutTicketOnSaleNow(FunctionalTester $I)
     {
         $eventId = $this->createEvent($I);
-        $messageBus = $I->grabServiceFromContainer(Bus::class);
-        $identityGenerator = $I->grabServiceFromContainer(Generator::class);
-
-        $bus = new MessageFirer($identityGenerator, $messageBus);
-        $events = $bus->fire(new ReleaseTicket(
-            $eventId,
-            new Descriptor('name', 'description'),
-            100,
-            Price::fromNetCost(50, 20)
-        ));
-        $ticketId = $events[1]->getMessage()->getId();
+        $ticketId = $this->createTicket($I, $eventId);
 
 
         $I->amOnPage('/admin/tickets');
@@ -74,21 +76,56 @@ class TicketsCest
 
         $I->seeCurrentUrlEquals('/admin/tickets');
 
-        $bus->fire(new \ConferenceTools\Attendance\Domain\Ticketing\Command\ShouldTicketBePutOnSale($ticketId, $onSaleFrom));
+        $this->bus->fire(new \ConferenceTools\Attendance\Domain\Ticketing\Command\ShouldTicketBePutOnSale($ticketId, $onSaleFrom));
 
         $I->amOnPage('/admin/tickets');
         $I->seeLink('Withdraw');
     }
 
+    public function testWithdrawTicketsNow(FunctionalTester $I)
+    {
+        $onSaleFrom = (new \DateTime())->sub(new \DateInterval('P2D'));
+        $withdrawFrom = (new \DateTime())->sub(new \DateInterval('P1D'));
+        $eventId = $this->createEvent($I);
+        $ticketId = $this->createTicket($I, $eventId);
+        $this->bus->fire(new \ConferenceTools\Attendance\Domain\Ticketing\Command\ScheduleSaleDate($ticketId, $onSaleFrom));
+        $this->bus->fire(new \ConferenceTools\Attendance\Domain\Ticketing\Command\ShouldTicketBePutOnSale($ticketId, $onSaleFrom));
+
+        $I->amOnPage('/admin/tickets');
+        $I->click('Withdraw');
+        $I->seeCurrentUrlEquals('/admin/tickets/withdraw/' . $ticketId);
+
+        $I->submitForm(
+            'form',
+            [
+                'datetime' => $withdrawFrom->format('Y-m-d\TH:iP'),
+            ]
+        );
+
+        $I->seeCurrentUrlEquals('/admin/tickets');
+
+        $this->bus->fire(new \ConferenceTools\Attendance\Domain\Ticketing\Command\ShouldTicketBeWithdrawn($ticketId, $withdrawFrom));
+
+        $I->amOnPage('/admin/tickets');
+        $I->seeLink('Put on Sale');
+    }
+
     private function createEvent(FunctionalTester $I): string
     {
-        /** @var Bus $bus */
-        $messageBus = $I->grabServiceFromContainer(Bus::class);
-        $identityGenerator = $I->grabServiceFromContainer(Generator::class);
-
-        $bus = new MessageFirer($identityGenerator, $messageBus);
-        $events = $bus->fire(new CreateEvent('event', 'event', 10, new \DateTime(), new \DateTime()));
+        $events = $this->bus->fire(new CreateEvent('event', 'event', 10, new \DateTime(), new \DateTime()));
         $eventId = $events[1]->getMessage()->getId();
         return $eventId;
+    }
+
+    private function createTicket(FunctionalTester $I, string $eventId): string
+    {
+        $events = $this->bus->fire(new ReleaseTicket(
+            $eventId,
+            new Descriptor('name', 'description'),
+            100,
+            Price::fromNetCost(50, 20)
+        ));
+        $ticketId = $events[1]->getMessage()->getId();
+        return $ticketId;
     }
 }

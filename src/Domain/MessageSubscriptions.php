@@ -15,7 +15,7 @@ use ConferenceTools\Attendance\Domain\Ticketing\Event as TicketingEvent;
 use ConferenceTools\Attendance\Domain\Purchasing\Event as PurchasingEvent;
 use ConferenceTools\Attendance\Domain\Payment\Event as PaymentEvent;
 use ConferenceTools\Attendance\Domain\Ticketing\Ticket;
-use ConferenceTools\Attendance\Domain\Ticketing\Tickets;
+use ConferenceTools\Attendance\Domain\Ticketing\TicketProjector;
 
 class MessageSubscriptions
 {
@@ -100,7 +100,7 @@ class MessageSubscriptions
             ],
 
             PurchasingEvent\TicketReservationExpired::class => [
-                Tickets::class,
+                TicketProjector::class,
                 Purchasing\Projector::class,
             ],
             PurchasingEvent\TicketAllocatedToDelegate::class => [
@@ -108,7 +108,7 @@ class MessageSubscriptions
                 Delegate\Projector::class,
             ],
             PurchasingEvent\TicketsReserved::class => [
-                Tickets::class,
+                TicketProjector::class,
                 Purchasing\Projector::class,
             ],
             PurchasingEvent\PurchaseStartedBy::class => [
@@ -122,19 +122,19 @@ class MessageSubscriptions
             ],
 
             TicketingEvent\TicketsOnSale::class => [
-                Tickets::class,
+                TicketProjector::class,
             ],
             TicketingEvent\TicketsWithdrawnFromSale::class => [
-                Tickets::class,
+                TicketProjector::class,
             ],
             TicketingEvent\TicketsReleased::class => [
-                Tickets::class,
+                TicketProjector::class,
             ],
             TicketingEvent\SaleDateScheduled::class => [
-                Tickets::class,
+                TicketProjector::class,
             ],
             TicketingEvent\WithdrawDateScheduled::class => [
-                Tickets::class,
+                TicketProjector::class,
             ],
             Ticketing\Event\EventCreated::class => [
                 Ticketing\EventProjector::class,

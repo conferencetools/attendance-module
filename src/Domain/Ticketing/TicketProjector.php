@@ -1,8 +1,6 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Domain\Ticketing;
-
 
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
@@ -17,7 +15,7 @@ use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
 use Phactor\ReadModel\Repository;
 
-class Tickets implements Handler
+class TicketProjector implements Handler
 {
     private $repository;
 

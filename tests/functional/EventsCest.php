@@ -20,7 +20,7 @@ class EventsCest
         $name = 'event' . uniqid();
         $description = 'description' . uniqid();
         $I->submitForm(
-            'form',
+            '#action-form',
             [
                 'name' => $name,
                 'description' => $description,

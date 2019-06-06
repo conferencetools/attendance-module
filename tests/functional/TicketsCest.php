@@ -39,7 +39,7 @@ class TicketsCest
         $name = 'event' . uniqid();
         $description = 'description' . uniqid();
         $I->submitForm(
-            'form',
+            '#action-form',
             [
                 'eventId'=> $eventId,
                 'name' => $name,
@@ -68,7 +68,7 @@ class TicketsCest
         $onSaleFrom = (new \DateTime())->sub(new \DateInterval('P1D'));
 
         $I->submitForm(
-            'form',
+            '#action-form',
             [
                 'datetime' => $onSaleFrom->format('Y-m-d\TH:iP'),
             ]
@@ -96,7 +96,7 @@ class TicketsCest
         $I->seeCurrentUrlEquals('/admin/tickets/withdraw/' . $ticketId);
 
         $I->submitForm(
-            'form',
+            '#action-form',
             [
                 'datetime' => $withdrawFrom->format('Y-m-d\TH:iP'),
             ]

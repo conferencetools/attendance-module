@@ -6,13 +6,13 @@ use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
-use ConferenceTools\Attendance\Domain\Ticketing\Tickets;
+use ConferenceTools\Attendance\Domain\Ticketing\TicketProjector;
 use ConferenceTools\Attendance\Domain\Ticketing\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use Phactor\Test\ProjectorHelper;
 
 /**
- * @covers \ConferenceTools\Attendance\Domain\Ticketing\Tickets
+ * @covers \ConferenceTools\Attendance\Domain\Ticketing\TicketProjector
  */
 class TicketsTest extends \Codeception\Test\Unit
 {
@@ -21,7 +21,7 @@ class TicketsTest extends \Codeception\Test\Unit
 
     public function _before()
     {
-        $this->helper = new ProjectorHelper(Tickets::class);
+        $this->helper = new ProjectorHelper(TicketProjector::class);
     }
 
     public function testTicketsReleased()

@@ -8,7 +8,7 @@ use ConferenceTools\Attendance\Factory;
 
 return [
     'factories' => [
-        Ticketing\Tickets::class => Factory\Ticketing\TicketsFactory::class,
+        Ticketing\TicketProjector::class => Factory\Ticketing\TicketsFactory::class,
         Ticketing\EventProjector::class => Factory\Ticketing\EventProjectorFactory::class,
         Purchasing\Projector::class => Factory\Purchasing\ProjectorFactory::class,
         Delegate\Projector::class => Factory\Delegate\ProjectorFactory::class,

@@ -35,7 +35,7 @@ class TicketsController extends AppController
     {
         $events = $this->indexBy($this->repository(Event::class)->matching(new Criteria()));
 
-        $form = $this->form(TicketForm::class, ['eventOptions' => array_map(function(Event $event) { return $event->getName();}, $events)]);
+        $form = $this->form(TicketForm::class, ['eventOptions' => array_map(function(Event $event) { return $event->getDescriptor()->getName();}, $events)]);
 
         if ($this->getRequest()->isPost()) {
             $form->setData($this->params()->fromPost());

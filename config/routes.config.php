@@ -329,6 +329,15 @@ $routes['attendance-admin'] = [
                         ]
                     ],
                 ],
+                'view' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/view/:eventId',
+                        'defaults' => [
+                            'action' => 'view',
+                        ],
+                    ],
+                ],
             ],
         ],
     ]

@@ -24,8 +24,8 @@
                         /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event $event */
                         ?>
                         <tr>
-                            <td><?= $event->getName()?></td>
-                            <td><?= $event->getDescription() ?></td>
+                            <td><a href="<?=$this->url('attendance-admin/events/view', ['eventId' => $event->getId()])?>"><?=$this->escapeHtml($event->getDescriptor()->getName())?></a></td>
+                            <td><?= $this->escapeHtml($event->getDescription())?></td>
                             <td><?= $event->getCapacity() ?></td>
                             <!-- @TODO add buttons for editing, adding tickets etc -->
                         </tr>

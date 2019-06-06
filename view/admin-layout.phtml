@@ -12,45 +12,95 @@
 
     <!-- Le styles -->
     <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
-        ->prependStylesheet($this->basePath('css/card.css'))
-        ->prependStylesheet($this->basePath('css/bootstrap-theme.min.css'))
-        ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
+        //->prependStylesheet($this->basePath('css/card.css'))
+        //->prependStylesheet($this->basePath('css/bootstrap-theme.min.css'))
+        //->prependStylesheet($this->basePath('css/bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('css/spur.min.css'))
+        ->prependStylesheet($this->basePath('css/tempusdominus-bootstrap-4.min.css'))
     ?>
 
     <!-- Scripts -->
     <?= $this->headScript()
-        ->prependFile($this->basePath('js/bootstrap.datetimepicker.min.js'))
+        ->prependFile($this->basePath('js/spur.js'))
+        ->prependFile($this->basePath('js/tempusdominus-bootstrap-4.min.js'))
         ->prependFile($this->basePath('js/bootstrap.min.js'))
         ->prependFile($this->basePath('js/jquery-3.1.0.min.js'))
         ->prependFile($this->basePath('js/moment.min.js'))
     ?>
-    <style>
-        body {
-            padding-bottom: 20px;
-            background-color: rgb(78, 161, 206);
-        }
-    </style>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 </head>
 <body>
 
-<div class="container">
-    <?php foreach(['info' => 'alert-info', 'error' => 'alert-danger', 'success' => 'alert-success', 'default' => 'alert-link', 'warning' => 'alert-warning'] as $namespace => $class):?>
-        <?= $this->flashMessenger()->renderCurrent($namespace, ['alert', $class]) ?>
-        <?= $this->flashMessenger()->render($namespace, ['alert', $class]) ?>
-    <?php endforeach?>
-    <div class="row">
-        <div class="col-md-2">
-            <div class="panel panel-default credit-card-box">
-                <div class="panel-heading"><h3 class="panel-title">Menu</h3></div>
-                <div class="panel-body">
-                    <?=$this->navigation('navigation')->menu()->setUlClass('nav nav-pils nav-stacked')->render();?>
+<div class="dash">
+    <div class="dash-nav dash-nav-dark">
+        <header>
+            <a href="#!" class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </a>
+            <a href="index.html" class="spur-logo"><i class="fas fa-bolt"></i> <span>Admin</span></a>
+        </header>
+        <nav class="dash-nav-list">
+        <?php $container = $this->navigation('navigation')->getContainer();?>
+            <?php foreach ($container as $page):?>
+                <?php if (!empty($page->getPages())):?>
+                    <div class="dash-nav-dropdown">
+                        <a href="#!" class="dash-nav-item dash-nav-dropdown-toggle">
+                            <i class="fas fa-chart-bar"></i> <?=$page->getLabel()?> </a>
+                        <div class="dash-nav-dropdown-menu">
+                            <a href="<?=$page->getHref()?>" class="dash-nav-dropdown-item"><?=$page->getLabel()?></a>
+                            <?php foreach ($page->getPages() as $childPage):?>
+                                <a href="<?=$childPage->getHref()?>" class="dash-nav-dropdown-item"><?=$childPage->getLabel()?></a>
+                            <?php endforeach;?>
+                        </div>
+                    </div>
+                <?php else:?>
+                    <a href="<?=$page->getHref()?>" class="dash-nav-item"><?=$page->getLabel()?></a>
+                <?php endif?>
+            <?php endforeach;?>
+        </nav>
+
+    </div>
+    <div class="dash-app">
+        <header class="dash-toolbar">
+            <a href="#!" class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </a>
+            <a href="#!" class="searchbox-toggle">
+                <i class="fas fa-search"></i>
+            </a>
+            <form class="searchbox" action="#!">
+                <a href="#!" class="searchbox-toggle"> <i class="fas fa-arrow-left"></i> </a>
+                <button type="submit" class="searchbox-submit"> <i class="fas fa-search"></i> </button>
+                <input type="text" class="searchbox-input" placeholder="type to search">
+            </form>
+            <div class="tools">
+                <a href="https://github.com/HackerThemes/spur-template" target="_blank" class="tools-item">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="#!" class="tools-item">
+                    <i class="fas fa-bell"></i>
+                    <i class="tools-item-count">4</i>
+                </a>
+                <div class="dropdown tools-item">
+                    <a href="#" class="" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                        <a class="dropdown-item" href="#!">Profile</a>
+                        <a class="dropdown-item" href="login.html">Logout</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-10">
-            <?= $this->content ?>
-        </div>
+        </header>
+        <main class="dash-content">
+            <?php foreach(['info' => 'alert-info', 'error' => 'alert-danger', 'success' => 'alert-success', 'default' => 'alert-link', 'warning' => 'alert-warning'] as $namespace => $class):?>
+                <?= $this->flashMessenger()->renderCurrent($namespace, ['alert', $class]) ?>
+                <?= $this->flashMessenger()->render($namespace, ['alert', $class]) ?>
+            <?php endforeach?>
+            <div class="container-fluid">
+                <?= $this->content ?>
+            </div>
+        </main>
     </div>
 </div>
 <?= $this->inlineScript() ?>

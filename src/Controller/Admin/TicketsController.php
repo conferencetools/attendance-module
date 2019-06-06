@@ -53,13 +53,15 @@ class TicketsController extends AppController
             }
         }
 
-        return new ViewModel(['form' => $form]);
+        $viewModel = new ViewModel(['form' => $form, 'action' => 'Create new Ticket']);
+        $viewModel->setTemplate('attendance/admin/form');
+        return $viewModel;
     }
 
     public function withdrawAction()
     {
         $ticketId = $this->params()->fromRoute('ticketId');
-        $form = $this->form(DateTimeForm::class, ['fieldLabel' => 'Withdraw from']);
+        $form = $this->form(DateTimeForm::class, ['fieldLabel' => 'Withdraw from', 'submitLabel' => 'Withdraw']);
 
         if ($this->getRequest()->isPost()) {
             $form->setData($this->params()->fromPost());
@@ -80,7 +82,7 @@ class TicketsController extends AppController
     public function putOnSaleAction()
     {
         $ticketId = $this->params()->fromRoute('ticketId');
-        $form = $this->form(DateTimeForm::class, ['fieldLabel' => 'On sale from']);
+        $form = $this->form(DateTimeForm::class, ['fieldLabel' => 'On sale from', 'submitLabel' => 'Put on Sale']);
 
         if ($this->getRequest()->isPost()) {
             $form->setData($this->params()->fromPost());

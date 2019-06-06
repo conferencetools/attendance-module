@@ -1,23 +1,20 @@
 <div class="row" >
-    <div class="col-md-8">
-        <form method="post">
-            <div class="panel panel-default credit-card-box">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <?=$this->action?>
-                    </h4>
+    <div class="col-md-12">
+        <div class="card spur-card">
+            <div class="card-header">
+                <div class="spur-card-icon">
+                    <i class="fas fa-chart-bar"></i>
                 </div>
-                <div class="panel-body">
-                    <div style="padding: 15px;">
-                        <?=$this->form($this->form)?>
-                    </div>
-                </div>
+                <div class="spur-card-title"> <?=$this->action?> </div>
             </div>
-        </form>
+            <div class="card-body ">
+                <?=$this->form($this->form)?>
+            </div>
+        </div>
     </div>
 </div>
 <script>
     $(function () {
-        $('input[type="datetime"]').datetimepicker({"format": "YYYY-MM-DDThh:mmP"});
+        $('input[type="datetime"]').datetimepicker({"format": "YYYY-MM-DDThh:mmP", "sideBySide": true});
     });
 </script>

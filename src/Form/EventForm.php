@@ -41,6 +41,13 @@ class EventForm extends Form
             'options' => [
                 'label' => 'Start date',
             ],
+            'attributes' => [
+                'class'=> 'datetimepicker-input',
+                'id' => "startsOn",
+                'data-toggle' => "datetimepicker",
+                'data-target' => "#startsOn",
+                'autocomplete' => 'off',
+            ],
         ]);
         $this->add([
             'type' => DateTime::class,
@@ -48,8 +55,24 @@ class EventForm extends Form
             'options' => [
                 'label' => 'End date',
             ],
+            'attributes' => [
+                'class'=> 'datetimepicker-input',
+                'id' => "endsOn",
+                'data-toggle' => "datetimepicker",
+                'data-target' => "#endsOn",
+                'autocomplete' => 'off',
+            ],
         ]);
 
-        $this->add(new Submit('create', ['label' => 'Create']));
+        $this->add([
+            'type' => Submit::class,
+            'name' => 'create',
+            'options' => [
+                'label' => 'Create',
+            ],
+            'attributes' => [
+                'class'=> 'btn-primary',
+            ]
+        ]);
     }
 }

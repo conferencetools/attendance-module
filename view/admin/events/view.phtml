@@ -1,10 +1,11 @@
 <?php
 /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event $event */
 $event = $this->event;
+$remainingCapacity = $event->getCapacity() - $this->stats['ticketsReleased'];
 ?>
     <div class="row dash-row">
         <div class="col-xl-4">
-            <div class="stats stats-primary">
+            <div class="stats <?=($remainingCapacity >= 0) ? 'stats-primary' : 'stats-warning'?>">
                 <h3 class="stats-title"> Tickets released </h3>
                 <div class="stats-content">
                     <div class="stats-icon">
@@ -13,8 +14,14 @@ $event = $this->event;
                     <div class="stats-data">
                         <div class="stats-number"><?=$this->stats['ticketsReleased']?></div>
                         <div class="stats-change">
-                            <span class="stats-percentage"><?=$event->getCapacity() - $this->stats['ticketsReleased']?></span>
-                            <span class="stats-timeframe">capacity unallocated</span>
+                            <?php if ($remainingCapacity >= 0):?>
+                                <span class="stats-percentage"><?=$remainingCapacity?></span>
+                                <span class="stats-timeframe">capacity unallocated</span>
+                            <?php else:?>
+                                <span class="stats-percentage"><?=-$remainingCapacity?></span>
+                                <span class="stats-timeframe">over capacity</span>
+                            <?php endif;?>
+
                         </div>
                     </div>
                 </div>

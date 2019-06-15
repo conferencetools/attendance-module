@@ -22,6 +22,7 @@ use ConferenceTools\Attendance\Form\DelegatesForm;
 use ConferenceTools\Attendance\Form\PaymentForm;
 use ConferenceTools\Attendance\Form\PurchaseForm;
 use ConferenceTools\Attendance\Handler\PaymentFailed;
+use ConferenceTools\Attendance\Service\TicketValidationFailed;
 use Doctrine\Common\Collections\Criteria;
 use Zend\View\Model\ViewModel;
 
@@ -31,7 +32,7 @@ class PurchaseController extends AppController
 
     public function indexAction()
     {
-        $tickets = $this->getTickets();
+        $tickets = $this->getTickets(true);
         $form = $this->form(PurchaseForm::class, ['tickets' => $tickets]);
 
         //@TODO if discount code in url fetch + validate it.
@@ -230,47 +231,11 @@ class PurchaseController extends AppController
         return new ViewModel(['purchase' => $purchase, 'discount' => $discount, 'tickets' => $this->getTickets(false), 'delegates' => $delegates]);
     }
 
-    /**
-     * @return Ticket[]
-     */
-    protected function getTickets($onlyOnSale = true): array
-    {
-        if ($this->tickets === null) {
-            $criteria = Criteria::create();
-            if ($onlyOnSale) {
-                $criteria->where(Criteria::expr()->eq('onSale', true));
-            }
-            $tickets = $this->repository(Ticket::class)->matching($criteria);
-            $ticketsIndexed = [];
-
-            foreach ($tickets as $ticket) {
-                $ticketsIndexed[$ticket->getId()] = $ticket;
-            }
-
-            $this->tickets = $ticketsIndexed;
-        }
-
-        return $this->tickets;
-    }
-
     private function validateTicketQuantity(array $quantities): bool
     {
-        $tickets = $this->getTickets();
-
-        $total = 0;
-        foreach ($quantities as $ticketId => $quantity) {
-            if ((int) $quantity > 0) { //filter out any rows which haven't been selected
-                $total += $quantity;
-
-                if (!isset($tickets[$ticketId]) || $tickets[$ticketId]->getRemaining() < $quantity) {
-                    $this->flashmessenger()->addErrorMessage('One or more of the tickets you selected has sold out or you have selected more than the quantity remaining');
-                    return false;
-                }
-            }
-        }
-
-        if ($total < 1) {
-            $this->flashmessenger()->addErrorMessage('Please select at least one ticket to purchase');
+        $result = $this->getTicketService()->validateTicketQuantity($quantities);
+        if ($result instanceof TicketValidationFailed) {
+            $this->flashMessenger()->addErrorMessage($result->getReason());
             return false;
         }
 
@@ -281,7 +246,7 @@ class PurchaseController extends AppController
     {
         $purchasedTickets = $purchase->getTickets();
         $maxDelegates = $purchase->getMaxDelegates();
-        $tickets = $this->getTickets();
+        $tickets = $this->getTickets(true);
         $valid = true;
 
         for ($i = 0; $i < $maxDelegates; $i++) {

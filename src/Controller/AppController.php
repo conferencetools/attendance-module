@@ -3,7 +3,9 @@
 namespace ConferenceTools\Attendance\Controller;
 
 use ConferenceTools\Attendance\Controller\Admin\PurchaseController;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
+use ConferenceTools\Attendance\Service\TicketService;
 use Doctrine\Common\Collections\Criteria;
 use Phactor\ReadModel\Repository;
 use Phactor\Zend\ControllerPlugin\MessageBus;
@@ -18,25 +20,14 @@ use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
  */
 abstract class AppController extends AbstractActionController
 {
-    protected $tickets;
+    protected $ticketsService;
 
     /**
      * @return Ticket[]
      */
-    protected function getTickets(): array
+    protected function getTickets($onlyOnSale = false): array
     {
-        if ($this->tickets === null) {
-            $tickets = $this->repository(Ticket::class)->matching(new Criteria());
-            $ticketsIndexed = [];
-
-            foreach ($tickets as $ticket) {
-                $ticketsIndexed[$ticket->getId()] = $ticket;
-            }
-
-            $this->tickets = $ticketsIndexed;
-        }
-
-        return $this->tickets;
+        return $this->getTicketService()->getTickets($onlyOnSale);
     }
 
     protected function indexBy(iterable $entities, string $by = 'getId'): array
@@ -47,5 +38,17 @@ abstract class AppController extends AbstractActionController
         }
 
         return $indexed;
+    }
+
+    protected function getTicketService(): TicketService
+    {
+        if (!isset($this->ticketsService)) {
+            $this->ticketsService = new TicketService(
+                $this->repository(Ticket::class),
+                $this->repository(Event::class)
+            );
+        }
+
+        return $this->ticketsService;
     }
 }

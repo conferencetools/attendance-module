@@ -19,4 +19,4 @@ modules:
     enabled:
         - \Helper\Functional
         - ZF2:
-              config: tests/functional/config/application.config.php
+              config: tests/3.functional/config/application.config.php

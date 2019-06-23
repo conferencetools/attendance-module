@@ -2,7 +2,6 @@
 $viewDir = __DIR__ . '/../view/';
 return [
     'attendance/layout' => $viewDir . 'layout.phtml',
-    'attendance/admin-layout' => $viewDir . 'admin-layout.phtml',
 
     'attendance/purchase/index' => $viewDir . 'purchase/index.phtml',
     'attendance/purchase/delegates' => $viewDir . 'purchase/delegates.phtml',

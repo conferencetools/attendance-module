@@ -2,10 +2,6 @@
 return [
     'default' => [
         [
-            'label' => 'Home',
-            'route' => 'attendance-admin',
-        ],
-        [
             'label' => 'Discounts',
             'route' => 'attendance-admin/discounts',
             'permission' => 'discounts',

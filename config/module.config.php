@@ -12,11 +12,6 @@ return [
         ]
     ],
     'controllers' => require __DIR__ . '/controllers.config.php',
-    'controller_plugins' => [
-        'factories' => [
-            'form' => \ConferenceTools\Attendance\Mvc\Controller\Plugin\FormFactory::class,
-        ],
-    ],
     'doctrine' => require __DIR__ . '/doctrine.config.php',
     'message_handlers' => require __DIR__ . '/message_handlers.config.php',
     'message_subscriptions' => require __DIR__ . '/message_subscriptions.config.php',

@@ -89,14 +89,12 @@ if (!function_exists('getflag')) {
 
 $routes['attendance-admin'] = [
     'type' => Literal::class,
-    'may_terminate' => true,
+    'may_terminate' => false,
     'options' => [
         'route' => '/admin',
         'defaults' => [
             'requiresAuth' => true,
-            'layout' => 'attendance/admin-layout',
-            'controller' => Controller\Admin\IndexController::class,
-            'action' => 'index'
+            'layout' => 'admin/layout',
         ]
     ],
     'child_routes' => [

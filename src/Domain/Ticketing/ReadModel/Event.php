@@ -19,6 +19,8 @@ class Event
     private $description;
     /** @ORM\Column(type="integer") */
     private $capacity;
+    /** @ORM\Column(type="integer") */
+    private $registered = 0;
     /** @ORM\Column(type="datetime") */
     private $startsOn;
     /** @ORM\Column(type="datetime") */
@@ -57,6 +59,21 @@ class Event
     public function getCapacity(): int
     {
         return $this->capacity;
+    }
+
+    public function getRemainingCapacity(): int
+    {
+        return $this->capacity - $this->registered;
+    }
+
+    public function increaseRegistered(int $by): void
+    {
+        $this->registered += $by;
+    }
+
+    public function decreaseRegistered(int $by): void
+    {
+        $this->registered -= $by;
     }
 
     public function getStartsOn(): \DateTime

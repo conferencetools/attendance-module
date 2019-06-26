@@ -4,6 +4,7 @@ namespace ConferenceTools\AttendanceTest\Service;
 
 use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Service\TicketService;
 use ConferenceTools\Attendance\Service\TicketValidationFailed;
@@ -22,13 +23,19 @@ class TicketServiceTest extends \Codeception\Test\Unit
         $ticketOnSale = new Ticket('1', 'event', new Descriptor('name', 'desc'), 5, Price::fromNetCost(100, 12));
         $ticketOnSale->onSale();
 
-        $repository = new InMemoryRepository();
-        $repository->add($ticket);
-        $repository->add($ticketOnSale);
+        $ticketsRepository = new InMemoryRepository();
+        $ticketsRepository->add($ticket);
+        $ticketsRepository->add($ticketOnSale);
+
+        $event = new Event('event', new Descriptor('name', 'desc'), 3, new \DateTime(), new \DateTime());
+
+        $eventsRepository = new InMemoryRepository();
+        $eventsRepository->add($event);
+
 
         $sut = new TicketService(
-            $repository,
-            new InMemoryRepository()
+            $ticketsRepository,
+            $eventsRepository
         );
 
         $result = $sut->validateTicketQuantity($quantities);
@@ -45,6 +52,7 @@ class TicketServiceTest extends \Codeception\Test\Unit
             [[], false, 'Please select at least one ticket to purchase'],
             [['1' => 0], false, 'Please select at least one ticket to purchase'],
             [['1' => 7], false, 'One or more of the tickets you selected has sold out or you have selected more than the quantity remaining'],
+            [['1' => 4], false, 'The tickets you have selected would put the event over capacity, please reduce the number of tickets you have selected'],
         ];
     }
 

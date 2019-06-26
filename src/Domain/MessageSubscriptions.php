@@ -14,6 +14,7 @@ use ConferenceTools\Attendance\Domain\Delegate\Event as DelegateEvent;
 use ConferenceTools\Attendance\Domain\Ticketing\Event as TicketingEvent;
 use ConferenceTools\Attendance\Domain\Purchasing\Event as PurchasingEvent;
 use ConferenceTools\Attendance\Domain\Payment\Event as PaymentEvent;
+use ConferenceTools\Attendance\Domain\Ticketing\EventProjector;
 use ConferenceTools\Attendance\Domain\Ticketing\Ticket;
 use ConferenceTools\Attendance\Domain\Ticketing\TicketProjector;
 
@@ -102,6 +103,7 @@ class MessageSubscriptions
             PurchasingEvent\TicketReservationExpired::class => [
                 TicketProjector::class,
                 Purchasing\Projector::class,
+                EventProjector::class,
             ],
             PurchasingEvent\TicketAllocatedToDelegate::class => [
                 Delegate\Delegate::class,
@@ -110,6 +112,7 @@ class MessageSubscriptions
             PurchasingEvent\TicketsReserved::class => [
                 TicketProjector::class,
                 Purchasing\Projector::class,
+                EventProjector::class,
             ],
             PurchasingEvent\PurchaseStartedBy::class => [
                 Purchasing\Projector::class,

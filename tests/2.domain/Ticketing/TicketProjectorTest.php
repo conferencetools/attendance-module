@@ -14,14 +14,14 @@ use Phactor\Test\ProjectorHelper;
 /**
  * @covers \ConferenceTools\Attendance\Domain\Ticketing\TicketProjector
  */
-class TicketsTest extends \Codeception\Test\Unit
+class TicketProjectorTest extends \Codeception\Test\Unit
 {
     /** @var ProjectorHelper */
     private $helper;
 
     public function _before()
     {
-        $this->helper = new ProjectorHelper(TicketProjector::class);
+        $this->helper = ProjectorHelper::fromClassName(TicketProjector::class);
     }
 
     public function testTicketsReleased()

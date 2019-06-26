@@ -112,4 +112,9 @@ class Ticket
     {
         $this->withdrawFrom = $when;
     }
+
+    public function getSold(): int
+    {
+        return $this->quantity - $this->remaining;
+    }
 }

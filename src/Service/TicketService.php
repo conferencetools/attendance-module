@@ -3,6 +3,7 @@
 namespace ConferenceTools\Attendance\Service;
 
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use Doctrine\Common\Collections\Criteria;
 use Phactor\ReadModel\Repository;
 
@@ -16,6 +17,26 @@ class TicketService
     {
         $this->ticketsRepository = $ticketsRepository;
         $this->eventsRepository = $eventsRepository;
+    }
+
+    public function getTicketsForPurchasePage(): array
+    {
+        $tickets = $this->getTickets(true);
+
+        $ticketsByEvent = [];
+        $eventIds = [];
+
+        foreach ($tickets as $ticket) {
+            /** @var Ticket $ticket */
+            $eventId = $ticket->getEventId();
+            $eventIds[$eventId] = $eventId;
+            $ticketsByEvent[$eventId][] = $ticket;
+        }
+
+        $events = $this->eventsRepository->matching(Criteria::create()->where(Criteria::expr()->in('id', $eventIds)));
+        $events = $this->indexBy($events);
+        uasort($events, function (Event $a, Event $b) { return $a->getStartsOn() <=> $b->getStartsOn();} );
+        return ['tickets' => $ticketsByEvent, 'events' => $events];
     }
 
     public function getTickets($onlyOnSale = false): array

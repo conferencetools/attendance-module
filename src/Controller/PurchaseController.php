@@ -32,6 +32,7 @@ class PurchaseController extends AppController
 
     public function indexAction()
     {
+        $events = $this->getTicketService()->getTicketsForPurchasePage();
         $tickets = $this->getTickets(true);
         $form = $this->form(PurchaseForm::class, ['tickets' => $tickets]);
 
@@ -85,7 +86,7 @@ class PurchaseController extends AppController
             }
         }
         $form->prepare();
-        return new ViewModel(['tickets' => $tickets, 'form' => $form]);
+        return new ViewModel(['tickets' => $tickets, 'events' => $events, 'form' => $form]);
     }
 
     public function delegatesAction()

@@ -18,7 +18,8 @@
     "ext-json": "*",
     "zendframework/zend-mail": "^2.10@dev",
     "codeception/codeception": "^3.0",
-    "chillerlan/php-qrcode": "^2.0"
+    "chillerlan/php-qrcode": "^2.0",
+    "conferencetools/admin-module": "dev-master"
   },
   "autoload": {
     "psr-4": {

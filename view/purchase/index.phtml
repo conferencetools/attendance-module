@@ -18,29 +18,39 @@
                                     </tr>
                                 <?php
                                 else:
-                                    foreach ($this->tickets as $id => $ticket):
+                                    foreach ($this->events['events'] as $event):
+                                        ?>
+                                    <tr>
+                                        <td colspan="2">
+                                            <?= $event->getDescriptor()->getName() ?>
+                                            <?php if ( ! empty($event->getDescriptor()->getDescription())): ?>
+                                                <span class="help-block"><?= $event->getDescriptor()->getDescription() ?></span>
+                                            <?php endif ?>
+                                            <?=$event->getStartsOn()->format('l \t\h\e jS \o\f F, Y h:i')?> until <?=$event->getEndsOn()->format('l \t\h\e jS \o\f F, Y h:i')?>
+                                        </td>
+                                    </tr>
+                                    <?php foreach ($this->tickets as $id => $ticket):
                                         /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket $ticket */
                                         ?>
-                                        <?php if ($ticket->getRemaining() > 0):?>
+                                        <?php if ($ticket->getRemaining() > 0 && $ticket->getEventId() === $event->getId()):?>
                                             <tr>
                                                 <td class="col-md-9 col-xs-6">
-                                                    <span class="col-xs-12 col-md-6"><?= $ticket->getDescriptor()->getName() ?></span>
-                                                    <span class="hidden-xs col-md-6">
-                                                        <?= $ticket->getRemaining() ?> remaining
-                                                    </span>
+                                                    <span style="margin-top:5px; margin-bottom: 10px;" class="col-xs-12 col-md-3"><?= $ticket->getDescriptor()->getName() ?></span>
                                                     <?php if ( ! empty($ticket->getDescriptor()->getDescription())): ?>
-                                                        <span class="help-block col-xs-12 col-md-12"><?= $ticket->getDescriptor()->getDescription() ?></span>
+                                                        <span class="help-block col-xs-12 col-md-9"><?= $ticket->getDescriptor()->getDescription() ?></span>
                                                     <?php endif ?>
                                                 </td>
                                                 <td class="col-md-3 col-xs-6">
-                                                    <span class="col-xs-6"><?= $this->moneyFormat($ticket->getPrice()) ?></span>
+                                                    <span style="margin-top:5px; margin-bottom: 10px;" class="col-xs-6"><?= $this->moneyFormat($ticket->getPrice()) ?></span>
                                                     <span class="col-xs-6">
                                                         <?=$this->formInput($this->form->get('quantity')->get($ticket->getId()))?>
+                                                        <span class="help-block"><?= $ticket->getRemaining() ?> remaining</span>
                                                     </span>
                                                 </td>
                                             </tr>
                                         <?php endif; ?>
                                     <?php
+                                    endforeach;
                                     endforeach;
                                 endif;
                                 ?>

@@ -37,7 +37,7 @@ $remainingCapacity = $event->getCapacity() - $this->stats['ticketsReleased'];
                     <div class="stats-data">
                         <div class="stats-number"><?=$this->stats['ticketsSold']?></div>
                         <div class="stats-change">
-                            <span class="stats-percentage">0</span>
+                            <span class="stats-percentage"><?=$this->stats['ticketsRemaining']?></span>
                             <span class="stats-timeframe">remaining</span>
                         </div>
                     </div>
@@ -55,7 +55,7 @@ $remainingCapacity = $event->getCapacity() - $this->stats['ticketsReleased'];
                         <div class="stats-number">0</div>
                         <div class="stats-change">
                             <span class="stats-percentage">0</span>
-                            <span class="stats-timeframe">remaining</span>
+                            <span class="stats-timeframe">purchases</span>
                         </div>
                     </div>
                 </div>

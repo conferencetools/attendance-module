@@ -33,7 +33,7 @@ class TicketService
             $ticketsByEvent[$eventId][] = $ticket;
         }
 
-        $events = $this->eventsRepository->matching(Criteria::create()->where(Criteria::expr()->in('id', $eventIds)));
+        $events = $this->eventsRepository->matching(Criteria::create()->where(Criteria::expr()->in('id', $eventIds))->orderBy(['startsOn' => Criteria::ASC]));
         $events = $this->indexBy($events);
         uasort($events, function (Event $a, Event $b) { return $a->getStartsOn() <=> $b->getStartsOn();} );
         return ['tickets' => $ticketsByEvent, 'events' => $events];

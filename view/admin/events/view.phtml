@@ -35,7 +35,7 @@ $remainingCapacity = $event->getCapacity() - $this->stats['ticketsReleased'];
                         <i class="fas fa-cart-arrow-down"></i>
                     </div>
                     <div class="stats-data">
-                        <div class="stats-number">0</div>
+                        <div class="stats-number"><?=$this->stats['ticketsSold']?></div>
                         <div class="stats-change">
                             <span class="stats-percentage">0</span>
                             <span class="stats-timeframe">remaining</span>

@@ -31,7 +31,8 @@ class EventsController extends AppController
             'event' => $event,
             'tickets' => $tickets,
             'stats' => [
-                'ticketsReleased' => array_reduce($tickets->toArray(), function (int $soFar, Ticket $ticket) { return $soFar + $ticket->getQuantity();}, 0)
+                'ticketsReleased' => array_reduce($tickets->toArray(), function (int $soFar, Ticket $ticket) { return $soFar + ($ticket->isOnSale() ? $ticket->getQuantity() : $ticket->getSold());}, 0),
+                'ticketsSold' => array_reduce($tickets->toArray(), function (int $soFar, Ticket $ticket) { return $soFar + $ticket->getSold();}, 0),
             ]
         ]);
     }

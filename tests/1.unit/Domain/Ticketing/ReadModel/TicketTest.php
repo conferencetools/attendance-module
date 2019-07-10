@@ -75,6 +75,14 @@ class TicketTest extends \Codeception\Test\Unit
         $this->tester->assertEquals($when, $sut->getWithdrawFrom());
     }
 
+    public function testGetSold()
+    {
+        $sut = $this->newTicket();
+        $sut->decreaseRemainingBy(5);
+
+        $this->tester->assertEquals(5, $sut->getSold());
+    }
+
     private function newTicket(): Ticket
     {
         $ticketId = 'ticketId';

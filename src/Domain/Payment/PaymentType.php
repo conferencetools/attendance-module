@@ -3,14 +3,27 @@
 
 namespace ConferenceTools\Attendance\Domain\Payment;
 use JMS\Serializer\Annotation as Jms;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Embeddable()
+ */
 class PaymentType
 {
-    /** @Jms\Type("string")*/
+    /**
+     * @Jms\Type("string")
+     * @ORM\Column(type="string")
+     */
     private $name;
-    /** @Jms\Type("int") */
+    /**
+     * @Jms\Type("int")
+     * @ORM\Column(type="integer")
+     */
     private $paymentTimeout;
-    /** @Jms\Type("boolean") */
+    /**
+     * @ORM\Column(type="boolean")
+     * @Jms\Type("boolean")
+     */
     private $manualConfirmation;
 
     public function __construct(string $name, int $paymentTimeout, bool $manualConfirmation)

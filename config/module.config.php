@@ -15,7 +15,10 @@ return [
     'doctrine' => require __DIR__ . '/doctrine.config.php',
     'message_handlers' => require __DIR__ . '/message_handlers.config.php',
     'message_subscriptions' => require __DIR__ . '/message_subscriptions.config.php',
-    'message_subscription_providers' => [\ConferenceTools\Attendance\Domain\MessageSubscriptions::class],
+    'message_subscription_providers' => [
+        \ConferenceTools\Attendance\Domain\MessageSubscriptions::class,
+        \ConferenceTools\Attendance\Domain\Payment\MessageSubscriptions::class,
+    ],
     'navigation' => require __DIR__ . '/navigation.config.php',
     'router' => [
         'routes' => require __DIR__ . '/routes.config.php',

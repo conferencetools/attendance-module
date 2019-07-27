@@ -12,16 +12,16 @@ class PaymentType
 {
     /**
      * @Jms\Type("string")
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $name;
     /**
      * @Jms\Type("int")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $paymentTimeout;
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      * @Jms\Type("boolean")
      */
     private $manualConfirmation;

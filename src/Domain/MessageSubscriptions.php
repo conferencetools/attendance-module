@@ -56,6 +56,9 @@ class MessageSubscriptions
             PurchasingCommand\ApplyDiscount::class => [
                 Purchasing\Purchase::class,
             ],
+            Purchasing\Command\Checkout::class => [
+                Purchasing\Purchase::class,
+            ],
 
             TicketingCommand\ReleaseTicket::class => [
                 Ticket::class,
@@ -123,6 +126,9 @@ class MessageSubscriptions
             Purchasing\Event\DiscountApplied::class => [
                 Purchasing\Projector::class,
             ],
+            Purchasing\Event\PurchaseCompleted::class => [
+                Purchasing\Projector::class,
+            ],
 
             TicketingEvent\TicketsOnSale::class => [
                 TicketProjector::class,
@@ -147,6 +153,9 @@ class MessageSubscriptions
                 Purchasing\Purchase::class,
                 Purchasing\Projector::class,
                 Delegate\Projector::class,
+            ],
+            Payment\Event\PaymentRaised::class => [
+                Purchasing\Purchase::class,
             ]
         ];
     }

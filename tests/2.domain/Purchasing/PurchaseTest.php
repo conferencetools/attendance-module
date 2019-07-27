@@ -3,13 +3,21 @@
 namespace ConferenceTools\AttendanceTest\Domain\Purchasing;
 
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
+use ConferenceTools\Attendance\Domain\Payment\Event\PaymentConfirmed;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
+use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMethodSelected;
+use ConferenceTools\Attendance\Domain\Payment\Event\PaymentRaised;
+use ConferenceTools\Attendance\Domain\Payment\Event\PaymentTimedOut;
+use ConferenceTools\Attendance\Domain\Payment\PaymentType;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\ApplyDiscount;
+use ConferenceTools\Attendance\Domain\Purchasing\Command\Checkout;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\CheckPurchaseTimeout;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\DiscountApplied;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\OutstandingPaymentCalculated;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCheckedOut;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCompleted;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseStartedBy;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketAllocatedToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
@@ -82,6 +90,16 @@ class PurchaseTest extends \Codeception\Test\Unit
         $this->helper->expectNoMoreMessages();
     }
 
+    public function testTimeoutPurchaseForWhichAPaymentHasBeenRaised()
+    {
+        $messages = $this->purchaseHasStarted();
+        $messages[] = new PaymentRaised('paymentId', $this->actorId, Price::fromNetCost(300, 20));
+        $messages[] = new PaymentMethodSelected('paymentId', new PaymentType('invoice', 86400, true));
+        $this->helper->given($messages);
+        $this->helper->when(new CheckPurchaseTimeout($this->actorId));
+        $this->helper->expectNoMoreMessages();
+    }
+
     public function testAssignTicketToDelegateThatsAlreadyAssigned()
     {
         $messages = $this->purchaseHasStarted();
@@ -89,6 +107,35 @@ class PurchaseTest extends \Codeception\Test\Unit
         $this->helper->given($messages);
         $this->helper->when(new AllocateTicketToDelegate('delegateId', $this->actorId, 'ticketId'));
         $this->helper->expectNoMoreMessages();
+    }
+
+    public function testTimeoutPurchaseWhenPaymentTimesOut()
+    {
+        $this->markTestSkipped('Test needs subscription support to work');
+        $messages = $this->purchaseHasStarted();
+        $messages[] = new PaymentRaised('paymentId', $this->actorId, Price::fromNetCost(300, 20));
+        $this->helper->given($messages);
+        $this->helper->when(new PaymentTimedOut('paymentId'));
+        $this->helper->expect(new TicketReservationExpired($this->actorId, 'ticketId', 1));
+    }
+
+    public function testPaymentConfirmed()
+    {
+        $this->markTestSkipped('Test needs subscription support to work');
+        $messages = $this->purchaseHasStarted();
+        $messages[] = new PaymentRaised('paymentId', $this->actorId, Price::fromNetCost(300, 20));
+        $messages[] = new PaymentMethodSelected('paymentId', new PaymentType('invoice', 86400, true));
+        $this->helper->given($messages);
+        $this->helper->when(new PaymentConfirmed('paymentId'));
+        $this->helper->expect(new PurchaseCompleted($this->actorId));
+    }
+
+    public function testCheckoutPurchase()
+    {
+        $messages = $this->purchaseHasStarted();
+        $this->helper->given($messages);
+        $this->helper->when(new Checkout($this->actorId));
+        $this->helper->expect(new PurchaseCheckedOut($this->actorId, Price::fromNetCost(10000, 20)));
     }
 
     private function purchaseHasStarted(): array

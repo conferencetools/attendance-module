@@ -1,0 +1,122 @@
+<?php
+
+?>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card spur-card">
+            <div class="card-header">
+                <div class="spur-card-icon">
+                    <i class="fas fa-table"></i>
+                </div>
+                <div class="spur-card-title">Details</div>
+            </div>
+            <div class="card-body ">
+                <dl>
+                    <dt>Email</dt><dd><?=$this->escapeHtml($this->purchase->getEmail())?></dd>
+                    <dt>Status</dt><dd><?=($this->purchase->isPaid() ? 'Completed' : 'In Progress')?></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card spur-card">
+            <div class="card-header">
+                <div class="spur-card-icon">
+                    <i class="fas fa-table"></i>
+                </div>
+                <div class="spur-card-title">Payments</div>
+            </div>
+            <div class="card-body ">
+                <?php if (count($this->payments) === 0):?>
+                    No payments have been raised on this purchase.
+                <?php else:?>
+                    <table class="table table-hover table-in-card">
+                        <thead>
+                        <tr>
+                            <th scope="col">Status</th>
+                            <th scope="col">Due by</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($this->payments as $id => $payment):
+                            /** @var \ConferenceTools\Attendance\Domain\Payment\ReadModel\Payment $payment */
+                            ?>
+                            <tr>
+                                <td><?= ucfirst(strtolower($payment->getStatus()))?></td>
+                                <td>???</td>
+                                <td><?= $this->moneyFormat($payment->getAmount()) ?></td>
+                                <td>
+                                    <?php if ($payment->isPending()): ?>
+                                        <a class="btn btn-danger" href="<?=$this->url('attendance-admin/purchase/payment-received', ['paymentId' => $payment->getId(), 'purchaseId' => $payment->getPurchaseId()])?>">
+                                            Payment Received
+                                        </a>
+                                    <?php endif;?>
+                                </td>
+                            </tr>
+                        <?php
+                        endforeach;?>
+                        </tbody>
+                    </table>
+                <?php endif;?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card spur-card">
+            <div class="card-header">
+                <div class="spur-card-icon">
+                    <i class="fas fa-table"></i>
+                </div>
+                <div class="spur-card-title">Delegates</div>
+            </div>
+            <div class="card-body ">
+                <?php if (count($this->delegates) === 0):?>
+                    No delegates have been added to this purchase.
+                <?php else:?>
+                    <table class="table table-hover table-in-card">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Delegate type</th>
+                            <th scope="col">Tickets</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($this->delegates as $id => $delegate):
+                            /** @var \ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate $delegate */
+                            ?>
+                            <tr>
+                                <td><?= $delegate->getName()?></td>
+                                <td><?= ucfirst(strtolower($delegate->getDelegateType()))?></td>
+                                <td>
+                                    <?php
+                                    $tickets = $this->tickets;
+                                    $delegateTickets = array_map(function (string $ticketId) use ($tickets) {return $tickets[$ticketId]->getDescriptor()->getName();}, $delegate->getTickets());
+                                    ?>
+                                    <?= implode(', ', $delegateTickets) ?>
+
+                                </td>
+                                <td>
+                                    <!--@TODO add edit button/form for delegates details-->
+                                    <!--@TODO add resend ticket button for delegate-->
+                                    <!--@TODO add regenerate id button for delegate-->
+                                </td>
+                            </tr>
+                        <?php
+                        endforeach;?>
+                        </tbody>
+                    </table>
+                <?php endif;?>
+            </div>
+        </div>
+    </div>
+</div>

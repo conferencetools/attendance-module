@@ -39,9 +39,15 @@ return [
             ],
         ],
         [
-            'label' => 'Create Purchase',
+            'label' => 'Purchases',
             'route' => 'attendance-admin/purchase',
             'permission' => 'orders',
+            'pages' => [
+                [
+                    'label' => 'Create new',
+                    'route' => 'attendance-admin/purchase/create',
+                ],
+            ],
         ],
         [
             'label' => 'Check in delegates',

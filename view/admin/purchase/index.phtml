@@ -1,18 +1,47 @@
-<div class="row" >
-    <div class="col-md-8">
-        <form method="get" action="<?=$this->url('attendance-admin/purchase/delegates')?>">
-            <div class="panel panel-default credit-card-box">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        Create Purchase
-                    </h4>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card spur-card">
+            <div class="card-header">
+                <div class="spur-card-icon">
+                    <i class="fas fa-table"></i>
                 </div>
-                <div class="panel-body">
-                    <div style="padding: 15px;">
-                        <?=$this->form($this->form)?>
-                    </div>
-                </div>
+                <div class="spur-card-title">Purchases</div>
             </div>
-        </form>
+            <div class="card-body ">
+                <?php if (count($this->purchases) === 0):?>
+                    No purchases made yet.
+                <?php else:?>
+                    <table class="table table-hover table-in-card">
+                        <thead>
+                        <tr>
+                            <th scope="col">Email</th>
+                            <th scope="col">Paid</th>
+                            <th scope="col">Value</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($this->purchases as $id => $purchase):
+                            /** @var \ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase $purchase */
+                            ?>
+                            <tr>
+                                <td>
+                                    <a href="<?=$this->url('attendance-admin/purchase/view', ['purchaseId' => $purchase->getId()])?>">
+                                        <?= $this->escapeHtml($purchase->getEmail())?>
+                                    </a>
+                                </td>
+                                <td><?= $purchase->isPaid() ? 'Yes' : 'No'?></td>
+                                <td><?= $this->moneyFormat($purchase->getTotal()) ?></td>
+                                <td>
+
+                                </td>
+                            </tr>
+                        <?php
+                        endforeach;?>
+                        </tbody>
+                    </table>
+                <?php endif;?>
+            </div>
+        </div>
     </div>
 </div>

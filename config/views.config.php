@@ -20,6 +20,7 @@ return [
     'attendance/admin/discounts/index' => $viewDir . 'admin/discounts/index.phtml',
     'attendance/admin/purchase/delegates' => $viewDir . 'admin/purchase/delegates.phtml',
     'attendance/admin/purchase/index' => $viewDir . 'admin/purchase/index.phtml',
+    'attendance/admin/purchase/view' => $viewDir . 'admin/purchase/view.phtml',
     'attendance/admin/reports/index' => $viewDir . 'admin/reports/index.phtml',
     'attendance/admin/reports/report' => $viewDir . 'admin/reports/report.phtml',
     'attendance/admin/confirmation-form' => $viewDir . 'admin/confirmation-form.phtml',

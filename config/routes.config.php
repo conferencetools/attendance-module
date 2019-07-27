@@ -110,6 +110,15 @@ $routes['attendance-admin'] = [
             ],
             'may_terminate' => true,
             'child_routes' => [
+                'create' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/create',
+                        'defaults' => [
+                            'action' => 'create',
+                        ],
+                    ],
+                ],
                 'delegates' => [
                     'type' => Literal::class,
                     'options' => [
@@ -118,7 +127,25 @@ $routes['attendance-admin'] = [
                             'action' => 'delegates',
                         ],
                     ],
-                ]
+                ],
+                'view' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:purchaseId/view',
+                        'defaults' => [
+                            'action' => 'view',
+                        ],
+                    ],
+                ],
+                'payment-received' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:purchaseId/payment-received/:paymentId',
+                        'defaults' => [
+                            'action' => 'payment-received',
+                        ],
+                    ],
+                ],
             ]
         ],
         'checkin' => [

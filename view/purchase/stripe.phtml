@@ -1,0 +1,137 @@
+<?php
+
+$this->headScript()
+    //->appendFile('https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js')
+    //->appendFile('https://cdnjs.cloudflare.com/ajax/libs/jquery.payment/1.2.3/jquery.payment.min.js')
+    ->appendFile('https://js.stripe.com/v3/');
+    //->appendScript($this->stripeKey());
+    //->appendFile('/js/card.js');
+
+$this->headLink()->appendStylesheet('/css/card.css');
+?>
+
+<? //$this->render('tickets/ticket/_orderInformation', ['purchase' => $this->purchase]) ?>
+<div class="row">
+    <div class="col-md-6 col-xs-12">
+        <form id="payment-form" method="post"></form>
+
+        <div class="panel panel-default credit-card-box">
+            <div class="panel-heading display-table" >
+                <div class="row display-tr" >
+                    <h3 class="panel-title display-td" >Purchase Information</h3>
+                    <div class="display-td" ></div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <?php /*foreach ($this->purchase->getTickets() as $ticketId => $quantity): ?>
+                    <div class="row">
+                        <span class="col-xs-12 col-md-8"><?= $this->tickets[$ticketId]->getDescriptor()->getName() ?></span>
+                        <span class="col-xs-12 col-md-4"><?= $quantity ?></span>
+                        <?php if ( ! empty($this->tickets[$ticketId]->getDescriptor()->getDescription())): ?>
+                            <span class="help-block col-xs-12 col-md-12"><?= $this->tickets[$ticketId]->getDescriptor()->getDescription() ?></span>
+                        <?php endif ?>
+                    </div>
+                <?php endforeach;*/ ?>
+                <hr />
+                <div class="row">
+                    <span class="col-xs-8"><strong>Sub Total</strong></span>
+                    <span class="col-xs-4"><?= $this->moneyFormat($this->purchase->getTotal(), true) ?></span>
+                </div>
+                <?php if ($this->discount):?>
+                    <div class="row">
+                        <span class="col-xs-8"><strong>Discount applied</strong></span>
+                        <span class="col-xs-4"><?= $this->discount->getName() ?></span>
+                    </div>
+                <?php endif;?>
+                <div class="row">
+                    <span class="col-xs-8"><strong>VAT</strong></span>
+                    <span class="col-xs-4"><?= $this->moneyFormat($this->purchase->getTotal()->getTax()) ?></span>
+                </div>
+                <div class="row">
+                    <span class="col-xs-8"><strong>Total</strong></span>
+                    <span class="col-xs-4"><?= $this->moneyFormat($this->purchase->getTotal()) ?></span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xs-12">
+        <div class="panel panel-default credit-card-box">
+            <div class="panel-heading display-table" >
+                <div class="row display-tr" >
+                    <h3 class="panel-title display-td" >Payment Details</h3>
+                    <div class="display-td" ></div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <form role="form" id="payment-information-form" method="POST" action="javascript:void(0);">
+                    <div class="row">
+                        <div class="col-xs-12">
+                        <label for="#card-element">Credit or Debit card</label>
+                        <div id="card-element" class="form-control"></div>
+                        </div>
+                    </div>
+                    <div class="row" style="display:none;">
+                        <div class="col-xs-12">
+                            <p class="payment-errors"></p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="form-group col-md-offset-10 col-md-2 col-xs-offset-6 col-xs-2">
+        <button id="card-button" type="submit" class="btn btn-default">Complete Purchase</button>
+    </div>
+</div>
+<script>
+
+    var stripe = Stripe('pk_test_7Up68KxainTwEsy826jsZ8BK');
+    var elements = stripe.elements();
+    var card = elements.create('card');
+    var clientSecret = '<?=$this->stripePayment->getClientSecret()?>';
+
+    // Add an instance of the card UI component into the `card-element` <div>
+    card.mount('#card-element');
+
+    var $form = $('#payment-information-form');
+    var submitPaymentButton = $('#card-button');
+    var delegateForm = $('#payment-form');
+    var stripeTokenElement = delegateForm.find('input[name="stripe_token"]');
+    submitPaymentButton.on('click', payWithStripe);
+
+    /* If you're using Stripe for payments */
+    function payWithStripe(e) {
+
+        e.preventDefault();
+        function stripeResponseHandler(response) {console.log(response)
+            if (response.error) {
+                /* Visual feedback */
+                submitPaymentButton.html('Try again').prop('disabled', false);
+                /* Show Stripe errors on the form */
+                $form.find('.payment-errors').text(response.error.message);
+                $form.find('.payment-errors').closest('.row').show();
+            } else {
+                /* Visual feedback */
+                submitPaymentButton.html('Processing <i class="fa fa-spinner fa-pulse"></i>');
+                /* Hide Stripe errors on the form */
+                $form.find('.payment-errors').closest('.row').hide();
+                $form.find('.payment-errors').text("");
+                delegateForm.submit();
+            }
+        }
+
+        /* Visual feedback */
+        submitPaymentButton.html('Validating <i class="fa fa-spinner fa-pulse"></i>').prop('disabled', true).removeClass('btn-success');
+
+        stripe.handleCardPayment(
+            clientSecret, card, /*{
+                payment_method_data: {
+                    billing_details: {name: cardholderName.value}
+                }
+            }*/
+        ).then(stripeResponseHandler);
+    }
+</script>

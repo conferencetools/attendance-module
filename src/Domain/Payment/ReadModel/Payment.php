@@ -74,6 +74,10 @@ class Payment
 
     public function getPaymentMethod(): ?PaymentType
     {
+        if ($this->status === PaymentModel::STATUS_RAISED) {
+            return null;
+        }
+
         return $this->paymentMethod;
     }
 }

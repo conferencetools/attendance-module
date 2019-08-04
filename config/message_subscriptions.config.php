@@ -9,4 +9,7 @@ return [
     \ConferenceTools\Attendance\Domain\Delegate\Command\SendTicketEmail::class => [
         \ConferenceTools\Attendance\Handler\EmailTicket::class,
     ],
+    \ConferenceTools\Attendance\Domain\Payment\Event\PaymentMethodSelected::class => [
+        \ConferenceTools\Attendance\PaymentProvider\StripePaymentHandler::class,
+    ],
 ];

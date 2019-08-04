@@ -26,6 +26,11 @@ return [
             'cache' => 'array',
             'paths' => [__DIR__ . '/../src/Domain/Delegate']
         ],
+        'stripe' => [
+            'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
+            'cache' => 'array',
+            'paths' => [__DIR__ . '/../src/PaymentProvider']
+        ],
         'orm_default' => [
             'drivers' => [
                 'ConferenceTools\\Attendance\\Domain\\Ticketing' => 'ticketing',
@@ -33,6 +38,7 @@ return [
                 'ConferenceTools\\Attendance\\Domain\\Payment' => 'payments',
                 'ConferenceTools\\Attendance\\Domain\\Purchasing' => 'purchasing',
                 'ConferenceTools\\Attendance\\Domain\\Delegate' => 'delegates',
+                'ConferenceTools\\Attendance\\PaymentProvider' => 'stripe',
             ]
         ]
     ],

@@ -18,5 +18,6 @@ return [
         \ConferenceTools\Attendance\Handler\StripePaymentHandler::class => \ConferenceTools\Attendance\Handler\StripePaymentHandlerFactory::class,
         \ConferenceTools\Attendance\Handler\EmailPurchase::class => \ConferenceTools\Attendance\Handler\EmailPurchaseFactory::class,
         \ConferenceTools\Attendance\Handler\EmailTicket::class => \ConferenceTools\Attendance\Handler\EmailTicketFactory::class,
+        \ConferenceTools\Attendance\PaymentProvider\StripePaymentHandler::class => \ConferenceTools\Attendance\PaymentProvider\StripePaymentHandlerFactory::class
     ]
 ];

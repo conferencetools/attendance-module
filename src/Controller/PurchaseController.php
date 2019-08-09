@@ -10,9 +10,11 @@ use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountCode;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType;
+use ConferenceTools\Attendance\Domain\Payment\Command\ConfirmPayment;
 use ConferenceTools\Attendance\Domain\Payment\Command\ProvidePaymentDetails;
 use ConferenceTools\Attendance\Domain\Payment\Command\SelectPaymentMethod;
 use ConferenceTools\Attendance\Domain\Payment\Command\TakePayment;
+use ConferenceTools\Attendance\Domain\Payment\Event\PaymentConfirmed;
 use ConferenceTools\Attendance\Domain\Payment\PaymentType;
 use ConferenceTools\Attendance\Domain\Payment\ReadModel\Payment;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
@@ -29,8 +31,12 @@ use ConferenceTools\Attendance\Form\PurchaseForm;
 use ConferenceTools\Attendance\Handler\PaymentFailed;
 use ConferenceTools\Attendance\PaymentProvider\StripePayment;
 use ConferenceTools\Attendance\PaymentProvider\StripeViewProvider;
+use ConferenceTools\Attendance\PaymentProvider\Webhook\CreateWebhook;
+use ConferenceTools\Attendance\PaymentProvider\Webhook\Webhook;
+use ConferenceTools\Attendance\Service\StripeSignatureValidator;
 use ConferenceTools\Attendance\Service\TicketValidationFailed;
 use Doctrine\Common\Collections\Criteria;
+use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ViewModel;
 
@@ -40,6 +46,7 @@ class PurchaseController extends AppController
 
     public function indexAction()
     {
+        //$this->messageBus()->fire(new CreateWebhook('attendance/purchase/stripe-webhook', 'https://85ae60d3.ngrok.io'));
         $events = $this->getTicketService()->getTicketsForPurchasePage();
         $tickets = $this->getTickets(true);
         $form = $this->form(PurchaseForm::class, ['tickets' => $tickets]);
@@ -211,6 +218,41 @@ class PurchaseController extends AppController
         return $paymentProvider->getView($purchase, $payment);
     }
 
+    public function confirmPaymentAction()
+    {
+        //Called by stripe
+        /** @var Request $request */
+        $request = $this->getRequest();
+        if (!($request instanceof Request)) {
+            throw new \RuntimeException('Cannot call from console');
+        }
+        $payload = $request->getContent();
+        $signature = $request->getHeader('STRIPE_SIGNATURE')->getFieldValue();
+
+        $route = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+
+        /** @var Webhook $webhook */
+        $webhook = $this->repository(Webhook::class)->get($route);
+
+        StripeSignatureValidator::verifyHeader($payload, $signature, $webhook->getSecret(), 300);
+        $messages[] = 'Signature valid';
+
+        $data = json_decode($payload, true);
+        $messages[] = $data['type'];
+        if ($data['type'] === 'payment_intent.succeeded') {
+            $messages[] = $data['data']['object']['metadata'];
+            if (isset($data['data']['object']['metadata']['paymentId'])) {
+                $this->messageBus()->fire(new ConfirmPayment($data['data']['object']['metadata']['paymentId']));
+            } // if it's not set we may have to fall back to loading the stripe payment to pull the payment id out.
+        } // should we also deal with payment_intent.failed; trigger an error which prompts the user to enter details again?
+
+        $viewModel = new ViewModel(['messages' => $messages]);
+        $viewModel->setTemplate('attendance/purchase/stripe-webhook');
+        $viewModel->setTerminal(true);
+
+        return $viewModel;
+    }
+
     public function completeAction()
     {
         $purchaseId = $this->params()->fromRoute('purchaseId');
@@ -312,7 +354,7 @@ class PurchaseController extends AppController
     public function amIInTheRightPlace(MvcEvent $event)
     {
         $action = $event->getRouteMatch()->getParam('action');
-        if ($action === 'index') {
+        if ($action === 'index' || $action === 'confirm-payment') {
             return;
         }
 
@@ -328,6 +370,10 @@ class PurchaseController extends AppController
 
         if ($purchase->isPaid() && $action !== 'complete') {
             return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $purchaseId]);
+        }
+
+        if ($purchase->isPaid() && $action === 'complete') {
+            return;
         }
 
         if ($action === 'payment') {

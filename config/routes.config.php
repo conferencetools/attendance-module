@@ -51,6 +51,15 @@ $routes = [
                             ],
                         ]
                     ],
+                    'stripe-webhook' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => 'stripe-webhook',
+                            'defaults' => [
+                                'action' => 'confirm-payment',
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'delegates' => [

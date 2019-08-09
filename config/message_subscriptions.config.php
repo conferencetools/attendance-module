@@ -12,4 +12,7 @@ return [
     \ConferenceTools\Attendance\Domain\Payment\Event\PaymentMethodSelected::class => [
         \ConferenceTools\Attendance\PaymentProvider\StripePaymentHandler::class,
     ],
+    \ConferenceTools\Attendance\PaymentProvider\Webhook\CreateWebhook::class => [
+        \ConferenceTools\Attendance\PaymentProvider\Webhook\CreateWebhookHandler::class,
+    ],
 ];

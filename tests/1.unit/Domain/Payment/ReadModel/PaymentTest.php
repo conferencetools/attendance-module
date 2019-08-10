@@ -59,6 +59,7 @@ class PaymentTest extends \Codeception\Test\Unit
         $purchaseId = 'purchaseId';
         $due = Price::fromNetCost(300, 20);
         $sut = new Payment($id, $purchaseId, $due);
+        $sut->setStatus(\ConferenceTools\Attendance\Domain\Payment\Payment::STATUS_STARTED);
 
         $paymentMethod = new PaymentType('invoice', 86400, true);
         $sut->paymentMethodProvided($paymentMethod);

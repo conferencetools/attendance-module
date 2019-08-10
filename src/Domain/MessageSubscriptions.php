@@ -24,16 +24,6 @@ class MessageSubscriptions
     {
         return [
             //################## Commands #######################
-            DelegateCommand\RegisterDelegate::class => [
-                Delegate\Delegate::class,
-            ],
-            DelegateCommand\UpdateDelegateDetails::class => [
-                Delegate\Delegate::class,
-            ],
-            DelegateCommand\CheckIn::class => [
-                Delegate\Delegate::class,
-            ],
-
             DiscountingCommand\CreateDiscount::class => [
                 DiscountType::class,
             ],
@@ -80,16 +70,6 @@ class MessageSubscriptions
             ],
 
             //################## Events #######################
-            DelegateEvent\DelegateRegistered::class => [
-                Delegate\Projector::class,
-            ],
-            DelegateEvent\DelegateDetailsUpdated::class => [
-                Delegate\Projector::class,
-            ],
-            DelegateEvent\CheckedIn::class => [
-                Delegate\Projector::class,
-            ],
-
             DiscountingEvent\DiscountCreated::class => [
                 Discounting\Projector::class,
             ],
@@ -109,7 +89,6 @@ class MessageSubscriptions
                 EventProjector::class,
             ],
             PurchasingEvent\TicketAllocatedToDelegate::class => [
-                Delegate\Delegate::class,
                 Delegate\Projector::class,
             ],
             PurchasingEvent\TicketsReserved::class => [

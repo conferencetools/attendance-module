@@ -15,10 +15,7 @@ return [
         Delegate\Projector::class => Factory\Delegate\ProjectorFactory::class,
         Discounting\Projector::class => Factory\Discounting\ProjectorFactory::class,
         Payment\Projector::class => Factory\Payment\ProjectorFactory::class,
-        \ConferenceTools\Attendance\Handler\StripePaymentHandler::class => \ConferenceTools\Attendance\Handler\StripePaymentHandlerFactory::class,
         \ConferenceTools\Attendance\Handler\EmailPurchase::class => \ConferenceTools\Attendance\Handler\EmailPurchaseFactory::class,
         \ConferenceTools\Attendance\Handler\EmailTicket::class => \ConferenceTools\Attendance\Handler\EmailTicketFactory::class,
-        \ConferenceTools\Attendance\PaymentProvider\StripePaymentHandler::class => \ConferenceTools\Attendance\PaymentProvider\StripePaymentHandlerFactory::class,
-        \ConferenceTools\Attendance\PaymentProvider\Webhook\CreateWebhookHandler::class => \ConferenceTools\Attendance\PaymentProvider\Webhook\CreateWebhookHandlerFactory::class,
     ]
 ];

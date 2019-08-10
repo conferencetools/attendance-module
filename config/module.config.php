@@ -34,11 +34,6 @@ return [
             //'flashMessenger' => \ConferenceTools\Tickets\View\Helper\FlashMessenger::class,
             'moneyFormat' => \ConferenceTools\Attendance\View\Helper\MoneyFormat::class,
         ],
-        'factories' => [
-            'stripeKey' => \ConferenceTools\Attendance\View\Helper\StripeKeyFactory::class,
-            //'ticketsConfig' => \ConferenceTools\Tickets\View\Helper\ConfigurationFactory::class,
-            //'serverUrl' => \ConferenceTools\Tickets\View\Helper\ServerUrlFactory::class,
-        ],
     ],
     'service_manager' => [
         'factories' => [

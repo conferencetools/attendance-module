@@ -6,8 +6,6 @@ return [
     'attendance/purchase/index' => $viewDir . 'purchase/index.phtml',
     'attendance/purchase/delegates' => $viewDir . 'purchase/delegates.phtml',
     'attendance/purchase/payment' => $viewDir . 'purchase/payment.phtml',
-    'attendance/purchase/stripe' => $viewDir . 'purchase/stripe.phtml',
-    'attendance/purchase/stripe-webhook' => $viewDir . 'purchase/stripe-webhook.phtml',
     'attendance/purchase/complete' => $viewDir . 'purchase/complete.phtml',
     'attendance/delegate/update-details' => $viewDir . 'delegate/update-details.phtml',
 

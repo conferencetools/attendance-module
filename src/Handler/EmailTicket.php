@@ -2,7 +2,7 @@
 
 namespace ConferenceTools\Attendance\Handler;
 
-use ConferenceTools\Attendance\Domain\Delegate\Command\SendTicketEmail;
+use ConferenceTools\Attendance\Domain\Delegate\Event\CheckinIdGenerated;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
@@ -36,23 +36,17 @@ class EmailTicket implements Handler
         $this->delegateRepository = $delegateRepository;
     }
 
-
-    public function handleDomainMessage(DomainMessage $message)
-    {
-        $this->handle($message->getEvent());
-    }
-
     public function handle(DomainMessage $domainMessage)
     {
         $message = $domainMessage->getMessage();
-        if (!($message instanceof SendTicketEmail)) {
+        if (!($message instanceof CheckinIdGenerated)) {
             return;
         }
 
         /** @var Delegate $delegate */
-        $delegate = $this->delegateRepository->get($message->getDelegateId());
+        $delegate = $this->delegateRepository->get($message->getId());
 
-        $viewModel = new ViewModel(['delegate' => $delegate, 'config'=> $this->config]);
+        $viewModel = new ViewModel(['delegate' => $delegate, 'config'=> $this->config, 'checkinId' => $message->getCheckinId()]);
         $viewModel->setTemplate('email/ticket');
 
         $response = new Response();

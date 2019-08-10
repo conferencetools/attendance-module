@@ -133,6 +133,11 @@ class PurchaseController extends AppController
                         if (empty($delegate['tickets'])) {
                             continue;
                         }
+
+                        if (empty($delegate['email'])) {
+                            $delegate['email'] = $purchase->getEmail();
+                        }
+
                         $dietaryRequirements = new DietaryRequirements($delegate['preference'], $delegate['allergies']);
 
                         $command = new RegisterDelegate(

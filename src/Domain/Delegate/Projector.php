@@ -18,12 +18,10 @@ use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketAllocatedToDelegate
 class Projector implements Handler
 {
     private $repository;
-    private $purchaseRepository;
 
-    public function __construct(Repository $repository, Repository $purchaseRepository)
+    public function __construct(Repository $repository)
     {
         $this->repository = $repository;
-        $this->purchaseRepository = $purchaseRepository;
     }
 
     public function handle(DomainMessage $message)
@@ -53,13 +51,9 @@ class Projector implements Handler
 
     private function delegateRegistered(DelegateRegistered $event): void
     {
-        /** @var Purchase $purchase */
-        $purchase = $this->purchaseRepository->get($event->getPurchaseId());
-
         $delegate = new ReadModel\Delegate(
             $event->getId(),
             $event->getPurchaseId(),
-            $purchase->getEmail(),
             $event->getName(),
             $event->getEmail(),
             $event->getCompany(),

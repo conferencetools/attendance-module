@@ -38,6 +38,10 @@ return [
     'service_manager' => [
         'factories' => [
             'navigation' => \Zend\Navigation\Service\DefaultNavigationFactory::class,
+            \ConferenceTools\Attendance\PaymentProvider\PaymentProviderManager::class => \ConferenceTools\Attendance\PaymentProvider\PaymentProviderManagerFactory::class,
         ],
+    ],
+    'payment_providers' => [
+        'factories' => [],
     ],
 ];

@@ -23,19 +23,25 @@ use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
 use ConferenceTools\Attendance\Form\DelegatesForm;
 use ConferenceTools\Attendance\Form\PurchaseForm;
+use ConferenceTools\Attendance\PaymentProvider\PaymentProvider;
 use ConferenceTools\StripePaymentProvider\PaymentProvider\StripePayment;
 use ConferenceTools\StripePaymentProvider\PaymentProvider\StripeViewProvider;
 use ConferenceTools\StripePaymentProvider\Webhook\CreateWebhook;
 use ConferenceTools\StripePaymentProvider\Webhook\Webhook;
 use ConferenceTools\Attendance\Service\TicketValidationFailed;
 use Doctrine\Common\Collections\Criteria;
-use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ViewModel;
 
 class PurchaseController extends AppController
 {
     protected $tickets;
+    private $paymentProvider;
+
+    public function __construct(PaymentProvider $paymentProvider)
+    {
+        $this->paymentProvider = $paymentProvider;
+    }
 
     public function indexAction()
     {
@@ -205,10 +211,7 @@ class PurchaseController extends AppController
 
         $purchase = $this->repository(Purchase::class)->get($purchaseId);
 
-        // @TODO eventually this will be pluggable via a service manager.
-        $paymentProvider = new StripeViewProvider($this->repository(StripePayment::class));
-
-        return $paymentProvider->getView($purchase, $payment);
+        return $this->paymentProvider->getView($purchase, $payment);
     }
 
     public function completeAction()

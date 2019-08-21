@@ -1,6 +1,6 @@
 <?php
 
-namespace ConferenceTools\Attendance\Domain\Ticketing;
+namespace ConferenceTools\Attendance\Domain\Merchandise;
 
 use ConferenceTools\Attendance\Domain\Merchandise\Command\CreateMerchandise;
 use ConferenceTools\Attendance\Domain\Merchandise\Command\ScheduleSaleDate;

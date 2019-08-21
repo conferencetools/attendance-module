@@ -3,9 +3,6 @@
 
 namespace ConferenceTools\Attendance\Domain\Merchandise;
 
-
-use ConferenceTools\Attendance\Domain\Ticketing\Merchandise;
-
 class MessageSubscriptions
 {
     public static function getSubscriptions(): array
@@ -31,6 +28,21 @@ class MessageSubscriptions
             ],
 
             // ######## merchandise events ########
+            Event\MerchandiseCreated::class => [
+                MerchandiseProjector::class,
+            ],
+            Event\MerchandiseOnSale::class => [
+                MerchandiseProjector::class,
+            ],
+            Event\MerchandiseWithdrawnFromSale::class => [
+                MerchandiseProjector::class,
+            ],
+            Event\SaleDateScheduled::class => [
+                MerchandiseProjector::class,
+            ],
+            Event\WithdrawDateScheduled::class => [
+                MerchandiseProjector::class,
+            ],
         ];
     }
 }

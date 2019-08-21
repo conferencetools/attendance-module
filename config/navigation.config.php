@@ -39,6 +39,17 @@ return [
             ],
         ],
         [
+            'label' => 'Merchandise',
+            'route' => 'attendance-admin/merchandise',
+            'permission' => 'merchandise',
+            'pages' => [
+                [
+                    'label' => 'Add',
+                    'route' => 'attendance-admin/merchandise/new',
+                ]
+            ],
+        ],
+        [
             'label' => 'Purchases',
             'route' => 'attendance-admin/purchase',
             'permission' => 'orders',

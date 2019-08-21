@@ -333,6 +333,47 @@ $routes['attendance-admin'] = [
                 ],
             ],
         ],
+        'merchandise' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/merchandise',
+                'defaults' => [
+                    'controller' => Controller\Admin\MerchandiseController::class,
+                    'action' => 'index',
+                    'requiresPermission' => 'merchandise',
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'new' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/new',
+                        'defaults' => [
+                            'action' => 'new-merchandise'
+                        ]
+                    ],
+                ],
+                'withdraw' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/withdraw/:merchandiseId',
+                        'defaults' => [
+                            'action' => 'withdraw',
+                        ]
+                    ],
+                ],
+                'put-on-sale' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/put-on-sale/:merchandiseId',
+                        'defaults' => [
+                            'action' => 'put-on-sale',
+                        ]
+                    ],
+                ],
+            ],
+        ],
         'events' => [
             'type' => Literal::class,
             'options' => [

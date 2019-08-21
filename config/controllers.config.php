@@ -14,5 +14,6 @@ return [
         Controller\Admin\CheckinController::class =>  InvokableFactory::class,
         Controller\Admin\EventsController::class =>  InvokableFactory::class,
         Controller\Admin\PurchaseController::class =>  InvokableFactory::class,
+        Controller\Admin\MerchandiseController::class => InvokableFactory::class,
     ]
 ];

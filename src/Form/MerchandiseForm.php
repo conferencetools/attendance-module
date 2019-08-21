@@ -4,6 +4,7 @@
 namespace ConferenceTools\Attendance\Form;
 
 
+use Zend\Filter\Boolean;
 use Zend\Form\Element\Csrf;
 use Zend\Form\Element\DateTime;
 use Zend\Form\Element\Radio;
@@ -59,6 +60,17 @@ class MerchandiseForm extends Form implements InputFilterProviderInterface
                 'label' => 'Price in pence',
             ],
         ]);
+        $this->add([
+            'type' => Radio::class,
+            'name' => 'requiresTicket',
+            'options' => [
+                'value_options' => [
+                    1 => 'Yes',
+                    0 => 'No'
+                ],
+                'label' => 'Require purchase of a ticket',
+            ],
+        ]);
         $this->add(new Submit('create', ['label' => 'Create']));
     }
 
@@ -84,6 +96,13 @@ class MerchandiseForm extends Form implements InputFilterProviderInterface
                     ['name' => Digits::class],
                     ['name' => GreaterThan::class, ['options' => ['min' => 0]]]
                 ]
+            ],
+            'requiresTicket' => [
+                'allow_empty' => false,
+                'required' => true,
+                'filters' => [
+                    ['name' => Boolean::class],
+                ],
             ],
         ];
     }

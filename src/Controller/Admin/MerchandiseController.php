@@ -37,7 +37,7 @@ class MerchandiseController extends AppController
                     new Descriptor($data['name'], $data['description']),
                     $data['quantity'],
                     $this->makePrice($data['price'], $data['grossOrNet']),
-                    false
+                    (bool) $data['requiresTicket']
                 );
                 $this->messageBus()->fire($command);
 

@@ -34,7 +34,7 @@ class DiscountsController extends AppController
         $tickets = $this->repository(Ticket::class)->matching(Criteria::create());
         foreach ($tickets as $ticket) {
             /** @var Ticket $ticket */
-            $ticketOptions[$ticket->getId()] = $ticket->getEvent()->getName();
+            $ticketOptions[$ticket->getId()] = $ticket->getDescriptor()->getName();
         }
 
         $form = $this->form(DiscountForm::class, ['tickets' => $ticketOptions]);
@@ -55,7 +55,9 @@ class DiscountsController extends AppController
             }
         }
 
-        return new ViewModel(['form' => $form]);
+        $viewModel = new ViewModel(['form' => $form, 'action' => 'Create Discount']);
+        $viewModel->setTemplate('attendance/admin/form');
+        return $viewModel;
     }
 
     public function addCodeAction()
@@ -77,7 +79,9 @@ class DiscountsController extends AppController
             }
         }
 
-        return new ViewModel(['form' => $form]);
+        $viewModel = new ViewModel(['form' => $form, 'action' => 'Add Discount Code']);
+        $viewModel->setTemplate('attendance/admin/form');
+        return $viewModel;
     }
 
     private function makeAvailableDates(string $from, string $until)

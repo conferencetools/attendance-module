@@ -1,45 +1,48 @@
 <div class="row">
-    <div class="col-xs-12">
-        <div class="panel panel-default credit-card-box">
-            <div class="panel-heading display-table" >
-                <div class="row display-tr" >
-                    <h3 class="panel-title display-td" >Discounts</h3>
-                    <a class="btn btn-success" style="float:right" href="<?=$this->url('attendance-admin/discounts/new')?>">Add</a>
+    <div class="col-md-12">
+        <div class="card spur-card">
+            <div class="card-header">
+                <div class="spur-card-icon">
+                    <i class="fas fa-table"></i>
                 </div>
+                <div class="spur-card-title">Discounts</div>
             </div>
-            <div class="panel-body">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <table class="table">
-                                <?php if (count($this->discounts) === 0): ?>
-                                    <tr>
-                                        <td>You haven't created any disccounts yet.</td>
-                                    </tr>
-                                <?php
-                                else:
-                                    foreach ($this->discounts as $id => $discount):
-                                        /** @var \ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType $discount */
-                                        ?>
-                                        <tr>
-                                            <td class="col-md-6 col-xs-6">
-                                                <span class="col-xs-12 col-md-6"><?= $discount->getName() ?></span>
-                                                <span class="col-xs-12 col-md-6"><?=$discount->getDiscount() ?></span>
-                                                <span class="help-block col-xs-12 col-md-12"><?= implode(', ', $discount->getCodes())?></span>
-                                            </td>
-                                            <td class="col-md-3 col-xs-3">
-                                                <a class="btn btn-default" href="<?=$this->url('attendance-admin/discounts/add-code', ['discountId' => $discount->getId()])?>">
-                                                    Add new code
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    <?php
-                                    endforeach;
-                                endif;
-                                ?>
-                            </table>
-                        </div>
-                    </div>
+            <div class="card-body ">
+                <?php if (count($this->discounts) === 0): ?>
+                    You haven't created any discounts yet.
+                <?php else:?>
+                <table class="table table-hover table-in-card">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Discount</th>
+                        <th scope="col">Codes</th>
+                        <th scope="col">Available from</th>
+                        <th scope="col">Until</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($this->discounts as $id => $discount):
+                            /** @var \ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType $discount */
+                            ?>
+                            <tr>
+                                <td><?= $discount->getName() ?></td>
+                                <td><?=$discount->getDiscount() ?></td>
+                                <td><?= implode(', ', $discount->getCodes())?></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <a class="btn btn-primary" href="<?=$this->url('attendance-admin/discounts/add-code', ['discountId' => $discount->getId()])?>">
+                                        Add new code
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php
+                        endforeach;
+                    endif;
+                    ?>
+                </table>
             </div>
-        </div>
     </div>
 </div>

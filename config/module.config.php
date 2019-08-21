@@ -19,6 +19,7 @@ return [
         \ConferenceTools\Attendance\Domain\MessageSubscriptions::class,
         \ConferenceTools\Attendance\Domain\Payment\MessageSubscriptions::class,
         \ConferenceTools\Attendance\Domain\Delegate\MessageSubscriptions::class,
+        \ConferenceTools\Attendance\Domain\Merchandise\MessageSubscriptions::class,
     ],
     'navigation' => require __DIR__ . '/navigation.config.php',
     'router' => [

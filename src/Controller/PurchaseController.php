@@ -1,8 +1,6 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Controller;
-
 
 use ConferenceTools\Attendance\Domain\Delegate\Command\RegisterDelegate;
 use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
@@ -10,24 +8,24 @@ use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountCode;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType;
+use ConferenceTools\Attendance\Domain\Merchandise\ReadModel\Merchandise;
 use ConferenceTools\Attendance\Domain\Payment\Command\ProvidePaymentDetails;
 use ConferenceTools\Attendance\Domain\Payment\Command\SelectPaymentMethod;
 use ConferenceTools\Attendance\Domain\Payment\PaymentType;
 use ConferenceTools\Attendance\Domain\Payment\ReadModel\Payment;
+use ConferenceTools\Attendance\Domain\Purchasing\BasketFactory;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\ApplyDiscount;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\Checkout;
-use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;
+use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseItems;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Form\DelegatesForm;
 use ConferenceTools\Attendance\Form\PurchaseForm;
 use ConferenceTools\Attendance\PaymentProvider\PaymentProvider;
-use ConferenceTools\StripePaymentProvider\PaymentProvider\StripePayment;
-use ConferenceTools\StripePaymentProvider\PaymentProvider\StripeViewProvider;
-use ConferenceTools\StripePaymentProvider\Webhook\CreateWebhook;
-use ConferenceTools\StripePaymentProvider\Webhook\Webhook;
 use ConferenceTools\Attendance\Service\TicketValidationFailed;
 use Doctrine\Common\Collections\Criteria;
 use Zend\Mvc\MvcEvent;
@@ -65,22 +63,19 @@ class PurchaseController extends AppController
 
                     foreach ($data['quantity'] as $ticketId => $quantity) {
                         $quantity = (int)$quantity;
-
-                        if ($quantity > 0) {
-                            $selectedTickets[] = new TicketQuantity(
-                                $ticketId,
-                                $quantity,
-                                $tickets[$ticketId]->getPrice()
-                            );
-                        }
-
                         $minDelegates = min($minDelegates, $quantity);
                         $maxDelegates += $quantity;
                     }
 
                     $forDelegates = min($maxDelegates, max($minDelegates, (int) $data['delegates']));
 
-                    $messages = $this->messageBus()->fire(new PurchaseTickets($data['purchase_email'], $forDelegates, ...$selectedTickets));
+                    $basketFactory = new BasketFactory(
+                        $this->repository(Ticket::class),
+                        $this->repository(Event::class),
+                        $this->repository(Merchandise::class)
+                    );
+
+                    $messages = $this->messageBus()->fire(new PurchaseItems($data['purchase_email'], $forDelegates, $basketFactory->createBasket($data['quantity'], [])));
                     $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
 
                     if (!empty($data['discount_code'])) {

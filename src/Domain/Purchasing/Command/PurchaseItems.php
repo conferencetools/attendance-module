@@ -3,16 +3,17 @@
 
 namespace ConferenceTools\Attendance\Domain\Purchasing\Command;
 
+use ConferenceTools\Attendance\Domain\Purchasing\Basket;
 use JMS\Serializer\Annotation as Jms;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
 
-class PurchaseTickets
+class PurchaseItems
 {
     /**
      * @var TicketQuantity[]
-     * @Jms\Type("array<ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity>")
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Purchasing\Basket")
      */
-    private $tickets;
+    private $basket;
     /**
      * @var string
      * @Jms\Type("string")
@@ -24,16 +25,16 @@ class PurchaseTickets
      */
     private $delegates = -1;
 
-    public function __construct(string $email, $delegates, TicketQuantity ...$tickets)
+    public function __construct(string $email, $delegates, Basket $basket)
     {
-        $this->tickets = $tickets;
+        $this->basket = $basket;
         $this->email = $email;
         $this->delegates = $delegates;
     }
 
-    public function getTickets(): array
+    public function getBasket(): Basket
     {
-        return $this->tickets;
+        return $this->basket;
     }
 
     public function getEmail(): string

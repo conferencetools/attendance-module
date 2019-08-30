@@ -37,7 +37,7 @@ class MessageSubscriptions
             PurchasingCommand\CheckPurchaseTimeout::class => [
                 Purchasing\Purchase::class,
             ],
-            PurchasingCommand\PurchaseTickets::class => [
+            PurchasingCommand\PurchaseItems::class => [
                 Purchasing\Purchase::class,
             ],
             PurchasingCommand\AllocateTicketToDelegate::class => [

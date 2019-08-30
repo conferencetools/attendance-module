@@ -9,11 +9,12 @@ use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMethodSelected;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentRaised;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentTimedOut;
 use ConferenceTools\Attendance\Domain\Payment\PaymentType;
+use ConferenceTools\Attendance\Domain\Purchasing\Basket;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\ApplyDiscount;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\Checkout;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\CheckPurchaseTimeout;
-use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;
+use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseItems;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\DiscountApplied;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\OutstandingPaymentCalculated;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCheckedOut;
@@ -149,22 +150,26 @@ class PurchaseTest extends \Codeception\Test\Unit
         ];
     }
 
-    private function purchaseTicketsCommand(): PurchaseTickets
+    private function purchaseTicketsCommand(): PurchaseItems
     {
-        return new PurchaseTickets(
+        return new PurchaseItems(
             'test@email.com',
             1,
-            new TicketQuantity(
+            new Basket([new TicketQuantity(
                 'ticketId',
                 1,
                 Price::fromNetCost(10000, 20)
-            )
+            )], [])
         );
     }
 
     private function purchaseStartedByEvent(): PurchaseStartedBy
     {
-        return new PurchaseStartedBy($this->actorId, 'test@email.com', 1);
+        return new PurchaseStartedBy($this->actorId, 'test@email.com', 1, new Basket([new TicketQuantity(
+            'ticketId',
+            1,
+            Price::fromNetCost(10000, 20)
+        )], []));
     }
 
     private function checkPurchaseTimeoutEvent(): CheckPurchaseTimeout

@@ -14,7 +14,7 @@ use ConferenceTools\Attendance\Domain\Payment\PaymentType;
 use ConferenceTools\Attendance\Domain\Payment\ReadModel\Payment;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\Checkout;
-use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;
+use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseItems;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
@@ -122,7 +122,7 @@ class PurchaseController extends AppController
                     );
                 }
 
-                $messages = $this->messageBus()->fire(new PurchaseTickets($email, (int) $delegates, ...$selectedTickets));
+                $messages = $this->messageBus()->fire(new PurchaseItems($email, (int) $delegates, ...$selectedTickets));
                 $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
 
                 for ($i = 0; $i < $delegates; $i++) {

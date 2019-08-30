@@ -3,6 +3,7 @@
 
 namespace ConferenceTools\Attendance\Domain\Purchasing\Event;
 
+use ConferenceTools\Attendance\Domain\Purchasing\Basket;
 use JMS\Serializer\Annotation as Jms;
 
 class PurchaseStartedBy
@@ -21,12 +22,17 @@ class PurchaseStartedBy
      * @Jms\Type("int")
      */
     private $delegates = -1;
+    /**
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Purchasing\Basket")
+     */
+    private $basket;
 
-    public function __construct(string $id, string $email, int $delegates)
+    public function __construct(string $id, string $email, int $delegates, Basket $basket)
     {
         $this->id = $id;
         $this->email = $email;
         $this->delegates = $delegates;
+        $this->basket = $basket;
     }
 
     public function getId(): string
@@ -42,5 +48,10 @@ class PurchaseStartedBy
     public function getDelegates(): int
     {
         return $this->delegates;
+    }
+
+    public function getBasket(): Basket
+    {
+        return $this->basket;
     }
 }

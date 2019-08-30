@@ -12,7 +12,7 @@ use ConferenceTools\Attendance\Domain\Purchasing\Command\{ApplyDiscount,
     Checkout,
     AllocateTicketToDelegate,
     CheckPurchaseTimeout,
-    PurchaseTickets};
+    PurchaseItems};
 use ConferenceTools\Attendance\Domain\Purchasing\Event\{DiscountApplied,
     PurchaseCheckedOut,
     OutstandingPaymentCalculated,
@@ -35,13 +35,13 @@ class Purchase extends AbstractActor
     private $total;
     private $timeoutHandlingByPayment = false;
 
-    protected function handlePurchaseTickets(PurchaseTickets $command)
+    protected function handlePurchaseItems(PurchaseItems $command)
     {
-        $this->fire(new PurchaseStartedBy($this->id(), $command->getEmail(), $command->getDelegates()));
+        $this->fire(new PurchaseStartedBy($this->id(), $command->getEmail(), $command->getDelegates(), $command->getBasket()));
         /** @var Price $total */
         $total = null;
 
-        foreach ($command->getTickets() as $ticket) {
+        foreach ($command->getBasket()->getTickets() as $ticket) {
             /** @var TicketQuantity $ticket */
             $this->fire(new TicketsReserved($this->id(), $ticket->getTicketId(), $ticket->getQuantity()));
             $total = ($total === null) ? $ticket->getTotalPrice() : $total->add($ticket->getTotalPrice());
@@ -50,11 +50,6 @@ class Purchase extends AbstractActor
         $this->fire(new OutstandingPaymentCalculated($this->id(), $total));
 
         $this->schedule(new CheckPurchaseTimeout($this->id()), (new \DateTime())->add(new \DateInterval('PT1800S')));
-    }
-
-    protected function applyPurchaseTickets(PurchaseTickets $command)
-    {
-        $this->tickets = $command->getTickets();
     }
 
     protected function handleApplyDiscount(ApplyDiscount $command)
@@ -67,6 +62,7 @@ class Purchase extends AbstractActor
     protected function applyPurchaseStartedBy(PurchaseStartedBy $event)
     {
         $this->email = $event->getEmail();
+        $this->tickets = $event->getBasket()->getTickets();
     }
 
     protected function applyTicketsReserved(TicketsReserved $event)

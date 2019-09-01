@@ -13,6 +13,7 @@ use ConferenceTools\Attendance\Domain\Payment\Command\ProvidePaymentDetails;
 use ConferenceTools\Attendance\Domain\Payment\Command\SelectPaymentMethod;
 use ConferenceTools\Attendance\Domain\Payment\PaymentType;
 use ConferenceTools\Attendance\Domain\Payment\ReadModel\Payment;
+use ConferenceTools\Attendance\Domain\Purchasing\Basket;
 use ConferenceTools\Attendance\Domain\Purchasing\BasketFactory;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\ApplyDiscount;
@@ -43,10 +44,10 @@ class PurchaseController extends AppController
 
     public function indexAction()
     {
-        //$this->messageBus()->fire(new CreateWebhook('stripe-payment-provider/webhooks/payment-intent-success', 'https://946f48c4.ngrok.io'));
         $events = $this->getTicketService()->getTicketsForPurchasePage();
         $tickets = $this->getTickets(true);
-        $form = $this->form(PurchaseForm::class, ['tickets' => $tickets]);
+        $merchandise = $this->repository(Merchandise::class)->matching(Criteria::create()->where(Criteria::expr()->eq('onSale', true)));
+        $form = $this->form(PurchaseForm::class, ['tickets' => $tickets, 'merchandise' => $merchandise]);
 
         //@TODO if discount code in url fetch + validate it.
         //@TODO if discount code in url, apply it to prices (use <strike></strike>)
@@ -56,26 +57,23 @@ class PurchaseController extends AppController
             $form->setData($formData);
             if ($form->isValid()) {
                 $data = $form->getData();
-                if ($this->validateTicketQuantity($data['quantity']) && $this->validateDiscountCode($data['discount_code'])) {
-
-                    $minDelegates = PHP_INT_MAX;
-                    $maxDelegates = 0;
-
-                    foreach ($data['quantity'] as $ticketId => $quantity) {
-                        $quantity = (int)$quantity;
-                        $minDelegates = min($minDelegates, $quantity);
-                        $maxDelegates += $quantity;
-                    }
-
-                    $forDelegates = min($maxDelegates, max($minDelegates, (int) $data['delegates']));
-
+                $basket = null;
+                try {
                     $basketFactory = new BasketFactory(
                         $this->repository(Ticket::class),
                         $this->repository(Event::class),
                         $this->repository(Merchandise::class)
                     );
 
-                    $messages = $this->messageBus()->fire(new PurchaseItems($data['purchase_email'], $forDelegates, $basketFactory->createBasket($data['quantity'], [])));
+                    $basket = $basketFactory->createBasket($data['quantity'], $data['merchandise']);
+                } catch (\Exception $e) {
+                    $this->flashMessenger()->addErrorMessage($e->getMessage());
+                }
+
+                if ($basket instanceof Basket && $this->validateDiscountCode($data['discount_code'])) {
+                    $forDelegates = $this->clampDelegates($data['quantity'], $data['delegates']);
+
+                    $messages = $this->messageBus()->fire(new PurchaseItems($data['purchase_email'], $forDelegates, $basket));
                     $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
 
                     if (!empty($data['discount_code'])) {
@@ -95,7 +93,20 @@ class PurchaseController extends AppController
             }
         }
         $form->prepare();
-        return new ViewModel(['tickets' => $tickets, 'events' => $events, 'form' => $form]);
+
+        $requiresTicket = [];
+        $doesntRequireTicket = [];
+
+        foreach ($merchandise as $merch) {
+            /** @var Merchandise $merch */
+            if ($merch->requiresTicket()) {
+                $requiresTicket[] = $merch;
+            } else {
+                $doesntRequireTicket[] = $merch;
+            }
+        }
+
+        return new ViewModel(['tickets' => $tickets, 'events' => $events, 'form' => $form, 'ticketFreeMerchandise' => $doesntRequireTicket, 'merchandise' => $requiresTicket]);
     }
 
     public function delegatesAction()
@@ -233,17 +244,6 @@ class PurchaseController extends AppController
         return $viewModel;
     }
 
-    private function validateTicketQuantity(array $quantities): bool
-    {
-        $result = $this->getTicketService()->validateTicketQuantity($quantities);
-        if ($result instanceof TicketValidationFailed) {
-            $this->flashMessenger()->addErrorMessage($result->getReason());
-            return false;
-        }
-
-        return true;
-    }
-
     private function validateDelegateTicketAssignment(Purchase $purchase, array $data): bool
     {
         $purchasedTickets = $purchase->getTickets();
@@ -346,5 +346,13 @@ class PurchaseController extends AppController
         if (count($delegates) > 0) {
             return $this->redirect()->toRoute('attendance/purchase/payment', ['purchaseId' => $purchaseId]);
         }
+    }
+
+    private function clampDelegates($tickets, $delegates): int
+    {
+        $minDelegates = min($tickets);
+        $maxDelegates = array_sum($tickets);
+
+        return min($maxDelegates, max($minDelegates, (int) $delegates));
     }
 }

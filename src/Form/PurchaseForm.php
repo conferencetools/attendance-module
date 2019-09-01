@@ -2,6 +2,7 @@
 
 namespace ConferenceTools\Attendance\Form;
 
+use ConferenceTools\Attendance\Domain\Merchandise\ReadModel\Merchandise;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use TwbBundle\Form\View\Helper\TwbBundleForm;
 use Zend\Form\Element\Number;
@@ -9,26 +10,15 @@ use Zend\Form\Element\Text;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Validator\Digits;
 use Zend\Validator\EmailAddress;
-use Zend\Validator\GreaterThan;
 use Zend\Validator\NotEmpty;
 
 class PurchaseForm extends Form implements InputFilterProviderInterface
 {
     public function init()
     {
-        /** @var Ticket[] $tickets */
-        $tickets = $this->getOption('tickets');
-        $fieldset = new Fieldset('quantity');
-
-        foreach ($tickets as $ticketId => $ticket) {
-            if ($ticket->getRemaining() > 0) {
-                $fieldset->add((new Number($ticketId))->setAttributes(['class' => 'form-control', 'min' => 0, 'max' => $ticket->getRemaining(), 'value' => 0]));
-            }
-        }
-
-        $this->add($fieldset);
+        $this->addTicketsFieldset();
+        $this->addMerchandiseFieldset();
         $this->add([
             'type' => Text::class,
             'name' => 'purchase_email',
@@ -86,5 +76,35 @@ class PurchaseForm extends Form implements InputFilterProviderInterface
                 'required' => true,
             ]
         ];
+    }
+
+    private function addTicketsFieldset(): void
+    {
+        /** @var Ticket[] $tickets */
+        $tickets = $this->getOption('tickets');
+        $fieldset = new Fieldset('quantity');
+
+        foreach ($tickets as $ticketId => $ticket) {
+            if ($ticket->getRemaining() > 0) {
+                $fieldset->add((new Number($ticketId))->setAttributes(['class' => 'form-control', 'min' => 0, 'max' => $ticket->getRemaining(), 'value' => 0]));
+            }
+        }
+
+        $this->add($fieldset);
+    }
+
+    private function addMerchandiseFieldset(): void
+    {
+        /** @var Merchandise[] $merchandise */
+        $merchandise = $this->getOption('merchandise');
+        $fieldset = new Fieldset('merchandise');
+
+        foreach ($merchandise as $merchandiseId => $merch) {
+            if ($merch->getRemaining() > 0) {
+                $fieldset->add((new Number($merch->getId()))->setAttributes(['class' => 'form-control', 'min' => 0, 'max' => $merch->getRemaining(), 'value' => 0]));
+            }
+        }
+
+        $this->add($fieldset);
     }
 }

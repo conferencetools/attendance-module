@@ -12,7 +12,7 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <table class="table">
-                                <?php if (count($this->tickets) === 0): ?>
+                                <?php if (count($this->tickets) === 0 && count($this->ticketFreeMerchandise) === 0): ?>
                                     <tr>
                                         <td>Sorry, there are no tickets currently available</td>
                                     </tr>
@@ -52,8 +52,63 @@
                                     <?php
                                     endforeach;
                                     endforeach;
-                                endif;
-                                ?>
+                                    if (count($this->merchandise) !== 0): ?>
+                                        <tr>
+                                            <td colspan="2">
+                                                Merchandise
+                                                <span class="help-block">You can add the following merchandise to your purchase to collect at the event. Requires at least 1 ticket purchase</span>
+                                            </td>
+                                        </tr>
+
+                                        <?php foreach ($this->merchandise as $merchandise): ?>
+                                            <?php if ($merchandise->getRemaining() > 0):?>
+                                                <tr>
+                                                    <td class="col-md-9 col-xs-6">
+                                                        <span style="margin-top:5px; margin-bottom: 10px;" class="col-xs-12 col-md-3"><?= $merchandise->getDescriptor()->getName() ?></span>
+                                                        <?php if ( ! empty($merchandise->getDescriptor()->getDescription())): ?>
+                                                            <span class="help-block col-xs-12 col-md-9"><?= $merchandise->getDescriptor()->getDescription() ?></span>
+                                                        <?php endif ?>
+                                                    </td>
+                                                    <td class="col-md-3 col-xs-6">
+                                                        <span style="margin-top:5px; margin-bottom: 10px;" class="col-xs-6"><?= $this->moneyFormat($merchandise->getPrice()) ?></span>
+                                                        <span class="col-xs-6">
+                                                        <?=$this->formInput($this->form->get('merchandise')->get($merchandise->getId()))?>
+                                                        <span class="help-block"><?= $merchandise->getRemaining() ?> remaining</span>
+                                                    </span>
+                                                    </td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                    <?php if (count($this->ticketFreeMerchandise) !== 0): ?>
+                                        <tr>
+                                            <td colspan="2">
+                                                Merchandise
+                                                <span class="help-block">This merchandise can be purchased without a ticket, see items for delivery information.</span>
+                                            </td>
+                                        </tr>
+
+                                        <?php foreach ($this->ticketFreeMerchandise as $merchandise): ?>
+                                        <?php if ($merchandise->getRemaining() > 0):?>
+                                            <tr>
+                                                <td class="col-md-9 col-xs-6">
+                                                    <span style="margin-top:5px; margin-bottom: 10px;" class="col-xs-12 col-md-3"><?= $merchandise->getDescriptor()->getName() ?></span>
+                                                    <?php if ( ! empty($merchandise->getDescriptor()->getDescription())): ?>
+                                                        <span class="help-block col-xs-12 col-md-9"><?= $merchandise->getDescriptor()->getDescription() ?></span>
+                                                    <?php endif ?>
+                                                </td>
+                                                <td class="col-md-3 col-xs-6">
+                                                    <span style="margin-top:5px; margin-bottom: 10px;" class="col-xs-6"><?= $this->moneyFormat($merchandise->getPrice()) ?></span>
+                                                    <span class="col-xs-6">
+                                                        <?=$this->formInput($this->form->get('merchandise')->get($merchandise->getId()))?>
+                                                        <span class="help-block"><?= $merchandise->getRemaining() ?> remaining</span>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
+                                        <?php endforeach;?>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </table>
                         </div>
                     </div>

@@ -36,9 +36,11 @@ class PurchaseController extends AppController
 {
     protected $tickets;
     private $paymentProvider;
+    private $paymentType;
 
-    public function __construct(PaymentProvider $paymentProvider)
+    public function __construct(PaymentProvider $paymentProvider, PaymentType $paymentType)
     {
+        $this->paymentType = $paymentType;
         $this->paymentProvider = $paymentProvider;
     }
 
@@ -61,8 +63,8 @@ class PurchaseController extends AppController
                 try {
                     $basketFactory = new BasketFactory(
                         $this->repository(Ticket::class),
-                        $this->repository(Event::class),
-                        $this->repository(Merchandise::class)
+                        $this->repository(Merchandise::class),
+                        $this->repository(Event::class)
                     );
 
                     $basket = $basketFactory->createBasket($data['quantity'], $data['merchandise']);
@@ -203,7 +205,7 @@ class PurchaseController extends AppController
 
         if ($payment->getPaymentMethod() === null) {
             //@TODO allow configuration of payment types, show user a form to select the one they wish to use
-            $this->messageBus()->fire(new SelectPaymentMethod($payment->getId(), new PaymentType('stripe', 1800, false)));
+            $this->messageBus()->fire(new SelectPaymentMethod($payment->getId(), $this->paymentType));
         }
 
         if ($payment->getPaymentMethod()->requiresManualConfirmation()) {
@@ -239,7 +241,14 @@ class PurchaseController extends AppController
         }
 
         $delegates = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $purchaseId)));
-        $viewModel = new ViewModel(['purchase' => $purchase, 'discount' => $discount, 'tickets' => $this->getTickets(false), 'delegates' => $delegates]);
+        $merchandise = $this->indexBy($this->repository(Merchandise::class)->matching(Criteria::create()));
+        $viewModel = new ViewModel([
+            'purchase' => $purchase,
+            'discount' => $discount,
+            'tickets' => $this->getTickets(false),
+            'delegates' => $delegates,
+            'merchandise' => $merchandise,
+        ]);
         $viewModel->setTemplate('attendance/purchase/complete');
         return $viewModel;
     }

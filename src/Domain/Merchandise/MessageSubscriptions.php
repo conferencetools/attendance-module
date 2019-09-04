@@ -3,12 +3,20 @@
 
 namespace ConferenceTools\Attendance\Domain\Merchandise;
 
+use ConferenceTools\Attendance\Domain\Purchasing;
+
 class MessageSubscriptions
 {
     public static function getSubscriptions(): array
     {
         return [
             // ######## external events ########
+            Purchasing\Event\MerchandiseAddedToPurchase::class => [
+                MerchandiseProjector::class,
+            ],
+            Purchasing\Event\MerchandisePurchaseExpired::class => [
+                MerchandiseProjector::class,
+            ],
 
             // ######## merchandise commands ########
             Command\CreateMerchandise::class => [

@@ -34,22 +34,6 @@ class MessageSubscriptions
                 DiscountType::class,
             ],
 
-            PurchasingCommand\CheckPurchaseTimeout::class => [
-                Purchasing\Purchase::class,
-            ],
-            PurchasingCommand\PurchaseItems::class => [
-                Purchasing\Purchase::class,
-            ],
-            PurchasingCommand\AllocateTicketToDelegate::class => [
-                Purchasing\Purchase::class,
-            ],
-            PurchasingCommand\ApplyDiscount::class => [
-                Purchasing\Purchase::class,
-            ],
-            Purchasing\Command\Checkout::class => [
-                Purchasing\Purchase::class,
-            ],
-
             TicketingCommand\ReleaseTicket::class => [
                 Ticket::class,
             ],
@@ -85,7 +69,6 @@ class MessageSubscriptions
 
             PurchasingEvent\TicketReservationExpired::class => [
                 TicketProjector::class,
-                Purchasing\Projector::class,
                 EventProjector::class,
             ],
             PurchasingEvent\TicketAllocatedToDelegate::class => [
@@ -93,20 +76,7 @@ class MessageSubscriptions
             ],
             PurchasingEvent\TicketsReserved::class => [
                 TicketProjector::class,
-                Purchasing\Projector::class,
                 EventProjector::class,
-            ],
-            PurchasingEvent\PurchaseStartedBy::class => [
-                Purchasing\Projector::class,
-            ],
-            PurchasingEvent\OutstandingPaymentCalculated::class => [
-                Purchasing\Projector::class,
-            ],
-            Purchasing\Event\DiscountApplied::class => [
-                Purchasing\Projector::class,
-            ],
-            Purchasing\Event\PurchaseCompleted::class => [
-                Purchasing\Projector::class,
             ],
 
             TicketingEvent\TicketsOnSale::class => [

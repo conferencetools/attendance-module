@@ -8,6 +8,8 @@ use ConferenceTools\Attendance\Domain\Merchandise\Event\MerchandiseWithdrawnFrom
 use ConferenceTools\Attendance\Domain\Merchandise\Event\SaleDateScheduled;
 use ConferenceTools\Attendance\Domain\Merchandise\Event\WithdrawDateScheduled;
 use ConferenceTools\Attendance\Domain\Merchandise\ReadModel\Merchandise as MerchandiseReadModel;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\MerchandiseAddedToPurchase;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\MerchandisePurchaseExpired;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
 use Phactor\ReadModel\Repository;
@@ -34,10 +36,10 @@ class MerchandiseProjector implements Handler
             case $event instanceof MerchandiseOnSale:
                 $this->onSale($event);
                 break;
-            case $event instanceof MerchandiseReserved:
+            case $event instanceof MerchandiseAddedToPurchase:
                 $this->merchandiseReserved($event);
                 break;
-            case $event instanceof MerchandiseReservationExpired:
+            case $event instanceof MerchandisePurchaseExpired:
                 $this->merchandiseExpired($event);
                 break;
             case $event instanceof SaleDateScheduled:
@@ -71,14 +73,14 @@ class MerchandiseProjector implements Handler
         $merchandise->onSale();
     }
 
-    private function merchandiseReserved(MerchandiseReserved $message)
+    private function merchandiseReserved(MerchandiseAddedToPurchase $message)
     {
         /** @var MerchandiseReadModel $entity */
         $entity = $this->repository->get($message->getMerchandiseId());
         $entity->decreaseRemainingBy($message->getQuantity());
     }
 
-    private function merchandiseExpired(MerchandiseReservationExpired $message)
+    private function merchandiseExpired(MerchandisePurchaseExpired $message)
     {
         /** @var MerchandiseReadModel $entity */
         $entity = $this->repository->get($message->getMerchandiseId());

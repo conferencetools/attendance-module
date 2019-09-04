@@ -22,6 +22,15 @@ $this->headLink()->appendStylesheet('/css/card.css');
                         <?php endif ?>
                     </div>
                 <?php endforeach; ?>
+                <?php foreach ($this->purchase->getMerchandise() as $merchandiseId => $quantity): ?>
+                    <div class="row">
+                        <span class="col-xs-12 col-md-8"><?= $this->merchandise[$merchandiseId]->getDescriptor()->getName() ?></span>
+                        <span class="col-xs-12 col-md-4"><?= $quantity ?></span>
+                        <?php if ( ! empty($this->merchandise[$merchandiseId]->getDescriptor()->getDescription())): ?>
+                            <span class="help-block col-xs-12 col-md-12"><?= $this->merchandise[$merchandiseId]->getDescriptor()->getDescription() ?></span>
+                        <?php endif ?>
+                    </div>
+                <?php endforeach; ?>
                 <hr />
                 <div class="row">
                     <span class="col-xs-8"><strong>Sub Total</strong></span>

@@ -5,6 +5,8 @@ namespace ConferenceTools\Attendance\Domain\Purchasing;
 
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\DiscountApplied;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\MerchandiseAddedToPurchase;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\MerchandisePurchaseExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCompleted;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
@@ -41,6 +43,7 @@ class Projector implements Handler
             case $event instanceof PaymentMade:
                 $this->purchasePaid($event);
                 break;
+            case $event instanceof MerchandisePurchaseExpired:
             case $event instanceof TicketReservationExpired:
                 $this->purchaseTimeout($event);
                 break;
@@ -49,6 +52,10 @@ class Projector implements Handler
                 break;
             case $event instanceof PurchaseCompleted:
                 $this->purchasePaid($event);
+                break;
+            case $event instanceof MerchandiseAddedToPurchase:
+                $this->merchandisePurchased($event);
+                break;
         }
 
         $this->repository->commit();
@@ -59,6 +66,13 @@ class Projector implements Handler
         /** @var Purchase $entity */
         $entity = $this->repository->get($event->getId());
         $entity->addTickets($event->getTicketId(), $event->getQuantity());
+    }
+
+    private function merchandisePurchased(MerchandiseAddedToPurchase $event)
+    {
+        /** @var Purchase $entity */
+        $entity = $this->repository->get($event->getId());
+        $entity->addMerchandise($event->getMerchandiseId(), $event->getQuantity());
     }
 
     private function purchaseStartedBy(PurchaseStartedBy $event)

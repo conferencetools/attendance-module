@@ -20,6 +20,10 @@ class Purchase
      */
     private $tickets = [];
     /**
+     * @ORM\Column(type="json_array")
+     */
+    private $merchandise = [];
+    /**
      * @ORM\Column(type="string")
      * @var string
      */
@@ -123,9 +127,19 @@ class Purchase
         return $this->discountCode;
     }
 
-    public function discountApplied(string $discountId, string $discountCode)
+    public function discountApplied(string $discountId, string $discountCode): void
     {
         $this->discountCode = $discountCode;
         $this->discountId = $discountId;
+    }
+
+    public function addMerchandise(string $merchandiseId, int $quantity): void
+    {
+        $this->merchandise[$merchandiseId] = $quantity;
+    }
+
+    public function getMerchandise(): array
+    {
+        return $this->merchandise;
     }
 }

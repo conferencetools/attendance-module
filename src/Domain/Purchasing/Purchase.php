@@ -14,6 +14,8 @@ use ConferenceTools\Attendance\Domain\Purchasing\Command\{ApplyDiscount,
     CheckPurchaseTimeout,
     PurchaseItems};
 use ConferenceTools\Attendance\Domain\Purchasing\Event\{DiscountApplied,
+    MerchandiseAddedToPurchase,
+    MerchandisePurchaseExpired,
     PurchaseCheckedOut,
     OutstandingPaymentCalculated,
     PurchaseCompleted,
@@ -34,20 +36,26 @@ class Purchase extends AbstractActor
     /** @var Price */
     private $total;
     private $timeoutHandlingByPayment = false;
+    /**
+     *
+     */
+    private $merchandise;
 
     protected function handlePurchaseItems(PurchaseItems $command)
     {
         $this->fire(new PurchaseStartedBy($this->id(), $command->getEmail(), $command->getDelegates(), $command->getBasket()));
-        /** @var Price $total */
-        $total = null;
 
         foreach ($command->getBasket()->getTickets() as $ticket) {
             /** @var TicketQuantity $ticket */
             $this->fire(new TicketsReserved($this->id(), $ticket->getTicketId(), $ticket->getQuantity()));
-            $total = ($total === null) ? $ticket->getTotalPrice() : $total->add($ticket->getTotalPrice());
         }
 
-        $this->fire(new OutstandingPaymentCalculated($this->id(), $total));
+        foreach ($command->getBasket()->getMerchandise() as $merchandise) {
+            /** @var MerchandiseQuantity $merchandise */
+            $this->fire(new MerchandiseAddedToPurchase($this->id(), $merchandise->getMerchandiseId(), $merchandise->getQuantity()));
+        }
+
+        $this->fire(new OutstandingPaymentCalculated($this->id(), $command->getBasket()->getTotal()));
 
         $this->schedule(new CheckPurchaseTimeout($this->id()), (new \DateTime())->add(new \DateInterval('PT1800S')));
     }
@@ -63,6 +71,7 @@ class Purchase extends AbstractActor
     {
         $this->email = $event->getEmail();
         $this->tickets = $event->getBasket()->getTickets();
+        $this->merchandise = $event->getBasket()->getMerchandise();
     }
 
     protected function applyTicketsReserved(TicketsReserved $event)
@@ -140,6 +149,11 @@ class Purchase extends AbstractActor
     {
         foreach ($this->tickets as $ticket) {
             $this->fire(new TicketReservationExpired($this->id(), $ticket->getTicketId(), $ticket->getQuantity()));
+        }
+
+        foreach ($this->merchandise as $merchandise) {
+            /** @var MerchandiseQuantity $merchandise*/
+            $this->fire(new MerchandisePurchaseExpired($this->id(), $merchandise->getMerchandiseId(), $merchandise->getQuantity()));
         }
 
         //@TODO deallocate any tickets from delegates (maybe leave them in place for now; at some point there needs

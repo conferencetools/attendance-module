@@ -98,7 +98,7 @@ class MerchandiseForm extends Form implements InputFilterProviderInterface
                 ]
             ],
             'requiresTicket' => [
-                'allow_empty' => false,
+                'allow_empty' => true,
                 'required' => true,
                 'filters' => [
                     ['name' => Boolean::class],

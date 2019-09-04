@@ -19,6 +19,7 @@ use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegat
 use ConferenceTools\Attendance\Domain\Purchasing\Command\ApplyDiscount;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\Checkout;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseItems;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseStartedBy;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
@@ -73,10 +74,11 @@ class PurchaseController extends AppController
                 }
 
                 if ($basket instanceof Basket && $this->validateDiscountCode($data['discount_code'])) {
+
                     $forDelegates = $this->clampDelegates($data['quantity'], $data['delegates']);
 
                     $messages = $this->messageBus()->fire(new PurchaseItems($data['purchase_email'], $forDelegates, $basket));
-                    $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
+                    $purchaseId = $this->messageBus()->firstInstanceOf(PurchaseStartedBy::class, ...$messages)->getId();
 
                     if (!empty($data['discount_code'])) {
                         $code = $this->fetchDiscountCode($data['discount_code']);
@@ -88,6 +90,11 @@ class PurchaseController extends AppController
                         );
 
                         $this->messageBus()->fire($command);
+                    }
+
+                    if ($forDelegates === 0) {
+                        $this->messageBus()->fire(new Checkout($purchaseId));
+                        return $this->redirect()->toRoute('attendance/purchase/payment', ['purchaseId' => $purchaseId]);
                     }
 
                     return $this->redirect()->toRoute('attendance/purchase/delegate-info', ['purchaseId' => $purchaseId]);
@@ -359,8 +366,13 @@ class PurchaseController extends AppController
 
     private function clampDelegates($tickets, $delegates): int
     {
+        $delegates = max($delegates, 1);
         $minDelegates = min($tickets);
         $maxDelegates = array_sum($tickets);
+
+        if ($maxDelegates === 0) {
+            return 0;
+        }
 
         return min($maxDelegates, max($minDelegates, (int) $delegates));
     }

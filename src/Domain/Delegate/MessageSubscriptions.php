@@ -3,12 +3,17 @@
 
 namespace ConferenceTools\Attendance\Domain\Delegate;
 
+use ConferenceTools\Attendance\Domain\Purchasing;
 
 class MessageSubscriptions
 {
     public static function getSubscriptions(): array
     {
         return [
+            Purchasing\Event\PurchaseCompleted::class => [
+                Projector::class,
+            ],
+
             Command\RegisterDelegate::class => [
                 Delegate::class,
             ],

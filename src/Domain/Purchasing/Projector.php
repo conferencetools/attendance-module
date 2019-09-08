@@ -3,13 +3,11 @@
 
 namespace ConferenceTools\Attendance\Domain\Purchasing;
 
-use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\DiscountApplied;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\MerchandiseAddedToPurchase;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\MerchandisePurchaseExpired;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCompleted;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
-use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
 use Phactor\ReadModel\Repository;
@@ -39,9 +37,6 @@ class Projector implements Handler
                 break;
             case $event instanceof OutstandingPaymentCalculated:
                 $this->updatePrice($event);
-                break;
-            case $event instanceof PaymentMade:
-                $this->purchasePaid($event);
                 break;
             case $event instanceof MerchandisePurchaseExpired:
             case $event instanceof TicketReservationExpired:
@@ -88,17 +83,10 @@ class Projector implements Handler
         $entity->updateTotal($event->getTotal());
     }
 
-    private function purchasePaid($event)
+    private function purchasePaid(PurchaseCompleted $event)
     {
-        $key = '';
-        if ($event instanceof PaymentMade) {
-            $key = $event->getActorId();
-        } elseif ($event instanceof PurchaseCompleted) {
-            $key = $event->getId();
-        }
-
         /** @var Purchase $entity */
-        $entity = $this->repository->get($key);
+        $entity = $this->repository->get($event->getId());
         $entity->paid();
     }
 

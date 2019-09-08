@@ -4,7 +4,6 @@ namespace ConferenceTools\AttendanceTest\Domain\Purchasing;
 
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentConfirmed;
-use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMethodSelected;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentRaised;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentTimedOut;
@@ -80,15 +79,6 @@ class PurchaseTest extends \Codeception\Test\Unit
         $this->helper->given($this->purchaseHasStarted());
         $this->helper->when(new CheckPurchaseTimeout($this->actorId));
         $this->helper->expect(new TicketReservationExpired($this->actorId, 'ticketId', 1));
-    }
-
-    public function testTimeoutPurchaseWhichHasBeenPaid()
-    {
-        $messages = $this->purchaseHasStarted();
-        $messages[] = new PaymentMade($this->actorId);
-        $this->helper->given($messages);
-        $this->helper->when(new CheckPurchaseTimeout($this->actorId));
-        $this->helper->expectNoMoreMessages();
     }
 
     public function testTimeoutPurchaseForWhichAPaymentHasBeenRaised()

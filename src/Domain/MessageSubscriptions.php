@@ -98,11 +98,6 @@ class MessageSubscriptions
                 Ticketing\EventProjector::class,
             ],
 
-            PaymentEvent\PaymentMade::class => [
-                Purchasing\Purchase::class,
-                Purchasing\Projector::class,
-                Delegate\Projector::class,
-            ],
             Payment\Event\PaymentRaised::class => [
                 Purchasing\Purchase::class,
             ]

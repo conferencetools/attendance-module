@@ -5,8 +5,7 @@ namespace ConferenceTools\Attendance\Domain\Purchasing;
 use ConferenceTools\Attendance\Domain\Payment\Event\{PaymentConfirmed,
     PaymentMethodSelected,
     PaymentRaised,
-    PaymentTimedOut,
-    PaymentMade};
+    PaymentTimedOut};
 use ConferenceTools\Attendance\Domain\Payment\Payment;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\{ApplyDiscount,
     Checkout,
@@ -96,14 +95,6 @@ class Purchase extends AbstractActor
         if (!$this->paid && !$this->timeoutHandlingByPayment) {
             $this->expireTickets();
         }
-    }
-
-    /**
-     * @deprecated
-     */
-    protected function applyPaymentMade(PaymentMade $event)
-    {
-        $this->paid = true;
     }
 
     protected function applyOutstandingPaymentCalculated(OutstandingPaymentCalculated $event)

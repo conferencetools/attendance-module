@@ -16,6 +16,6 @@ class PurchaseControllerFactory implements FactoryInterface
         $invoicePaymentType = new PaymentType('invoice', 1800, true);
 
         $paymentProviderManager = $container->get(PaymentProviderManager::class);
-        return new PurchaseController($paymentProviderManager->get(StripePaymentProvider::class), $invoicePaymentType);
+        return new PurchaseController($paymentProviderManager->get(StripePaymentProvider::class), $stripePaymentType);
     }
 }

@@ -6,8 +6,7 @@ namespace ConferenceTools\Attendance\Domain\Delegate;
 
 use ConferenceTools\Attendance\Domain\Delegate\Event\CheckedIn;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateDetailsUpdated;
-use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
-use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCompleted;
 use Doctrine\Common\Collections\Criteria;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
@@ -37,7 +36,7 @@ class Projector implements Handler
             case $event instanceof DelegateDetailsUpdated:
                 $this->updateDetails($event);
                 break;
-            case $event instanceof PaymentMade:
+            case $event instanceof PurchaseCompleted:
                 $this->paymentMade($event);
                 break;
             case $event instanceof CheckedIn:
@@ -83,9 +82,9 @@ class Projector implements Handler
         );
     }
 
-    private function paymentMade(PaymentMade $event): void
+    private function paymentMade(PurchaseCompleted $event): void
     {
-        $delegates = $this->repository->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $event->getActorId())));
+        $delegates = $this->repository->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $event->getId())));
         foreach ($delegates as $delegate) {
             $delegate->purchasePaid();
         }

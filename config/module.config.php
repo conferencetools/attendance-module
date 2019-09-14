@@ -12,6 +12,18 @@ return [
             'merchandise' => 'Merchandise management',
         ]
     ],
+    'conferencetools' => [
+        'purchase_provider' => 'invoice',
+        'payment_providers' => [
+            'invoice' => [
+                'payment_type' => [
+                    'name' => 'invoice',
+                    'timeout' => 30*86400,
+                    'manual_confirmation' => true,
+                ]
+            ]
+        ],
+    ],
     'controllers' => require __DIR__ . '/controllers.config.php',
     'doctrine' => require __DIR__ . '/doctrine.config.php',
     'message_handlers' => require __DIR__ . '/message_handlers.config.php',

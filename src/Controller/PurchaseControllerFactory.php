@@ -12,10 +12,20 @@ class PurchaseControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $stripePaymentType = new PaymentType('stripe', 1800, false);
-        $invoicePaymentType = new PaymentType('invoice', 1800, true);
+        //@TODO create a default provider for manual payments
+        $paymentProvider = StripePaymentProvider::class;
+
+        $config =  $container->get('Config');
+        $paymentProviderName = $config['conferencetools']['purchase_provider'];
+
+        $providerConfig = $config['conferencetools']['payment_providers'][$paymentProviderName]['payment_type'];
+        $paymentType = new PaymentType($providerConfig['name'], $providerConfig['timeout'], $providerConfig['manual_confirmation']);
+
+        if (!$paymentType->requiresManualConfirmation()) {
+            $paymentProvider = $config['conferencetools']['payment_providers'][$paymentProviderName]['provider_service'];
+        }
 
         $paymentProviderManager = $container->get(PaymentProviderManager::class);
-        return new PurchaseController($paymentProviderManager->get(StripePaymentProvider::class), $stripePaymentType);
+        return new PurchaseController($paymentProviderManager->get($paymentProvider), $paymentType);
     }
 }

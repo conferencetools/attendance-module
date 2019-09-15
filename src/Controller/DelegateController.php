@@ -8,6 +8,7 @@ use ConferenceTools\Attendance\Domain\Delegate\Command\UpdateDelegateDetails;
 use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Form\DelegateForm;
+use Doctrine\Common\Collections\Criteria;
 use GeneratedHydrator\Configuration;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
@@ -50,13 +51,13 @@ class DelegateController extends AppController
     public function qrCodeAction()
     {
         $delegateId = $this->params()->fromRoute('delegateId');
-        $renderer = new QRCode(new QROptions(['outputType' => QRCode::OUTPUT_IMAGE_PNG, 'imageBase64' => false]));
-        $delegate = $this->repository(Delegate::class)->get($delegateId);
+        $delegate = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('checkinId', $delegateId)))->first();
 
         if (!($delegate instanceof Delegate)) {
             return $this->notFoundAction();
         }
 
+        $renderer = new QRCode(new QROptions(['outputType' => QRCode::OUTPUT_IMAGE_PNG, 'imageBase64' => false]));
         $png = $renderer->render($delegateId);
 
         $response = $this->getResponse();

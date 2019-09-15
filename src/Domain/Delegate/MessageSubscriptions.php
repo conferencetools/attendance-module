@@ -33,6 +33,9 @@ class MessageSubscriptions
             Event\CheckedIn::class => [
                 Projector::class,
             ],
+            Event\CheckinIdGenerated::class => [
+                Projector::class,
+            ],
         ];
     }
 }

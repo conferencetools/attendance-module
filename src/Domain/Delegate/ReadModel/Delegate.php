@@ -59,6 +59,10 @@ class Delegate
      * @ORM\Column(type="boolean")
      */
     private $checkedIn = false;
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $checkinId;
 
     public function __construct(
         string $id,
@@ -164,5 +168,10 @@ class Delegate
     public function getContactEmail(): string
     {
         return $this->email;
+    }
+
+    public function updateCheckinId(string $checkinId)
+    {
+        $this->checkinId = $checkinId;
     }
 }

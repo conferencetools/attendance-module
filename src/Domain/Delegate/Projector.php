@@ -5,6 +5,7 @@ namespace ConferenceTools\Attendance\Domain\Delegate;
 
 
 use ConferenceTools\Attendance\Domain\Delegate\Event\CheckedIn;
+use ConferenceTools\Attendance\Domain\Delegate\Event\CheckinIdGenerated;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateDetailsUpdated;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCompleted;
 use Doctrine\Common\Collections\Criteria;
@@ -41,6 +42,9 @@ class Projector implements Handler
                 break;
             case $event instanceof CheckedIn:
                 $this->checkIn($event);
+                break;
+            case $event instanceof CheckinIdGenerated:
+                $this->updateCheckinId($event);
                 break;
 
         }
@@ -94,6 +98,12 @@ class Projector implements Handler
     {
         $delegate = $this->fetchDelegate($event->getId());
         $delegate->checkIn();
+    }
+
+    private function updateCheckinId(CheckinIdGenerated $event)
+    {
+        $delegate = $this->fetchDelegate($event->getId());
+        $delegate->updateCheckinId($event->getCheckinId());
     }
 
     private function fetchDelegate(string $delegateId): ReadModel\Delegate

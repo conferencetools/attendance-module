@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card spur-card">
+            <div class="card-header">
+                <div class="spur-card-icon">
+                    <i class="fas fa-table"></i>
+                </div>
+                <div class="spur-card-title">Events</div>
+            </div>
+            <div class="card-body ">
+                <?php if (count($this->events) === 0):?>
+                    You haven't created any events yet.
+                <?php else:?>
+                    <table class="table table-hover table-in-card">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Capacity</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($this->events as $id => $event):
+                        /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event $event */
+                        ?>
+                        <tr>
+                            <td><a href="<?=$this->url('attendance-admin/events/view', ['eventId' => $event->getId()])?>"><?=$this->escapeHtml($event->getDescriptor()->getName())?></a></td>
+                            <td><?= $this->escapeHtml($event->getDescription())?></td>
+                            <td><?= $event->getCapacity() ?></td>
+                            <!-- @TODO add buttons for editing, adding tickets etc -->
+                        </tr>
+                        <?php
+                                        endforeach;?>
+                        </tbody>
+                    </table>
+                <?php endif;?>
+            </div>
+        </div>
+    </div>
+</div>

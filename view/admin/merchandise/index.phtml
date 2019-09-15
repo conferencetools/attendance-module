@@ -1,0 +1,56 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card spur-card">
+            <div class="card-header">
+                <div class="spur-card-icon">
+                    <i class="fas fa-table"></i>
+                </div>
+                <div class="spur-card-title">Merchandise</div>
+            </div>
+            <div class="card-body ">
+                <?php if (count($this->merchandise) === 0):?>
+                    You haven't created any Merchandise yet.
+                <?php else:?>
+                    <table class="table table-hover table-in-card">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">On sale from</th>
+                            <th scope="col">Until</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($this->merchandise as $id => $merchandise):
+                            /** @var \ConferenceTools\Attendance\Domain\Merchandise\ReadModel\Merchandise $merchandise */
+                            ?>
+                            <tr>
+                                <td><?= $merchandise->getDescriptor()->getName()?></td>
+                                <td><?= $merchandise->getDescriptor()->getDescription() ?></td>
+                                <td><?= $merchandise->getQuantity() ?></td>
+                                <td><?= $this->moneyFormat($merchandise->getPrice()) ?></td>
+                                <td><?=($merchandise->getOnSaleFrom() === null? 'N/A': $merchandise->getOnSaleFrom()->format('Y-m-d h:i'))?></td>
+                                <td><?=($merchandise->getWithdrawFrom() === null? 'N/A': $merchandise->getWithdrawFrom()->format('Y-m-d h:i'))?></td>
+                                <td>
+                                    <a class="btn btn-danger" href="<?=$this->url('attendance-admin/merchandise/withdraw', ['merchandiseId' => $merchandise->getId()])?>">
+                                        Withdraw
+                                    </a>
+                                    <?php if (!$merchandise->isOnSale()): ?>
+                                        <a class="btn btn-warning" href="<?=$this->url('attendance-admin/merchandise/put-on-sale', ['merchandiseId' => $merchandise->getId()])?>">
+                                            Put on Sale
+                                        </a>
+                                    <?php endif;?>
+                                </td>
+                            </tr>
+                        <?php
+                        endforeach;?>
+                        </tbody>
+                    </table>
+                <?php endif;?>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,30 +9,18 @@ use ConferenceTools\Attendance\Domain\Discounting\Command\AddCode;
 use ConferenceTools\Attendance\Domain\Discounting\Command\CreateDiscount;
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType;
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
-use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
-use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
-use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
-use ConferenceTools\Attendance\Domain\Ticketing\Event;
-use ConferenceTools\Attendance\Domain\Ticketing\Money;
+use ConferenceTools\Attendance\Domain\Discounting\AvailabilityDates;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
-use ConferenceTools\Attendance\Domain\Ticketing\TaxRate;
 use ConferenceTools\Attendance\Form\DiscountCodeForm;
 use ConferenceTools\Attendance\Form\DiscountForm;
-use ConferenceTools\Attendance\Form\TicketForm;
 use Doctrine\Common\Collections\Criteria;
 use Zend\Form\Element\DateTime;
 use Zend\View\Model\ViewModel;
 
 class DiscountsController extends AppController
 {
-    private $taxRate;
-
-    public function __construct(/*TaxRate $taxRate*/)
-    {
-        $this->taxRate = new TaxRate(20);
-    }
+    private $taxRate = 20;
 
     public function indexAction()
     {
@@ -46,7 +34,7 @@ class DiscountsController extends AppController
         $tickets = $this->repository(Ticket::class)->matching(Criteria::create());
         foreach ($tickets as $ticket) {
             /** @var Ticket $ticket */
-            $ticketOptions[$ticket->getId()] = $ticket->getEvent()->getName();
+            $ticketOptions[$ticket->getId()] = $ticket->getDescriptor()->getName();
         }
 
         $form = $this->form(DiscountForm::class, ['tickets' => $ticketOptions]);
@@ -67,7 +55,9 @@ class DiscountsController extends AppController
             }
         }
 
-        return new ViewModel(['form' => $form]);
+        $viewModel = new ViewModel(['form' => $form, 'action' => 'Create Discount']);
+        $viewModel->setTemplate('attendance/admin/form');
+        return $viewModel;
     }
 
     public function addCodeAction()
@@ -89,7 +79,9 @@ class DiscountsController extends AppController
             }
         }
 
-        return new ViewModel(['form' => $form]);
+        $viewModel = new ViewModel(['form' => $form, 'action' => 'Add Discount Code']);
+        $viewModel->setTemplate('attendance/admin/form');
+        return $viewModel;
     }
 
     private function makeAvailableDates(string $from, string $until)
@@ -116,10 +108,10 @@ class DiscountsController extends AppController
     private function makePrice($price, $grossOrNet)
     {
         if ($grossOrNet === 'gross') {
-            return Price::fromGrossCost(new Money($price), $this->taxRate);
+            return Price::fromGrossCost($price, $this->taxRate);
         }
 
-        return Price::fromNetCost(new Money($price), $this->taxRate);
+        return Price::fromNetCost($price, $this->taxRate);
     }
 
     private function makeDiscount($data): Discount

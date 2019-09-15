@@ -89,14 +89,12 @@ if (!function_exists('getflag')) {
 
 $routes['attendance-admin'] = [
     'type' => Literal::class,
-    'may_terminate' => true,
+    'may_terminate' => false,
     'options' => [
         'route' => '/admin',
         'defaults' => [
             'requiresAuth' => true,
-            'layout' => 'attendance/admin-layout',
-            'controller' => Controller\Admin\IndexController::class,
-            'action' => 'index'
+            'layout' => 'admin/layout',
         ]
     ],
     'child_routes' => [
@@ -112,6 +110,15 @@ $routes['attendance-admin'] = [
             ],
             'may_terminate' => true,
             'child_routes' => [
+                'create' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/create',
+                        'defaults' => [
+                            'action' => 'create',
+                        ],
+                    ],
+                ],
                 'delegates' => [
                     'type' => Literal::class,
                     'options' => [
@@ -120,7 +127,25 @@ $routes['attendance-admin'] = [
                             'action' => 'delegates',
                         ],
                     ],
-                ]
+                ],
+                'view' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:purchaseId/view',
+                        'defaults' => [
+                            'action' => 'view',
+                        ],
+                    ],
+                ],
+                'payment-received' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:purchaseId/payment-received/:paymentId',
+                        'defaults' => [
+                            'action' => 'payment-received',
+                        ],
+                    ],
+                ],
             ]
         ],
         'checkin' => [
@@ -304,6 +329,79 @@ $routes['attendance-admin'] = [
                         'defaults' => [
                             'action' => 'add-code'
                         ]
+                    ],
+                ],
+            ],
+        ],
+        'merchandise' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/merchandise',
+                'defaults' => [
+                    'controller' => Controller\Admin\MerchandiseController::class,
+                    'action' => 'index',
+                    'requiresPermission' => 'merchandise',
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'new' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/new',
+                        'defaults' => [
+                            'action' => 'new-merchandise'
+                        ]
+                    ],
+                ],
+                'withdraw' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/withdraw/:merchandiseId',
+                        'defaults' => [
+                            'action' => 'withdraw',
+                        ]
+                    ],
+                ],
+                'put-on-sale' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/put-on-sale/:merchandiseId',
+                        'defaults' => [
+                            'action' => 'put-on-sale',
+                        ]
+                    ],
+                ],
+            ],
+        ],
+        'events' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/events',
+                'defaults' => [
+                    'controller' => Controller\Admin\EventsController::class,
+                    'action' => 'index',
+                    'requiresPermission' => 'tickets',
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'new' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/new',
+                        'defaults' => [
+                            'action' => 'new-event'
+                        ]
+                    ],
+                ],
+                'view' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/view/:eventId',
+                        'defaults' => [
+                            'action' => 'view',
+                        ],
                     ],
                 ],
             ],

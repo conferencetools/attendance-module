@@ -1,0 +1,87 @@
+<?php
+/** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event $event */
+$event = $this->event;
+$remainingCapacity = $event->getCapacity() - $this->stats['ticketsReleased'];
+?>
+    <div class="row dash-row">
+        <div class="col-xl-4">
+            <div class="stats <?=($remainingCapacity >= 0) ? 'stats-primary' : 'stats-warning'?>">
+                <h3 class="stats-title"> Tickets released </h3>
+                <div class="stats-content">
+                    <div class="stats-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="stats-data">
+                        <div class="stats-number"><?=$this->stats['ticketsReleased']?></div>
+                        <div class="stats-change">
+                            <?php if ($remainingCapacity >= 0):?>
+                                <span class="stats-percentage"><?=$remainingCapacity?></span>
+                                <span class="stats-timeframe">capacity unallocated</span>
+                            <?php else:?>
+                                <span class="stats-percentage"><?=-$remainingCapacity?></span>
+                                <span class="stats-timeframe">over capacity</span>
+                            <?php endif;?>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="stats stats-success ">
+                <h3 class="stats-title"> Tickets sold </h3>
+                <div class="stats-content">
+                    <div class="stats-icon">
+                        <i class="fas fa-cart-arrow-down"></i>
+                    </div>
+                    <div class="stats-data">
+                        <div class="stats-number"><?=$this->stats['ticketsSold']?></div>
+                        <div class="stats-change">
+                            <span class="stats-percentage"><?=$this->stats['ticketsRemaining']?></span>
+                            <span class="stats-timeframe">remaining</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="stats stats-success ">
+                <h3 class="stats-title"> Revenue </h3>
+                <div class="stats-content">
+                    <div class="stats-icon">
+                        <i class="fas fa-cart-arrow-down"></i>
+                    </div>
+                    <div class="stats-data">
+                        <div class="stats-number">0</div>
+                        <div class="stats-change">
+                            <span class="stats-percentage">0</span>
+                            <span class="stats-timeframe">purchases</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card spur-card">
+            <div class="card-header">
+                <div class="spur-card-icon">
+                    <i class="fas fa-table"></i>
+                </div>
+                <div class="spur-card-title">Details</div>
+            </div>
+            <div class="card-body ">
+                <dl>
+                    <dt>Name</dt><dd><?=$this->escapeHtml($event->getDescriptor()->getName())?></dd>
+                    <dt>Description</dt><dd><?=$this->escapeHtml($event->getDescriptor()->getDescription())?></dd>
+                    <dt>Capacity</dt><dd><?=$event->getCapacity()?></dd>
+                    <dt>Starts</dt><dd><?=$event->getStartsOn()->format('Y-m-d h:i')?></dd>
+                    <dt>Ends</dt><dd><?=$event->getEndsOn()->format('Y-m-d h:i')?></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?=$this->partial('attendance/admin/tickets/index');?>

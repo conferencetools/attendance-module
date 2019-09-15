@@ -6,7 +6,10 @@ namespace ConferenceTools\Attendance\Domain\Delegate;
 use ConferenceTools\Attendance\Domain\Delegate\Command\CheckIn;
 use ConferenceTools\Attendance\Domain\Delegate\Command\UpdateDelegateDetails;
 use ConferenceTools\Attendance\Domain\Delegate\Event\CheckedIn;
+use ConferenceTools\Attendance\Domain\Delegate\Event\CheckinIdGenerated;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateDetailsUpdated;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCompleted;
+use ConferenceTools\Attendance\Domain\Purchasing\Purchase;
 use Phactor\Actor\AbstractActor;
 use ConferenceTools\Attendance\Domain\Delegate\Command\RegisterDelegate;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
@@ -23,6 +26,14 @@ class Delegate extends AbstractActor
     private $name;
     private $delegateType;
     private $checkedIn = false;
+    /**
+     *
+     */
+    private $purchaseCompleted;
+    /**
+     *
+     */
+    private $checkinId;
 
     protected function handleRegisterDelegate(RegisterDelegate $command)
     {
@@ -36,6 +47,8 @@ class Delegate extends AbstractActor
             $command->getRequirements(),
             $command->getDelegateType()
         ));
+
+        $this->subscribe(Purchase::class, $command->getPurchaseId());
     }
 
     protected function applyDelegateRegistered(DelegateRegistered $event)
@@ -59,6 +72,11 @@ class Delegate extends AbstractActor
             $command->getDietaryRequirements(),
             $command->getRequirements()
         ));
+
+        $checkinId = $this->generateCheckinId();
+        if ($checkinId !== $this->checkinId && $this->purchaseCompleted) {
+            $this->fire(new CheckinIdGenerated($this->id(), $this->email, $checkinId));
+        }
     }
 
     protected function applyDelegateDetailsUpdated(DelegateDetailsUpdated $event)
@@ -75,6 +93,24 @@ class Delegate extends AbstractActor
         $this->tickets[] = $event->getTicketId();
     }
 
+    protected function handlePurchaseCompleted(PurchaseCompleted $event)
+    {
+        //generate ticket
+        //@TODO make this fully random by exposing the identity generator from the base class.
+        $checkinId = $this->generateCheckinId();
+        $this->fire(new CheckinIdGenerated($this->id(), $this->email, $checkinId));
+    }
+
+    protected function applyCheckinIdGenerated(CheckinIdGenerated $event)
+    {
+        $this->checkinId = $event->getCheckinId();
+    }
+
+    protected function applyPurchaseCompleted(PurchaseCompleted $event)
+    {
+        $this->purchaseCompleted = true;
+    }
+
     protected function handleCheckIn(CheckIn $command)
     {
         if (!$this->checkedIn) {
@@ -85,5 +121,13 @@ class Delegate extends AbstractActor
     protected function applyCheckedIn(CheckedIn $event)
     {
         $this->checkedIn = true;
+    }
+
+    /**
+     * @return string
+     */
+    private function generateCheckinId(): string
+    {
+        return $this->generateIdentity();
     }
 }

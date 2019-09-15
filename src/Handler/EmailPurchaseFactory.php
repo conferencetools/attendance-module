@@ -3,6 +3,7 @@
 namespace ConferenceTools\Attendance\Handler;
 
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType;
+use ConferenceTools\Attendance\Domain\Merchandise\ReadModel\Merchandise;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use Interop\Container\ContainerInterface;
@@ -24,6 +25,7 @@ class EmailPurchaseFactory implements FactoryInterface
             $repositoryManager->get(Purchase::class),
             $repositoryManager->get(Ticket::class),
             $repositoryManager->get(DiscountType::class),
+           $repositoryManager->get(Merchandise::class),
             $container->get('Zend\View\View'),
             $transport,
             $emailConfig

@@ -3,46 +3,30 @@
 
 namespace ConferenceTools\Attendance\Domain\Ticketing\Event;
 
+use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use JMS\Serializer\Annotation as Jms;
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
-use ConferenceTools\Attendance\Domain\Ticketing\Event;
 
 class TicketsReleased
 {
-    /**
-     * @var string
-     * @Jms\Type("string")
-     */
+    /** @Jms\Type("string") */
     private $id;
-    /**
-     * @var string
-     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Event")
-     */
-    private $event;
-    /**
-     * @var string
-     * @Jms\Type("integer")
-     */
+    /** @Jms\Type("string") */
+    private $eventId;
+    /** @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Descriptor") */
+    private $descriptor;
+    /** @Jms\Type("integer") */
     private $quantity;
-    /**
-     * @var string
-     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates")
-     */
-    private $availabilityDates;
-    /**
-     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price")
-     * @var Price
-     */
+    /** @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\Price") */
     private $price;
 
-    public function __construct(string $id, Event $event, int $quantity, AvailabilityDates $availabilityDates, Price $price)
+    public function __construct(string $id, string $eventId, Descriptor $descriptor, int $quantity, Price $price)
     {
         $this->id = $id;
-        $this->event = $event;
         $this->quantity = $quantity;
-        $this->availabilityDates = $availabilityDates;
         $this->price = $price;
+        $this->eventId = $eventId;
+        $this->descriptor = $descriptor;
     }
 
     public function getId(): string
@@ -50,19 +34,19 @@ class TicketsReleased
         return $this->id;
     }
 
-    public function getEvent(): Event
+    public function getEventId(): string
     {
-        return $this->event;
+        return $this->eventId;
+    }
+
+    public function getDescriptor(): Descriptor
+    {
+        return $this->descriptor;
     }
 
     public function getQuantity(): int
     {
         return $this->quantity;
-    }
-
-    public function getAvailabilityDates(): AvailabilityDates
-    {
-        return $this->availabilityDates;
     }
 
     public function getPrice(): Price

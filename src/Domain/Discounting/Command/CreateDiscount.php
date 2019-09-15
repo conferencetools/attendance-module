@@ -3,7 +3,7 @@
 namespace ConferenceTools\Attendance\Domain\Discounting\Command;
 
 use ConferenceTools\Attendance\Domain\Discounting\Discount;
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
+use ConferenceTools\Attendance\Domain\Discounting\AvailabilityDates;
 use JMS\Serializer\Annotation as Jms;
 
 class CreateDiscount
@@ -13,7 +13,7 @@ class CreateDiscount
      */
     private $name;
     /**
-     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates")
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Discounting\AvailabilityDates")
      */
     private $availabilityDates;
     /**

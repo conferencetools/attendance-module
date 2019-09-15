@@ -19,24 +19,25 @@ class TicketForm extends Form implements InputFilterProviderInterface
     public function init()
     {
         $this->add([
-            'type' => Text::class,
-            'name' => 'code',
+            'type' => Radio::class,
+            'name' => 'eventId',
             'options' => [
-                'label' => 'Event code',
+                'label' => 'Event',
+                'value_options' => $this->getOption('eventOptions')
             ],
         ]);
         $this->add([
             'type' => Text::class,
             'name' => 'name',
             'options' => [
-                'label' => 'Event name',
+                'label' => 'Ticket name',
             ],
         ]);
         $this->add([
             'type' => Text::class,
             'name' => 'description',
             'options' => [
-                'label' => 'Event description',
+                'label' => 'Ticket description',
             ],
         ]);
 
@@ -45,20 +46,6 @@ class TicketForm extends Form implements InputFilterProviderInterface
             'name' => 'quantity',
             'options' => [
                 'label' => 'Ticket quantity',
-            ],
-        ]);
-        $this->add([
-            'type' => DateTime::class,
-            'name' => 'from',
-            'options' => [
-                'label' => 'On sale from',
-            ],
-        ]);
-        $this->add([
-            'type' => DateTime::class,
-            'name' => 'until',
-            'options' => [
-                'label' => 'On sale until',
             ],
         ]);
 
@@ -87,19 +74,13 @@ class TicketForm extends Form implements InputFilterProviderInterface
     public function getInputFilterSpecification()
     {
         return [
-            'code' => [
+            'eventId' => [
                 'allow_empty' => false,
                 'required' => true,
             ],
             'name' => [
                 'allow_empty' => false,
                 'required' => true,
-            ],
-            'from' => [
-                'allow_empty' => true,
-            ],
-            'until' => [
-                'allow_empty' => true,
             ],
             'quantity' => [
                 'allow_empty' => false,

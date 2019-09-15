@@ -24,6 +24,6 @@ class MoneyFormat extends AbstractHelper
 
         //return $currencyFormat($money->getAmount() / 100, $money->getCurrency());
 
-        return sprintf('£%.2f', $money->getAmount() / 100);
+        return sprintf('£%.2f', $money / 100);
     }
 }

@@ -1,0 +1,22 @@
+# Codeception Test Suite Configuration
+#
+# Suite for functional tests
+# Emulate web requests and make application process them
+# Include one of framework modules (Symfony2, Yii2, Laravel5) to use it
+# Remove this suite if you don't use frameworks
+
+actor: FunctionalTester
+coverage:
+  enabled: true
+  include:
+    - src/*
+  exclude:
+    - src/Domain/*
+extensions:
+  enabled:
+    - \ConferenceTools\Attendance\Test\Functional\DBManager
+modules:
+    enabled:
+        - \Helper\Functional
+        - ZF2:
+              config: tests/3.functional/config/application.config.php

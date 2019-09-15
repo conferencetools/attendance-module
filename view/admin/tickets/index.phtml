@@ -1,57 +1,55 @@
 <div class="row">
-    <div class="col-xs-12">
-        <div class="panel panel-default credit-card-box">
-            <div class="panel-heading display-table" >
-                <div class="row display-tr" >
-                    <h3 class="panel-title display-td" >Tickets</h3>
-                    <a class="btn btn-success" style="float:right" href="<?=$this->url('attendance-admin/tickets/new')?>">Add</a>
+    <div class="col-md-12">
+        <div class="card spur-card">
+            <div class="card-header">
+                <div class="spur-card-icon">
+                    <i class="fas fa-table"></i>
                 </div>
+                <div class="spur-card-title">Tickets</div>
             </div>
-            <div class="panel-body">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <table class="table">
-                                <?php if (count($this->tickets) === 0): ?>
-                                    <tr>
-                                        <td>You haven't created any tickets yet.</td>
-                                    </tr>
-                                <?php
-                                else:
-                                    foreach ($this->tickets as $id => $ticket):
-                                        /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket $ticket */
-                                        ?>
-                                        <tr>
-                                            <td class="col-md-6 col-xs-6">
-                                                <span class="col-xs-12 col-md-6"><?= $ticket->getEvent()->getName() ?></span>
-                                                <span class="hidden-xs col-md-6">
-                                                    <?= $ticket->getQuantity() ?>
-                                                </span>
-                                                <?php if ( ! empty($ticket->getEvent()->getDescription())): ?>
-                                                    <span class="help-block col-xs-12 col-md-12"><?= $ticket->getEvent()->getDescription() ?></span>
-                                                <?php endif ?>
-                                            </td>
-                                            <td class="col-md-3 col-xs-3">
-                                                <span class="col-xs-6"><?= $this->moneyFormat($ticket->getPrice()) ?></span>
-                                            </td>
-                                            <td class="col-md-3 col-xs-3">
-                                                <?php if ($ticket->isOnSale()): ?>
-                                                <a class="btn btn-danger" href="<?=$this->url('attendance-admin/tickets/withdraw', ['ticketId' => $ticket->getId()])?>">
-                                                    Withdraw
-                                                </a>
-                                                <?php else:?>
-                                                    <a class="btn btn-warning" href="<?=$this->url('attendance-admin/tickets/put-on-sale', ['ticketId' => $ticket->getId()])?>">
-                                                        Put on Sale
-                                                    </a>
-                                                <?endif;?>
-                                            </td>
-                                        </tr>
-                                    <?php
-                                    endforeach;
-                                endif;
-                                ?>
-                            </table>
-                        </div>
-                    </div>
+            <div class="card-body ">
+                <?php if (count($this->tickets) === 0):?>
+                    You haven't created any tickets yet.
+                <?php else:?>
+                    <table class="table table-hover table-in-card">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">On sale from</th>
+                            <th scope="col">Until</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($this->tickets as $id => $ticket):
+                            /** @var \ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket $ticket */
+                            ?>
+                            <tr>
+                                <td><?= $ticket->getDescriptor()->getName()?></td>
+                                <td><?= $ticket->getDescriptor()->getDescription() ?></td>
+                                <td><?= $ticket->getQuantity() ?></td>
+                                <td><?= $this->moneyFormat($ticket->getPrice()) ?></td>
+                                <td><?=($ticket->getOnSaleFrom() === null? 'N/A': $ticket->getOnSaleFrom()->format('Y-m-d h:i'))?></td>
+                                <td><?=($ticket->getWithdrawFrom() === null? 'N/A': $ticket->getWithdrawFrom()->format('Y-m-d h:i'))?></td>
+                                <td>
+                                    <a class="btn btn-danger" href="<?=$this->url('attendance-admin/tickets/withdraw', ['ticketId' => $ticket->getId()])?>">
+                                        Withdraw
+                                    </a>
+                                    <?php if (!$ticket->isOnSale()): ?>
+                                        <a class="btn btn-warning" href="<?=$this->url('attendance-admin/tickets/put-on-sale', ['ticketId' => $ticket->getId()])?>">
+                                            Put on Sale
+                                        </a>
+                                    <?php endif;?>
+                                </td>
+                            </tr>
+                        <?php
+                        endforeach;?>
+                        </tbody>
+                    </table>
+                <?php endif;?>
             </div>
         </div>
     </div>

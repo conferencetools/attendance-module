@@ -2,55 +2,40 @@
 
 namespace ConferenceTools\Attendance\Domain\Ticketing\ReadModel;
 
-use ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates;
-use ConferenceTools\Attendance\Domain\Ticketing\Event;
+use ConferenceTools\Attendance\Domain\Ticketing\Descriptor;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- */
+/** @ORM\Entity() */
 class Ticket
 {
-    /**
-     * @ORM\Id @ORM\Column(type="string")
-     */
+    /** @ORM\Id @ORM\Column(type="string") */
     private $id;
-    /**
-     * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Event")
-     */
-    private $event;
-    /**
-     * @ORM\Column(type="integer")
-     */
+    /** @ORM\Column(type="string") */
+    private $eventId;
+    /** @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Descriptor") */
+    private $descriptor;
+    /** @ORM\Column(type="integer") */
     private $quantity;
-    /**
-     * @ORM\Column(type="integer")
-     */
+    /** @ORM\Column(type="integer") */
     private $remaining = 0;
-    /**
-     * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Price")
-     * @var Price
-     */
+    /** @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\Price") */
     private $price;
-    /**
-     * @var AvailabilityDates
-     * @ORM\Embedded("ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates")
-     */
-    private $availabilityDates;
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    /** @ORM\Column(type="boolean") */
     private $onSale = false;
+    /** @ORM\Column(type="datetime", nullable=true) */
+    private $onSaleFrom;
+    /** @ORM\Column(type="datetime", nullable=true) */
+    private $withdrawFrom;
 
-    public function __construct(string $id, Event $event, int $quantity, Price $price, AvailabilityDates $availabilityDates)
+    public function __construct(string $id, string $eventId, Descriptor $descriptor, int $quantity, Price $price)
     {
         $this->id = $id;
-        $this->event = $event;
         $this->quantity = $quantity;
         $this->remaining = $quantity;
         $this->price = $price;
-        $this->availabilityDates = $availabilityDates;
+        $this->eventId = $eventId;
+        $this->descriptor = $descriptor;
     }
 
     public function getId(): string
@@ -58,9 +43,14 @@ class Ticket
         return $this->id;
     }
 
-    public function getEvent(): Event
+    public function getEventId(): string
     {
-        return $this->event;
+        return $this->eventId;
+    }
+
+    public function getDescriptor(): Descriptor
+    {
+        return $this->descriptor;
     }
 
     public function getQuantity(): int
@@ -71,11 +61,6 @@ class Ticket
     public function getPrice(): Price
     {
         return $this->price;
-    }
-
-    public function getAvailabilityDates(): AvailabilityDates
-    {
-        return $this->availabilityDates;
     }
 
     public function withdraw()
@@ -98,11 +83,6 @@ class Ticket
         return $this->remaining;
     }
 
-    public function remaining(): int
-    {
-        return $this->remaining;
-    }
-
     public function decreaseRemainingBy(int $quantity): void
     {
         $this->remaining -= $quantity;
@@ -111,5 +91,30 @@ class Ticket
     public function increaseRemainingBy(int $quantity): void
     {
         $this->remaining+= $quantity;
+    }
+
+    public function getOnSaleFrom(): ?\DateTime
+    {
+        return $this->onSaleFrom;
+    }
+
+    public function onSaleFrom(\DateTime $when)
+    {
+        $this->onSaleFrom = $when;
+    }
+
+    public function getWithdrawFrom(): ?\DateTime
+    {
+        return $this->withdrawFrom;
+    }
+
+    public function withdrawFrom(\DateTime $when)
+    {
+        $this->withdrawFrom = $when;
+    }
+
+    public function getSold(): int
+    {
+        return $this->quantity - $this->remaining;
     }
 }

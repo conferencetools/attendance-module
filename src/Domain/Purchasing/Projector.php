@@ -3,10 +3,11 @@
 
 namespace ConferenceTools\Attendance\Domain\Purchasing;
 
-use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\DiscountApplied;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\MerchandiseAddedToPurchase;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\MerchandisePurchaseExpired;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCompleted;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketReservationExpired;
-use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
 use Phactor\ReadModel\Repository;
@@ -37,14 +38,18 @@ class Projector implements Handler
             case $event instanceof OutstandingPaymentCalculated:
                 $this->updatePrice($event);
                 break;
-            case $event instanceof PaymentMade:
-                $this->purchasePaid($event);
-                break;
+            case $event instanceof MerchandisePurchaseExpired:
             case $event instanceof TicketReservationExpired:
                 $this->purchaseTimeout($event);
                 break;
             case $event instanceof DiscountApplied:
                 $this->discountApplied($event);
+                break;
+            case $event instanceof PurchaseCompleted:
+                $this->purchasePaid($event);
+                break;
+            case $event instanceof MerchandiseAddedToPurchase:
+                $this->merchandisePurchased($event);
                 break;
         }
 
@@ -56,6 +61,13 @@ class Projector implements Handler
         /** @var Purchase $entity */
         $entity = $this->repository->get($event->getId());
         $entity->addTickets($event->getTicketId(), $event->getQuantity());
+    }
+
+    private function merchandisePurchased(MerchandiseAddedToPurchase $event)
+    {
+        /** @var Purchase $entity */
+        $entity = $this->repository->get($event->getId());
+        $entity->addMerchandise($event->getMerchandiseId(), $event->getQuantity());
     }
 
     private function purchaseStartedBy(PurchaseStartedBy $event)
@@ -71,10 +83,10 @@ class Projector implements Handler
         $entity->updateTotal($event->getTotal());
     }
 
-    private function purchasePaid(PaymentMade $event)
+    private function purchasePaid(PurchaseCompleted $event)
     {
         /** @var Purchase $entity */
-        $entity = $this->repository->get($event->getActorId());
+        $entity = $this->repository->get($event->getId());
         $entity->paid();
     }
 

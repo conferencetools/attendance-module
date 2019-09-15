@@ -14,8 +14,9 @@ use ConferenceTools\Attendance\Domain\Delegate\Event as DelegateEvent;
 use ConferenceTools\Attendance\Domain\Ticketing\Event as TicketingEvent;
 use ConferenceTools\Attendance\Domain\Purchasing\Event as PurchasingEvent;
 use ConferenceTools\Attendance\Domain\Payment\Event as PaymentEvent;
+use ConferenceTools\Attendance\Domain\Ticketing\EventProjector;
 use ConferenceTools\Attendance\Domain\Ticketing\Ticket;
-use ConferenceTools\Attendance\Domain\Ticketing\Tickets;
+use ConferenceTools\Attendance\Domain\Ticketing\TicketProjector;
 
 class MessageSubscriptions
 {
@@ -23,16 +24,6 @@ class MessageSubscriptions
     {
         return [
             //################## Commands #######################
-            DelegateCommand\RegisterDelegate::class => [
-                Delegate\Delegate::class,
-            ],
-            DelegateCommand\UpdateDelegateDetails::class => [
-                Delegate\Delegate::class,
-            ],
-            DelegateCommand\CheckIn::class => [
-                Delegate\Delegate::class,
-            ],
-
             DiscountingCommand\CreateDiscount::class => [
                 DiscountType::class,
             ],
@@ -43,43 +34,26 @@ class MessageSubscriptions
                 DiscountType::class,
             ],
 
-            PurchasingCommand\CheckPurchaseTimeout::class => [
-                Purchasing\Purchase::class,
-            ],
-            PurchasingCommand\PurchaseTickets::class => [
-                Purchasing\Purchase::class,
-            ],
-            PurchasingCommand\AllocateTicketToDelegate::class => [
-                Purchasing\Purchase::class,
-            ],
-            PurchasingCommand\ApplyDiscount::class => [
-                Purchasing\Purchase::class,
-            ],
-
             TicketingCommand\ReleaseTicket::class => [
                 Ticket::class,
             ],
-            TicketingCommand\CheckTicketAvailability::class => [
+            TicketingCommand\ScheduleWithdrawDate::class => [
                 Ticket::class,
             ],
-            TicketingCommand\WithdrawFromSale::class => [
+            TicketingCommand\ScheduleSaleDate::class => [
                 Ticket::class,
             ],
-            TicketingCommand\PutOnSale::class => [
+            Ticketing\Command\CreateEvent::class => [
+                Ticketing\EventActor::class,
+            ],
+            Ticketing\Command\ShouldTicketBePutOnSale::class => [
+                Ticket::class,
+            ],
+            Ticketing\Command\ShouldTicketBeWithdrawn::class => [
                 Ticket::class,
             ],
 
             //################## Events #######################
-            DelegateEvent\DelegateRegistered::class => [
-                Delegate\Projector::class,
-            ],
-            DelegateEvent\DelegateDetailsUpdated::class => [
-                Delegate\Projector::class,
-            ],
-            DelegateEvent\CheckedIn::class => [
-                Delegate\Projector::class,
-            ],
-
             DiscountingEvent\DiscountCreated::class => [
                 Discounting\Projector::class,
             ],
@@ -94,41 +68,38 @@ class MessageSubscriptions
             ],
 
             PurchasingEvent\TicketReservationExpired::class => [
-                Tickets::class,
-                Purchasing\Projector::class,
+                TicketProjector::class,
+                EventProjector::class,
             ],
             PurchasingEvent\TicketAllocatedToDelegate::class => [
-                Delegate\Delegate::class,
                 Delegate\Projector::class,
             ],
             PurchasingEvent\TicketsReserved::class => [
-                Tickets::class,
-                Purchasing\Projector::class,
-            ],
-            PurchasingEvent\PurchaseStartedBy::class => [
-                Purchasing\Projector::class,
-            ],
-            PurchasingEvent\OutstandingPaymentCalculated::class => [
-                Purchasing\Projector::class,
-            ],
-            Purchasing\Event\DiscountApplied::class => [
-                Purchasing\Projector::class,
+                TicketProjector::class,
+                EventProjector::class,
             ],
 
             TicketingEvent\TicketsOnSale::class => [
-                Tickets::class,
+                TicketProjector::class,
             ],
             TicketingEvent\TicketsWithdrawnFromSale::class => [
-                Tickets::class,
+                TicketProjector::class,
             ],
             TicketingEvent\TicketsReleased::class => [
-                Tickets::class,
+                TicketProjector::class,
+            ],
+            TicketingEvent\SaleDateScheduled::class => [
+                TicketProjector::class,
+            ],
+            TicketingEvent\WithdrawDateScheduled::class => [
+                TicketProjector::class,
+            ],
+            Ticketing\Event\EventCreated::class => [
+                Ticketing\EventProjector::class,
             ],
 
-            PaymentEvent\PaymentMade::class => [
+            Payment\Event\PaymentRaised::class => [
                 Purchasing\Purchase::class,
-                Purchasing\Projector::class,
-                Delegate\Projector::class,
             ]
         ];
     }

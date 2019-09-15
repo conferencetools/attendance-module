@@ -5,9 +5,9 @@ namespace ConferenceTools\Attendance\Domain\Delegate;
 
 
 use ConferenceTools\Attendance\Domain\Delegate\Event\CheckedIn;
+use ConferenceTools\Attendance\Domain\Delegate\Event\CheckinIdGenerated;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateDetailsUpdated;
-use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
-use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCompleted;
 use Doctrine\Common\Collections\Criteria;
 use Phactor\Message\DomainMessage;
 use Phactor\Message\Handler;
@@ -18,12 +18,10 @@ use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketAllocatedToDelegate
 class Projector implements Handler
 {
     private $repository;
-    private $purchaseRepository;
 
-    public function __construct(Repository $repository, Repository $purchaseRepository)
+    public function __construct(Repository $repository)
     {
         $this->repository = $repository;
-        $this->purchaseRepository = $purchaseRepository;
     }
 
     public function handle(DomainMessage $message)
@@ -39,11 +37,14 @@ class Projector implements Handler
             case $event instanceof DelegateDetailsUpdated:
                 $this->updateDetails($event);
                 break;
-            case $event instanceof PaymentMade:
+            case $event instanceof PurchaseCompleted:
                 $this->paymentMade($event);
                 break;
             case $event instanceof CheckedIn:
                 $this->checkIn($event);
+                break;
+            case $event instanceof CheckinIdGenerated:
+                $this->updateCheckinId($event);
                 break;
 
         }
@@ -53,13 +54,9 @@ class Projector implements Handler
 
     private function delegateRegistered(DelegateRegistered $event): void
     {
-        /** @var Purchase $purchase */
-        $purchase = $this->purchaseRepository->get($event->getPurchaseId());
-
         $delegate = new ReadModel\Delegate(
             $event->getId(),
             $event->getPurchaseId(),
-            $purchase->getEmail(),
             $event->getName(),
             $event->getEmail(),
             $event->getCompany(),
@@ -89,9 +86,9 @@ class Projector implements Handler
         );
     }
 
-    private function paymentMade(PaymentMade $event): void
+    private function paymentMade(PurchaseCompleted $event): void
     {
-        $delegates = $this->repository->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $event->getActorId())));
+        $delegates = $this->repository->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $event->getId())));
         foreach ($delegates as $delegate) {
             $delegate->purchasePaid();
         }
@@ -101,6 +98,12 @@ class Projector implements Handler
     {
         $delegate = $this->fetchDelegate($event->getId());
         $delegate->checkIn();
+    }
+
+    private function updateCheckinId(CheckinIdGenerated $event)
+    {
+        $delegate = $this->fetchDelegate($event->getId());
+        $delegate->updateCheckinId($event->getCheckinId());
     }
 
     private function fetchDelegate(string $delegateId): ReadModel\Delegate

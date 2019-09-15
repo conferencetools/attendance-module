@@ -15,10 +15,19 @@ $this->headLink()->appendStylesheet('/css/card.css');
             <div class="panel-body">
                 <?php foreach ($this->purchase->getTickets() as $ticketId => $quantity): ?>
                     <div class="row">
-                        <span class="col-xs-12 col-md-8"><?= $this->tickets[$ticketId]->getEvent()->getName() ?></span>
+                        <span class="col-xs-12 col-md-8"><?= $this->tickets[$ticketId]->getDescriptor()->getName() ?></span>
                         <span class="col-xs-12 col-md-4"><?= $quantity ?></span>
-                        <?php if ( ! empty($this->tickets[$ticketId]->getEvent()->getDescription())): ?>
-                            <span class="help-block col-xs-12 col-md-12"><?= $this->tickets[$ticketId]->getEvent()->getDescription() ?></span>
+                        <?php if ( ! empty($this->tickets[$ticketId]->getDescriptor()->getDescription())): ?>
+                            <span class="help-block col-xs-12 col-md-12"><?= $this->tickets[$ticketId]->getDescriptor()->getDescription() ?></span>
+                        <?php endif ?>
+                    </div>
+                <?php endforeach; ?>
+                <?php foreach ($this->purchase->getMerchandise() as $merchandiseId => $quantity): ?>
+                    <div class="row">
+                        <span class="col-xs-12 col-md-8"><?= $this->merchandise[$merchandiseId]->getDescriptor()->getName() ?></span>
+                        <span class="col-xs-12 col-md-4"><?= $quantity ?></span>
+                        <?php if ( ! empty($this->merchandise[$merchandiseId]->getDescriptor()->getDescription())): ?>
+                            <span class="help-block col-xs-12 col-md-12"><?= $this->merchandise[$merchandiseId]->getDescriptor()->getDescription() ?></span>
                         <?php endif ?>
                     </div>
                 <?php endforeach; ?>
@@ -47,6 +56,7 @@ $this->headLink()->appendStylesheet('/css/card.css');
     </div>
 </div>
 
+<?php if (count($this->delegates) > 0):?>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default credit-card-box">
@@ -68,7 +78,7 @@ $this->headLink()->appendStylesheet('/css/card.css');
                         </span>
                         <?php
                             $tickets = $this->tickets;
-                            $delegateTickets = array_map(function (string $ticketId) use ($tickets) {return $tickets[$ticketId]->getEvent()->getName();}, $delegate->getTickets());
+                            $delegateTickets = array_map(function (string $ticketId) use ($tickets) {return $tickets[$ticketId]->getDescriptor()->getName();}, $delegate->getTickets());
                         ?>
                         <span class="help-block col-xs-12 col-md-12"><?= implode(', ', $delegateTickets) ?></span>
 
@@ -78,3 +88,4 @@ $this->headLink()->appendStylesheet('/css/card.css');
         </div>
     </div>
 </div>
+<?php endif?>

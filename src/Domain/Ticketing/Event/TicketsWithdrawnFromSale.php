@@ -1,16 +1,12 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Domain\Ticketing\Event;
 
 use JMS\Serializer\Annotation as Jms;
 
 class TicketsWithdrawnFromSale
 {
-    /**
-     * @var string
-     * @Jms\Type("string")
-     */
+    /** @Jms\Type("string") */
     private $id;
 
     public function __construct(string $id)

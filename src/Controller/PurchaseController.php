@@ -1,8 +1,6 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Controller;
-
 
 use ConferenceTools\Attendance\Domain\Delegate\Command\RegisterDelegate;
 use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
@@ -10,29 +8,49 @@ use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountCode;
 use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountType;
-use ConferenceTools\Attendance\Domain\Payment\Command\TakePayment;
+use ConferenceTools\Attendance\Domain\Merchandise\ReadModel\Merchandise;
+use ConferenceTools\Attendance\Domain\Payment\Command\ProvidePaymentDetails;
+use ConferenceTools\Attendance\Domain\Payment\Command\SelectPaymentMethod;
+use ConferenceTools\Attendance\Domain\Payment\PaymentType;
+use ConferenceTools\Attendance\Domain\Payment\ReadModel\Payment;
+use ConferenceTools\Attendance\Domain\Purchasing\Basket;
+use ConferenceTools\Attendance\Domain\Purchasing\BasketFactory;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\ApplyDiscount;
-use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseTickets;
+use ConferenceTools\Attendance\Domain\Purchasing\Command\Checkout;
+use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseItems;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseStartedBy;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Form\DelegatesForm;
-use ConferenceTools\Attendance\Form\PaymentForm;
 use ConferenceTools\Attendance\Form\PurchaseForm;
-use ConferenceTools\Attendance\Handler\PaymentFailed;
+use ConferenceTools\Attendance\PaymentProvider\PaymentProvider;
+use ConferenceTools\Attendance\Service\TicketValidationFailed;
 use Doctrine\Common\Collections\Criteria;
+use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ViewModel;
 
 class PurchaseController extends AppController
 {
     protected $tickets;
+    private $paymentProvider;
+    private $paymentType;
+
+    public function __construct(PaymentProvider $paymentProvider, PaymentType $paymentType)
+    {
+        $this->paymentType = $paymentType;
+        $this->paymentProvider = $paymentProvider;
+    }
 
     public function indexAction()
     {
-        $tickets = $this->getTickets();
-        $form = $this->form(PurchaseForm::class, ['tickets' => $tickets]);
+        $events = $this->getTicketService()->getTicketsForPurchasePage();
+        $tickets = $this->getTickets(true);
+        $merchandise = $this->repository(Merchandise::class)->matching(Criteria::create()->where(Criteria::expr()->eq('onSale', true)));
+        $form = $this->form(PurchaseForm::class, ['tickets' => $tickets, 'merchandise' => $merchandise]);
 
         //@TODO if discount code in url fetch + validate it.
         //@TODO if discount code in url, apply it to prices (use <strike></strike>)
@@ -42,31 +60,25 @@ class PurchaseController extends AppController
             $form->setData($formData);
             if ($form->isValid()) {
                 $data = $form->getData();
-                if ($this->validateTicketQuantity($data['quantity']) && $this->validateDiscountCode($data['discount_code'])) {
+                $basket = null;
+                try {
+                    $basketFactory = new BasketFactory(
+                        $this->repository(Ticket::class),
+                        $this->repository(Merchandise::class),
+                        $this->repository(Event::class)
+                    );
 
-                    $minDelegates = PHP_INT_MAX;
-                    $maxDelegates = 0;
+                    $basket = $basketFactory->createBasket($data['quantity'], $data['merchandise']);
+                } catch (\Exception $e) {
+                    $this->flashMessenger()->addErrorMessage($e->getMessage());
+                }
 
-                    foreach ($data['quantity'] as $ticketId => $quantity) {
-                        $quantity = (int)$quantity;
+                if ($basket instanceof Basket && $this->validateDiscountCode($data['discount_code'])) {
 
-                        if ($quantity > 0) {
-                            $selectedTickets[] = new TicketQuantity(
-                                $ticketId,
-                                $tickets[$ticketId]->getEvent(),
-                                $quantity,
-                                $tickets[$ticketId]->getPrice()
-                            );
-                        }
+                    $forDelegates = $this->clampDelegates($data['quantity'], $data['delegates']);
 
-                        $minDelegates = min($minDelegates, $quantity);
-                        $maxDelegates += $quantity;
-                    }
-
-                    $forDelegates = min($maxDelegates, max($minDelegates, (int) $data['delegates']));
-
-                    $messages = $this->messageBus()->fire(new PurchaseTickets($data['purchase_email'], $forDelegates, ...$selectedTickets));
-                    $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
+                    $messages = $this->messageBus()->fire(new PurchaseItems($data['purchase_email'], $forDelegates, $basket));
+                    $purchaseId = $this->messageBus()->firstInstanceOf(PurchaseStartedBy::class, ...$messages)->getId();
 
                     if (!empty($data['discount_code'])) {
                         $code = $this->fetchDiscountCode($data['discount_code']);
@@ -80,12 +92,30 @@ class PurchaseController extends AppController
                         $this->messageBus()->fire($command);
                     }
 
+                    if ($forDelegates === 0) {
+                        $this->messageBus()->fire(new Checkout($purchaseId));
+                        return $this->redirect()->toRoute('attendance/purchase/payment', ['purchaseId' => $purchaseId]);
+                    }
+
                     return $this->redirect()->toRoute('attendance/purchase/delegate-info', ['purchaseId' => $purchaseId]);
                 }
             }
         }
         $form->prepare();
-        return new ViewModel(['tickets' => $tickets, 'form' => $form]);
+
+        $requiresTicket = [];
+        $doesntRequireTicket = [];
+
+        foreach ($merchandise as $merch) {
+            /** @var Merchandise $merch */
+            if ($merch->requiresTicket()) {
+                $requiresTicket[] = $merch;
+            } else {
+                $doesntRequireTicket[] = $merch;
+            }
+        }
+
+        return new ViewModel(['tickets' => $tickets, 'events' => $events, 'form' => $form, 'ticketFreeMerchandise' => $doesntRequireTicket, 'merchandise' => $requiresTicket]);
     }
 
     public function delegatesAction()
@@ -96,23 +126,8 @@ class PurchaseController extends AppController
         /** @var Purchase $purchase*/
         $purchase = $this->repository(Purchase::class)->get($purchaseId);
 
-        if ($purchase === null) {
-            $this->flashMessenger()->addErrorMessage('Purchase not found, or has timed out');
-            return $this->redirect()->toRoute('attendance/purchase');
-        }
-
-        if ($purchase->isPaid()) {
-            return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $purchaseId]);
-        }
-
-        $delegates = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $purchaseId)));
-
-        if (count($delegates) > 0) {
-            return $this->redirect()->toRoute('attendance/purchase/payment', ['purchaseId' => $purchaseId]);
-        }
-
         foreach ($purchase->getTickets() as $ticketId => $quantity) {
-            $ticketOptions[$ticketId] = $tickets[$ticketId]->getEvent()->getName();
+            $ticketOptions[$ticketId] = $tickets[$ticketId]->getDescriptor()->getName();
         }
 
         $maxDelegates = $purchase->getMaxDelegates();
@@ -133,6 +148,11 @@ class PurchaseController extends AppController
                         if (empty($delegate['tickets'])) {
                             continue;
                         }
+
+                        if (empty($delegate['email'])) {
+                            $delegate['email'] = $purchase->getEmail();
+                        }
+
                         $dietaryRequirements = new DietaryRequirements($delegate['preference'], $delegate['allergies']);
 
                         $command = new RegisterDelegate(
@@ -154,6 +174,8 @@ class PurchaseController extends AppController
                             $this->messageBus()->fire($command);
                         }
                     }
+
+                    $this->messageBus()->fire(new Checkout($purchaseId));
                     return $this->redirect()->toRoute('attendance/purchase/payment', ['purchaseId' => $purchaseId]);
                 }
             }
@@ -162,51 +184,54 @@ class PurchaseController extends AppController
         return new ViewModel(['form' =>  $form, 'purchase' => $purchase, 'tickets' => $tickets, 'delegates' => $maxDelegates]);
     }
 
+    /* logic
+    if manual payment
+        add message about awaiting payment confirmation, display complete  (done)
+    if automatic payment
+        if payment raised
+            select payment method: stripe by default (done)
+        if payment started
+            if method post
+                update to pending
+            else
+                display payment form (if reloaded how to get client secret?)
+        if payment pending
+            display message: waiting payment confirmation; reload page after a short while (done)
+        if payment complete
+            display/redirect to complete page (done)
+    */
     public function paymentAction()
     {
-        $form = $this->form(PaymentForm::class);
-
         $purchaseId = $this->params()->fromRoute('purchaseId');
+        /** @var Payment $payment */
+        $payment = $this->repository(Payment::class)->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $purchaseId)))->current();
 
-        /** @var Purchase $purchase*/
-        $purchase = $this->repository(Purchase::class)->get($purchaseId);
-
-        $discount = null;
-
-        if ($purchase->getDiscountId() !== null) {
-            $discount = $this->repository(DiscountType::class)->get($purchase->getDiscountId());
+        if ($payment->isComplete()) {
+            return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $payment->getPurchaseId()]);
         }
 
-        if ($purchase === null) {
-            $this->flashMessenger()->addErrorMessage('Purchase not found, or has timed out');
-            return $this->redirect()->toRoute('attendance/purchase');
+        if ($payment->getPaymentMethod() === null) {
+            //@TODO allow configuration of payment types, show user a form to select the one they wish to use
+            $this->messageBus()->fire(new SelectPaymentMethod($payment->getId(), $this->paymentType));
         }
 
-        if ($purchase->isPaid()) {
-            return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $purchaseId]);
+        if ($payment->getPaymentMethod()->requiresManualConfirmation()) {
+            $this->flashMessenger()->addWarningMessage('Your payment is pending manual confirmation. You will receive email confirmation once this has been done.');
+            return $this->completeAction();
+        }
+
+        if ($payment->isPending()) {
+            return new ViewModel(['payment' => $payment]);
         }
 
         if ($this->getRequest()->isPost()) {
-            $data = $this->params()->fromPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                try {
-                    $command = new TakePayment($purchaseId, $purchase->getTotal(), $data['stripe_token'], $purchase->getEmail());
-                    $this->messageBus()->fire($command);
-
-                    return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $purchaseId]);
-                } catch (PaymentFailed $e) {
-                    $this->flashMessenger()->addErrorMessage(
-                        sprintf(
-                            'There was an issue with taking your payment: %s Please try again.',
-                            $e->getMessage()
-                        )
-                    );
-                }
-            }
+            $this->messageBus()->fire(new ProvidePaymentDetails($payment->getId()));
+            return $this->redirect()->toRoute('attendance/purchase/payment', ['purchaseId' => $payment->getPurchaseId()]);
         }
 
-        return new ViewModel(['form' => $form, 'purchase' => $purchase, 'discount' => $discount, 'tickets' => $this->getTickets(false)]);
+        $purchase = $this->repository(Purchase::class)->get($purchaseId);
+
+        return $this->paymentProvider->getView($purchase, $payment);
     }
 
     public function completeAction()
@@ -222,67 +247,24 @@ class PurchaseController extends AppController
             $discount = $this->repository(DiscountType::class)->get($purchase->getDiscountId());
         }
 
-        if ($purchase === null) {
-            $this->flashMessenger()->addErrorMessage('Purchase not found, or has timed out');
-            return $this->redirect()->toRoute('attendance/purchase');
-        }
-
         $delegates = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $purchaseId)));
-        return new ViewModel(['purchase' => $purchase, 'discount' => $discount, 'tickets' => $this->getTickets(false), 'delegates' => $delegates]);
-    }
-
-    /**
-     * @return Ticket[]
-     */
-    protected function getTickets($onlyOnSale = true): array
-    {
-        if ($this->tickets === null) {
-            $criteria = Criteria::create();
-            if ($onlyOnSale) {
-                $criteria->where(Criteria::expr()->eq('onSale', true));
-            }
-            $tickets = $this->repository(Ticket::class)->matching($criteria);
-            $ticketsIndexed = [];
-
-            foreach ($tickets as $ticket) {
-                $ticketsIndexed[$ticket->getId()] = $ticket;
-            }
-
-            $this->tickets = $ticketsIndexed;
-        }
-
-        return $this->tickets;
-    }
-
-    private function validateTicketQuantity(array $quantities): bool
-    {
-        $tickets = $this->getTickets();
-
-        $total = 0;
-        foreach ($quantities as $ticketId => $quantity) {
-            if ((int) $quantity > 0) { //filter out any rows which haven't been selected
-                $total += $quantity;
-
-                if (!isset($tickets[$ticketId]) || $tickets[$ticketId]->getRemaining() < $quantity) {
-                    $this->flashmessenger()->addErrorMessage('One or more of the tickets you selected has sold out or you have selected more than the quantity remaining');
-                    return false;
-                }
-            }
-        }
-
-        if ($total < 1) {
-            $this->flashmessenger()->addErrorMessage('Please select at least one ticket to purchase');
-            return false;
-        }
-
-        return true;
+        $merchandise = $this->indexBy($this->repository(Merchandise::class)->matching(Criteria::create()));
+        $viewModel = new ViewModel([
+            'purchase' => $purchase,
+            'discount' => $discount,
+            'tickets' => $this->getTickets(false),
+            'delegates' => $delegates,
+            'merchandise' => $merchandise,
+        ]);
+        $viewModel->setTemplate('attendance/purchase/complete');
+        return $viewModel;
     }
 
     private function validateDelegateTicketAssignment(Purchase $purchase, array $data): bool
     {
         $purchasedTickets = $purchase->getTickets();
         $maxDelegates = $purchase->getMaxDelegates();
-        $tickets = $this->getTickets();
+        $tickets = $this->getTickets(true);
         $valid = true;
 
         for ($i = 0; $i < $maxDelegates; $i++) {
@@ -295,14 +277,14 @@ class PurchaseController extends AppController
         foreach ($purchasedTickets as $ticketId => $quantity) {
             if ($quantity < 0) {
                 $this->flashMessenger()->addErrorMessage(
-                    sprintf('You have allocated too many %s tickets.', $tickets[$ticketId]->getEvent()->getName())
+                    sprintf('You have allocated too many %s tickets.', $tickets[$ticketId]->getDescriptor()->getName())
                 );
                 $valid = false;
             }
 
             if ($quantity > 0) {
                 $this->flashMessenger()->addErrorMessage(
-                    sprintf('You have left %s tickets unallocated.', $tickets[$ticketId]->getEvent()->getName())
+                    sprintf('You have left %s tickets unallocated.', $tickets[$ticketId]->getDescriptor()->getName())
                 );
                 $valid = false;
             }
@@ -334,5 +316,64 @@ class PurchaseController extends AppController
         $codes = $this->repository(DiscountCode::class)->matching($criteria);
         $code = $codes->current();
         return $code ? $code : null;
+    }
+
+    protected function attachDefaultListeners()
+    {
+        parent::attachDefaultListeners();
+        $events = $this->getEventManager();
+        $events->attach(MvcEvent::EVENT_DISPATCH, [$this, 'amIInTheRightPlace'], 10);
+    }
+
+    /**
+     * @TODO Logic pulled out of individual methods, validate it and add to it to cover payment flow and prevent jumping to complete without payment
+     */
+    public function amIInTheRightPlace(MvcEvent $event)
+    {
+        $action = $event->getRouteMatch()->getParam('action');
+        if ($action === 'index' || $action === 'confirm-payment') {
+            return;
+        }
+
+        $purchaseId = $this->params()->fromRoute('purchaseId');
+
+        /** @var Purchase $purchase*/
+        $purchase = $this->repository(Purchase::class)->get($purchaseId);
+
+        if ($purchase === null) {
+            $this->flashMessenger()->addErrorMessage('Purchase not found, or has timed out');
+            return $this->redirect()->toRoute('attendance/purchase');
+        }
+
+        if ($purchase->isPaid() && $action !== 'complete') {
+            return $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $purchaseId]);
+        }
+
+        if ($purchase->isPaid() && $action === 'complete') {
+            return;
+        }
+
+        if ($action === 'payment') {
+            return;
+        }
+
+        $delegates = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $purchaseId)));
+
+        if (count($delegates) > 0) {
+            return $this->redirect()->toRoute('attendance/purchase/payment', ['purchaseId' => $purchaseId]);
+        }
+    }
+
+    private function clampDelegates($tickets, $delegates): int
+    {
+        $delegates = max($delegates, 1);
+        $minDelegates = min($tickets);
+        $maxDelegates = array_sum($tickets);
+
+        if ($maxDelegates === 0) {
+            return 0;
+        }
+
+        return min($maxDelegates, max($minDelegates, (int) $delegates));
     }
 }

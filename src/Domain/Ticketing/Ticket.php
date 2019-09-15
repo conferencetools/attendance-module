@@ -4,73 +4,65 @@
 namespace ConferenceTools\Attendance\Domain\Ticketing;
 
 
-use ConferenceTools\Attendance\Domain\Ticketing\Command\PutOnSale;
-use ConferenceTools\Attendance\Domain\Ticketing\Command\WithdrawFromSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ScheduleSaleDate;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ScheduleWithdrawDate;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ShouldTicketBeWithdrawn;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\SaleDateScheduled;
+use ConferenceTools\Attendance\Domain\Ticketing\Command\ShouldTicketBePutOnSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
 use Phactor\Actor\AbstractActor;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\CheckTicketAvailability;
 use ConferenceTools\Attendance\Domain\Ticketing\Command\ReleaseTicket;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsOnSale;
 use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsReleased;
-use ConferenceTools\Attendance\Domain\Ticketing\Event\TicketsWithdrawnFromSale;
+use ConferenceTools\Attendance\Domain\Ticketing\Event\WithdrawDateScheduled;
 
 class Ticket extends AbstractActor
 {
-    /**
-     * @var AvailabilityDates
-     */
-    private $availabilityDates;
-    private $event;
+    private $descriptor;
     private $quantity;
     private $onSale = false;
     private $price;
+    private $eventId;
+    private $putOnSaleOn;
+    private $withdrawOn;
 
     protected function handleReleaseTicket(ReleaseTicket $command)
     {
-        $availabilityDates = $command->getAvailableDates();
-
         $this->fire(new TicketsReleased(
             $this->id(),
-            $command->getTicket(),
+            $command->getEventId(),
+            $command->getDescriptor(),
             $command->getQuantity(),
-            $availabilityDates,
             $command->getPrice()
         ));
-
-        if ($availabilityDates->availableNow()) {
-            $this->fire(new TicketsOnSale($this->id(), $command->getTicket(), $command->getQuantity(), $command->getPrice()));
-            $availableUntil = $availabilityDates->getAvailableUntil();
-
-            if ($availableUntil instanceof \DateTime) {
-                $this->schedule(new CheckTicketAvailability($this->id()), $availableUntil);
-            }
-        } else {
-            $availableFrom = $availabilityDates->getAvailableFrom();
-
-            if ($availableFrom instanceof \DateTime) {
-                $this->schedule(new CheckTicketAvailability($this->id()), $availableFrom);
-            }
-        }
     }
 
     protected function applyTicketsReleased(TicketsReleased $event)
     {
-        $this->availabilityDates = $event->getAvailabilityDates();
-        $this->event = $event->getEvent();
+        $this->eventId = $event->getEventId();
+        $this->descriptor = $event->getDescriptor();
         $this->quantity = $event->getQuantity();
         $this->price = $event->getPrice();
     }
 
-    protected function handleWithdrawFromSale(WithdrawFromSale $command)
+    protected function handleScheduleSaleDate(ScheduleSaleDate $command)
     {
-        if ($this->onSale) {
-            $this->fire(new TicketsWithdrawnFromSale($this->id()));
+        if (!$this->onSale) {
+            $this->schedule(new ShouldTicketBePutOnSale($this->id(), $command->getWhen()), $command->getWhen());
+            $this->fire(new SaleDateScheduled($this->id(), $command->getWhen()));
         }
     }
 
-    protected function handlePutOnSale(PutOnSale $command)
+    protected function applySaleDateScheduled(SaleDateScheduled $event)
     {
-        if (!$this->onSale) {
-            $this->fire(new TicketsOnSale($this->id(), $this->event, $this->quantity, $this->price));
+        $this->putOnSaleOn = $event->getWhen();
+    }
+
+    protected function handleShouldTicketBePutOnSale(ShouldTicketBePutOnSale $command)
+    {
+        if (!$this->onSale && $this->putOnSaleOn == $command->getWhen()) {
+            $this->fire(new TicketsOnSale($this->id()));
         }
     }
 
@@ -79,18 +71,20 @@ class Ticket extends AbstractActor
         $this->onSale = true;
     }
 
-    protected function handleCheckTicketAvailability(CheckTicketAvailability $command)
+    protected function handleScheduleWithdrawDate(ScheduleWithdrawDate $command)
     {
-        if (!$this->onSale && $this->availabilityDates->availableNow()) {
-            $this->fire(new TicketsOnSale($this->id(), $this->event, $this->quantity, $this->price));
-            $availableUntil = $this->availabilityDates->getAvailableUntil();
+        $this->schedule(new ShouldTicketBeWithdrawn($this->id(), $command->getWhen()), $command->getWhen());
+        $this->fire(new WithdrawDateScheduled($this->id(), $command->getWhen()));
+    }
 
-            if ($availableUntil instanceof \DateTime) {
-                $this->schedule(new CheckTicketAvailability($this->id()), $availableUntil);
-            }
-        }
+    protected function applyWithdrawDateScheduled(WithdrawDateScheduled $event)
+    {
+        $this->withdrawOn = $event->getWhen();
+    }
 
-        if ($this->onSale && !$this->availabilityDates->availableNow()) {
+    protected function handleShouldTicketBeWithdrawn(ShouldTicketBeWithdrawn $command)
+    {
+        if ($this->onSale && $this->withdrawOn == $command->getWhen()) {
             $this->fire(new TicketsWithdrawnFromSale($this->id()));
         }
     }

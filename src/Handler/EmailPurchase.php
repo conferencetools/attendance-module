@@ -2,7 +2,7 @@
 
 namespace ConferenceTools\Attendance\Handler;
 
-use ConferenceTools\Attendance\Domain\Payment\Event\PaymentMade;
+use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCompleted;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
 use Doctrine\Common\Collections\Criteria;
 use Phactor\Message\DomainMessage;
@@ -24,11 +24,13 @@ class EmailPurchase implements Handler
     private $purchaseRepository;
     private $ticketsRepository;
     private $discountRepository;
+    private $merchandiseRepository;
 
     public function __construct(
         Repository $purchaseRepository,
         Repository $ticketsRepository,
         Repository $discountRepository,
+        Repository $merchandiseRepository,
         View $view,
         TransportInterface $mail,
         array $config = []
@@ -40,6 +42,7 @@ class EmailPurchase implements Handler
         $this->purchaseRepository = $purchaseRepository;
         $this->ticketsRepository = $ticketsRepository;
         $this->discountRepository = $discountRepository;
+        $this->merchandiseRepository = $merchandiseRepository;
     }
 
 
@@ -51,11 +54,11 @@ class EmailPurchase implements Handler
     public function handle(DomainMessage $domainMessage)
     {
         $message = $domainMessage->getMessage();
-        if (!($message instanceof PaymentMade)) {
+        if (!($message instanceof PurchaseCompleted)) {
             return;
         }
         /** @var Purchase $purchase */
-        $purchase = $this->purchaseRepository->get($message->getActorId());
+        $purchase = $this->purchaseRepository->get($message->getId());
         $discount = null;
 
         if ($purchase->getDiscountId() !== null) {
@@ -68,7 +71,19 @@ class EmailPurchase implements Handler
             $ticketsIndexed[$ticket->getId()] = $ticket;
         }
 
-        $viewModel = new ViewModel(['purchase' => $purchase, 'discount' => $discount, 'tickets' => $ticketsIndexed, 'config'=> $this->config]);
+        $merchandise = $this->merchandiseRepository->matching(Criteria::create());
+
+        foreach ($merchandise as $merch) {
+            $merchandiseIndexed[$merch->getId()] = $merch;
+        }
+
+        $viewModel = new ViewModel([
+            'purchase' => $purchase,
+            'discount' => $discount,
+            'tickets' => $ticketsIndexed,
+            'config'=> $this->config,
+            'merchandise' => $merchandiseIndexed,
+        ]);
         $viewModel->setTemplate('email/receipt');
 
         $response = new Response();

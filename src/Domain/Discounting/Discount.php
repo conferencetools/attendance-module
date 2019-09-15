@@ -2,7 +2,6 @@
 
 namespace ConferenceTools\Attendance\Domain\Discounting;
 
-use ConferenceTools\Attendance\Domain\Ticketing\Money;
 use JMS\Serializer\Annotation as Jms;
 use ConferenceTools\Attendance\Domain\Purchasing\TicketQuantity;
 use ConferenceTools\Attendance\Domain\Ticketing\Price;
@@ -75,7 +74,7 @@ class Discount
             return $this->perPurchase;
         }
 
-        $totalDiscount = Price::fromNetCost(new Money(0), current($tickets)->getTotalPrice()->getTaxRate());
+        $totalDiscount = Price::fromNetCost(0, current($tickets)->getTotalPrice()->getTaxRate());
 
         if ($this->perTicket !== null) {
             foreach ($tickets as $ticket) {
@@ -105,11 +104,11 @@ class Discount
     public function __toString()
     {
         if ($this->perPurchase !== null) {
-            return $this->perPurchase->getGross()->getAmount() . ' per purchase.';
+            return $this->perPurchase->getGross() . ' per purchase.';
         }
 
         if ($this->perTicket !== null) {
-            return $this->perTicket->getGross()->getAmount() . ' per ticket.';
+            return $this->perTicket->getGross() . ' per ticket.';
         }
 
         if ($this->percentage !== null) {

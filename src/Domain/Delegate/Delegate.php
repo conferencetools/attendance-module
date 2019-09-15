@@ -128,6 +128,6 @@ class Delegate extends AbstractActor
      */
     private function generateCheckinId(): string
     {
-        return rtrim(strtr(base64_encode(substr(hash_hmac('sha256', $this->id(), $this->email, true), 0, 22)), '+/', '-_'), '=');
+        return $this->generateIdentity();
     }
 }

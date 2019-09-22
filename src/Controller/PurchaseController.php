@@ -75,7 +75,7 @@ class PurchaseController extends AppController
 
                 if ($basket instanceof Basket && $this->validateDiscountCode($data['discount_code'])) {
 
-                    $forDelegates = $this->clampDelegates($data['quantity'], $data['delegates']);
+                    $forDelegates = empty($data['quantity']) ? 0 : $this->clampDelegates($data['quantity'], $data['delegates']);
 
                     $messages = $this->messageBus()->fire(new PurchaseItems($data['purchase_email'], $forDelegates, $basket));
                     $purchaseId = $this->messageBus()->firstInstanceOf(PurchaseStartedBy::class, ...$messages)->getId();

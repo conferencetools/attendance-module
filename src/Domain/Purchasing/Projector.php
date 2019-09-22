@@ -90,8 +90,12 @@ class Projector implements Handler
         $entity->paid();
     }
 
-    private function purchaseTimeout(TicketReservationExpired $event)
+    private function purchaseTimeout($event)
     {
+        if (!($event instanceof TicketReservationExpired || $event instanceof MerchandisePurchaseExpired)) {
+            return;
+        }
+        
         $entity = $this->repository->get($event->getId());
         if ($entity instanceof Purchase) {
             $this->repository->remove($entity);

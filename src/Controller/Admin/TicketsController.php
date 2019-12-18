@@ -100,37 +100,6 @@ class TicketsController extends AppController
         return $viewModel;
     }
 
-    public function sendTicketEmailsAction()
-    {
-        $tickets = $this->getTickets();
-        foreach ($tickets as $ticketId => $quantity) {
-            $ticketOptions[$ticketId] = $tickets[$ticketId]->getEvent()->getName();
-        }
-        $form = $this->form(SendTicketsForm::class, ['ticketOptions' => $ticketOptions]);
-
-        if ($this->getRequest()->isPost()) {
-            $form->setData($this->params()->fromPost());
-            if ($form->isValid()) {
-                $data = $form->getData();
-                $delegates = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('isPaid', true)));
-                foreach ($delegates as $delegate) {
-                    /** @var Delegate $delegate */
-                    if (!empty(array_intersect($delegate->getTickets(), $data['tickets']))) {
-                        $command = new SendTicketEmail($delegate->getId());
-                        $this->messageBus()->fire($command);
-                    }
-                }
-                $this->flashMessenger()->addInfoMessage('Emails sent out');
-
-                return $this->redirect()->toRoute('attendance-admin/tickets');
-            }
-        }
-
-        $viewModel = new ViewModel(['form' => $form, 'action' => 'Send out ticket emails']);
-        $viewModel->setTemplate('attendance/admin/form');
-        return $viewModel;
-    }
-
     private function makePrice($price, $grossOrNet)
     {
         if ($grossOrNet === 'gross') {

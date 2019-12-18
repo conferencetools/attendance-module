@@ -289,15 +289,6 @@ $routes['attendance-admin'] = [
                         ]
                     ],
                 ],
-                'send' => [
-                    'type' => Literal::class,
-                    'options' => [
-                        'route' => '/send',
-                        'defaults' => [
-                            'action' => 'send-ticket-emails',
-                        ],
-                    ],
-                ],
             ],
 
         ],

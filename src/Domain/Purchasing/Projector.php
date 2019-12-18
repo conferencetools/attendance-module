@@ -95,7 +95,7 @@ class Projector implements Handler
         if (!($event instanceof TicketReservationExpired || $event instanceof MerchandisePurchaseExpired)) {
             return;
         }
-        
+
         $entity = $this->repository->get($event->getId());
         if ($entity instanceof Purchase) {
             $this->repository->remove($entity);

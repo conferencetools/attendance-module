@@ -177,11 +177,10 @@ $routes['attendance-admin'] = [
                 'route' => '/reports',
                 'defaults'=> [
                     'controller' => Controller\Admin\ReportsController::class,
-                    'action' => 'index',
                     'requiresPermission' => 'reports',
                 ]
             ],
-            'may_terminate' => true,
+            'may_terminate' => false,
             'child_routes' => [
                 'catering' => [
                     'type' => Literal::class,
@@ -227,15 +226,6 @@ $routes['attendance-admin'] = [
                                     'action' => 'checked-in-delegates',
                                 ],
                             ],
-                        ],
-                    ],
-                ],
-                'sales' => [
-                    'type' => Literal::class,
-                    'options' => [
-                        'route' => '/sales',
-                        'defaults' => [
-                            'action' => 'sales',
                         ],
                     ],
                 ],

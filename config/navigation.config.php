@@ -63,7 +63,7 @@ return [
         ],
         [
             'label' => 'Reporting',
-            'route' => 'attendance-admin/reports',
+            'uri' => '',
             'permission' => 'reports',
             'pages' => [
                 [
@@ -85,10 +85,6 @@ return [
                 [
                     'label' => 'Purchases',
                     'route' => 'attendance-admin/reports/purchases',
-                ],
-                [
-                    'label' => 'Sales',
-                    'route' => 'attendance-admin/reports/sales',
                 ],
             ],
         ],

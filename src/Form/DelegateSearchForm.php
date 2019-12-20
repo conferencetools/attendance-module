@@ -12,7 +12,7 @@ class DelegateSearchForm extends Form
     {
         $this->add(new Text('name', ['label' => 'Name']));
         $this->add(new Text('email', ['label' => 'Email']));
-        $this->add(new Text('id', ['label' => 'Ticket Id']));
+        $this->add(new Text('checkinId', ['label' => 'Ticket Id']));
         $this->add(new Submit('submit', ['label' => 'Search']));
     }
 }

@@ -22,7 +22,6 @@ class CheckinController extends AppController
             $form->setData($data);
             if ($form->isValid()) {
                 $data = $form->getData();
-                $data['purchaserEmail'] = $data['email'];
 
                 $expressions = [];
 

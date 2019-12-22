@@ -88,6 +88,7 @@ class Projector implements Handler
 
     private function paymentMade(PurchaseCompleted $event): void
     {
+        /** @var ReadModel\Delegate[] $delegates */
         $delegates = $this->repository->matching(Criteria::create()->where(Criteria::expr()->eq('purchaseId', $event->getId())));
         foreach ($delegates as $delegate) {
             $delegate->purchasePaid();

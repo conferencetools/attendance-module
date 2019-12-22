@@ -17,6 +17,8 @@
                             <th scope="col">Name</th>
                             <th scope="col">Description</th>
                             <th scope="col">Quantity</th>
+                            <th scope="col">Sold</th>
+                            <th scope="col">Remaining</th>
                             <th scope="col">Price</th>
                             <th scope="col">On sale from</th>
                             <th scope="col">Until</th>
@@ -31,6 +33,8 @@
                                 <td><?= $ticket->getDescriptor()->getName()?></td>
                                 <td><?= $ticket->getDescriptor()->getDescription() ?></td>
                                 <td><?= $ticket->getQuantity() ?></td>
+                                <td><?= $ticket->getSold() ?></td>
+                                <td><?= $ticket->getRemaining() ?></td>
                                 <td><?= $this->moneyFormat($ticket->getPrice()) ?></td>
                                 <td><?=($ticket->getOnSaleFrom() === null? 'N/A': $ticket->getOnSaleFrom()->format('Y-m-d h:i'))?></td>
                                 <td><?=($ticket->getWithdrawFrom() === null? 'N/A': $ticket->getWithdrawFrom()->format('Y-m-d h:i'))?></td>

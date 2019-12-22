@@ -5,93 +5,39 @@ namespace ConferenceTools\Attendance\Controller\Admin;
 use ConferenceTools\Attendance\Controller\AppController;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use ConferenceTools\Attendance\Domain\Purchasing\ReadModel\Purchase;
+use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
 use Doctrine\Common\Collections\Criteria;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
 class ReportsController extends AppController
 {
-    public function indexAction()
-    {
-        return new ViewModel();
-    }
-
     public function cateringPreferencesAction()
     {
         $records = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('isPaid', true)));
-
-        $data = [];
-
-        foreach ($records as $record) {
-            /** @var Delegate $record */
-            $data[$record->getPreference()]++;
-        }
-
-        $iterator = new class(count($data)) extends \MultipleIterator implements \Countable {
-            private $count;
-
-            public function __construct($count)
-            {
-                $this->count = $count;
-            }
-
-            public function count()
-            {
-                return $this->count;
-            }
-        };
-        $iterator->attachIterator(new \ArrayIterator(\array_keys($data)));
-        $iterator->attachIterator(new \ArrayIterator(\array_values($data)));
-
-        if ((bool) $this->params()->fromQuery('download', false) === true) {
-            $csv = $this->createCsvData($iterator);
-            return $this->makeResponse($csv);
-        }
-
-        $viewModel = new ViewModel(['report' => $iterator]);
-        $viewModel->setTemplate('attendance/admin/reports/report');
-
-        return $viewModel;
-
-
-    }
-
-    public function salesAction()
-    {
-        $records = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('isPaid', true)));
         $tickets = $this->getTickets();
-
+        $events = $this->getEvents();
         $data = [];
 
         foreach ($records as $record) {
             /** @var Delegate $record */
             foreach ($record->getTickets() as $ticketId) {
-                $data[$tickets[$ticketId]->getEvent()->getCode()]++;
+                $data[$events[$tickets[$ticketId]->getEventId()]->getDescriptor()->getName()][$record->getPreference()]++;
             }
         }
 
-        $iterator = new class(count($data)) extends \MultipleIterator implements \Countable {
-            private $count;
-
-            public function __construct($count)
-            {
-                $this->count = $count;
+        foreach ($data as $event => $datum) {
+            foreach ($datum as $preference => $count) {
+                $iterator[] = [$event, ucfirst($preference), $count];
             }
-
-            public function count()
-            {
-                return $this->count;
-            }
-        };
-        $iterator->attachIterator(new \ArrayIterator(\array_keys($data)));
-        $iterator->attachIterator(new \ArrayIterator(\array_values($data)));
+        }
 
         if ((bool) $this->params()->fromQuery('download', false) === true) {
             $csv = $this->createCsvData($iterator);
             return $this->makeResponse($csv);
         }
 
-        $viewModel = new ViewModel(['report' => $iterator]);
+        $viewModel = new ViewModel(['title'=> 'Catering Report', 'report' => $iterator, 'header' => ['Event', 'Food preference', 'Count']]);
         $viewModel->setTemplate('attendance/admin/reports/report');
 
         return $viewModel;
@@ -103,15 +49,20 @@ class ReportsController extends AppController
     {
         $records = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('isPaid', true)));
 
+        $tickets = $this->getTickets();
+        $events = $this->getEvents();
         $data = [];
 
         foreach ($records as $record) {
             /** @var Delegate $record */
             if (!empty($record->getAllergies())) {
-                $data[] = [
-                    'name' => $record->getName(),
-                    'allergies' => $record->getAllergies(),
-                ];
+                foreach ($record->getTickets() as $ticketId) {
+                    $data[] = [
+                        'event' => $events[$tickets[$ticketId]->getEventId()]->getDescriptor()->getName(),
+                        'name' => $record->getName(),
+                        'allergies' => $record->getAllergies(),
+                    ];
+                }
             }
         }
 
@@ -120,7 +71,7 @@ class ReportsController extends AppController
             return $this->makeResponse($csv);
         }
 
-        $viewModel = new ViewModel(['report' => $data]);
+        $viewModel = new ViewModel(['title'=> 'Catering allergies Report', 'report' => $data, 'header' => ['Event', 'Delegate name', 'Alergies']]);
         $viewModel->setTemplate('attendance/admin/reports/report');
 
         return $viewModel;
@@ -142,7 +93,7 @@ class ReportsController extends AppController
                 'email' => $record->getContactEmail(),
             ];
 
-            $row['tickets'] = implode('; ', \array_map(function ($ticketId) use ($tickets) {return $tickets[$ticketId]->getEvent()->getName();}, $record->getTickets()));
+            $row['tickets'] = implode('; ', \array_map(function ($ticketId) use ($tickets) {return $tickets[$ticketId]->getDescriptor()->getName();}, $record->getTickets()));
             $data[] = $row;
         }
 
@@ -151,7 +102,7 @@ class ReportsController extends AppController
             return $this->makeResponse($csv);
         }
 
-        $viewModel = new ViewModel(['report' => $data, 'header' => ['Name', 'Company', 'Delegate type', 'Email', 'Tickets']]);
+        $viewModel = new ViewModel(['title'=> 'Delegates Report', 'report' => $data, 'header' => ['Name', 'Company', 'Delegate type', 'Email', 'Tickets']]);
         $viewModel->setTemplate('attendance/admin/reports/report');
 
         return $viewModel;
@@ -178,7 +129,7 @@ class ReportsController extends AppController
                 'email' => $email,
             ];
 
-            $row['tickets'] = implode('; ', \array_map(function ($ticketId) use ($tickets) {return $tickets[$ticketId]->getEvent()->getName();}, $record->getTickets()));
+            $row['tickets'] = implode('; ', \array_map(function ($ticketId) use ($tickets) {return $tickets[$ticketId]->getDescriptor()->getName();}, $record->getTickets()));
             $data[] = $row;
         }
 
@@ -187,7 +138,7 @@ class ReportsController extends AppController
             return $this->makeResponse($csv);
         }
 
-        $viewModel = new ViewModel(['report' => $data, 'header' => ['Name', 'Company', 'Delegate type', 'Email', 'Tickets']]);
+        $viewModel = new ViewModel(['title'=> 'Checked in Delegates Report', 'report' => $data, 'header' => ['Name', 'Company', 'Delegate type', 'Email', 'Tickets']]);
         $viewModel->setTemplate('attendance/admin/reports/report');
 
         return $viewModel;
@@ -216,7 +167,7 @@ class ReportsController extends AppController
             return $this->makeResponse($csv);
         }
 
-        $viewModel = new ViewModel(['report' => $data, 'header' => ['Email', 'Discount code', 'Delegates', 'Paid']]);
+        $viewModel = new ViewModel(['title'=> 'Purchases Report', 'report' => $data, 'header' => ['Email', 'Discount code', 'Delegates', 'Paid']]);
         $viewModel->setTemplate('attendance/admin/reports/report');
 
         return $viewModel;
@@ -262,5 +213,11 @@ class ReportsController extends AppController
         }
 
         return $response;
+    }
+
+    /** @return Event[] */
+    private function getEvents()
+    {
+        return $this->indexBy($this->repository(Event::class)->matching(Criteria::create()));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace ConferenceTools\Attendance\Handler;
 
+use ConferenceTools\Attendance\Domain\Delegate\Command\ResendTicketEmail;
 use ConferenceTools\Attendance\Domain\Delegate\Event\CheckinIdGenerated;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
 use Phactor\Message\DomainMessage;
@@ -39,7 +40,7 @@ class EmailTicket implements Handler
     public function handle(DomainMessage $domainMessage)
     {
         $message = $domainMessage->getMessage();
-        if (!($message instanceof CheckinIdGenerated)) {
+        if (!($message instanceof CheckinIdGenerated || $message instanceof ResendTicketEmail)) {
             return;
         }
 

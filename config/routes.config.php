@@ -397,6 +397,29 @@ $routes['attendance-admin'] = [
                 ],
             ],
         ],
+        'delegate' => [
+            'type' => Segment::class,
+            'options' => [
+                'route' => '/delegate/:delegateId',
+                'defaults' => [
+                    'controller' => Controller\Admin\DelegatesController::class,
+
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'resend-ticket' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/resend-ticket',
+                        'defaults' => [
+                            'action' => 'resend-ticket-email',
+
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ]
 ];
 

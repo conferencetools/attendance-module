@@ -150,6 +150,11 @@ class Delegate
         $this->isPaid = true;
     }
 
+    public function isPaid(): bool
+    {
+        return $this->isPaid;
+    }
+
     public function getDelegateType(): string
     {
         return $this->delegateType;
@@ -173,5 +178,10 @@ class Delegate
     public function updateCheckinId(string $checkinId)
     {
         $this->checkinId = $checkinId;
+    }
+
+    public function getCheckinId()
+    {
+        return $this->checkinId;
     }
 }

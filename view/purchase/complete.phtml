@@ -75,6 +75,9 @@ $this->headLink()->appendStylesheet('/css/card.css');
                             <a href="<?=$this->url('attendance/delegates', ['delegateId' => $delegate->getId()])?>">
                                 Edit
                             </a>
+                            <a href="<?=$this->url('attendance/delegates/resend-ticket', ['delegateId' => $delegate->getId()])?>">
+                                Resend Ticket Email
+                            </a>
                         </span>
                         <?php
                             $tickets = $this->tickets;

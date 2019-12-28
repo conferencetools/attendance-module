@@ -73,6 +73,15 @@ $routes = [
                             ],
                         ],
                     ],
+                    'resend-ticket' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => 'resend-ticket',
+                            'defaults' => [
+                                'action' => 'resend-ticket-email',
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ]

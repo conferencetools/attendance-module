@@ -20,3 +20,16 @@
         </form>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('input[name="delegate[email]"').change(function () {
+            $(this).parent().prepend('' +
+                '<div class="alert alert-warning" style="margin-bottom:0; padding:8px">' +
+                'Changing your email will invalidate your existing ticket and send a new one to the new email address' +
+                '</div>'
+            );
+        })
+    });
+
+</script>

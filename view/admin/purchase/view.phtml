@@ -95,7 +95,7 @@
                             /** @var \ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate $delegate */
                             ?>
                             <tr>
-                                <td><?= $delegate->getName()?></td>
+                                <td><?= $this->escapeHtml($delegate->getName())?></td>
                                 <td><?= ucfirst(strtolower($delegate->getDelegateType()))?></td>
                                 <td>
                                     <?php
@@ -107,7 +107,9 @@
                                 </td>
                                 <td>
                                     <!--@TODO add edit button/form for delegates details-->
-                                    <!--@TODO add resend ticket button for delegate-->
+                                    <?php if ($delegate->isPaid()):?>
+                                    <a href="<?=$this->url('attendance-admin/delegate/resend-ticket', ['delegateId' => $delegate->getId()])?>" class="btn btn-primary">Resend ticket</a>
+                                    <?php endif?>
                                     <!--@TODO add regenerate id button for delegate-->
                                 </td>
                             </tr>

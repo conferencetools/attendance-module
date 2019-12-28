@@ -4,6 +4,7 @@ namespace ConferenceTools\Attendance\Controller;
 
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use ConferenceTools\Attendance\Domain\Delegate\Command\ResendTicketEmail;
 use ConferenceTools\Attendance\Domain\Delegate\Command\UpdateDelegateDetails;
 use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
@@ -70,5 +71,17 @@ class DelegateController extends AppController
         }
 
         return $response;
+    }
+
+    public function resendTicketEmailAction()
+    {
+        $delegateId = $this->params()->fromRoute('delegateId');
+        /** @var Delegate $delegate */
+        $delegate = $this->repository(Delegate::class)->get($delegateId);
+
+        $this->messageBus()->fire(new ResendTicketEmail($delegateId, $delegate->getEmail(), $delegate->getCheckinId()));
+
+        $this->flashMessenger()->addInfoMessage('Email resent');
+        $this->redirect()->toRoute('attendance/purchase/complete', ['purchaseId' => $delegate->getPurchaseId()]);
     }
 }

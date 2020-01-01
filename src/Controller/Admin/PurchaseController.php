@@ -12,6 +12,7 @@ use ConferenceTools\Attendance\Domain\Payment\Command\SelectPaymentMethod;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentRaised;
 use ConferenceTools\Attendance\Domain\Payment\PaymentType;
 use ConferenceTools\Attendance\Domain\Payment\ReadModel\Payment;
+use ConferenceTools\Attendance\Domain\Purchasing\Basket;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\Checkout;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseItems;
@@ -122,7 +123,7 @@ class PurchaseController extends AppController
                     );
                 }
 
-                $messages = $this->messageBus()->fire(new PurchaseItems($email, (int) $delegates, ...$selectedTickets));
+                $messages = $this->messageBus()->fire(new PurchaseItems($email, (int) $delegates, new Basket($selectedTickets, [])));
                 $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
 
                 for ($i = 0; $i < $delegates; $i++) {
@@ -137,7 +138,7 @@ class PurchaseController extends AppController
                     $command = new RegisterDelegate(
                         $purchaseId,
                         $delegate['name'],
-                        $delegate['email'],
+                        empty($delegate['email']) ? $queryData['email'] : $delegate['email'],
                         $delegate['company'],
                         $dietaryRequirements,
                         $delegate['requirements'],

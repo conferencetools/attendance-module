@@ -16,6 +16,7 @@ return [
         Delegate\Projector::class => Factory\Delegate\ProjectorFactory::class,
         Discounting\Projector::class => Factory\Discounting\ProjectorFactory::class,
         Payment\Projector::class => Factory\Payment\ProjectorFactory::class,
+        Payment\ZeroPaymentHandler::class => Factory\Payment\ZeroPaymentHandlerFactory::class,
         Merchandise\MerchandiseProjector::class => Factory\Merchandise\ProjectorFactory::class,
         \ConferenceTools\Attendance\Handler\EmailPurchase::class => \ConferenceTools\Attendance\Handler\EmailPurchaseFactory::class,
         \ConferenceTools\Attendance\Handler\EmailTicket::class => \ConferenceTools\Attendance\Handler\EmailTicketFactory::class,

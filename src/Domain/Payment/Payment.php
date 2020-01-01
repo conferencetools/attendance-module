@@ -15,7 +15,9 @@ use ConferenceTools\Attendance\Domain\Payment\Event\PaymentRaised;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentStarted;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentTimedOut;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCheckedOut;
+use ConferenceTools\Attendance\Domain\Ticketing\Price;
 use Phactor\Actor\AbstractActor;
+use Phactor\Message\DomainMessage;
 
 class Payment extends AbstractActor
 {
@@ -41,6 +43,10 @@ class Payment extends AbstractActor
 
     protected function handleSelectPaymentMethod(SelectPaymentMethod $message)
     {
+        if ($this->status !== self::STATUS_RAISED) {
+            return;
+        }
+
         $this->fire(new PaymentMethodSelected($this->id(), $message->getPaymentType()));
 
         $when = (new \DateTime())->add(

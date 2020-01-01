@@ -74,7 +74,7 @@ class Delegate extends AbstractActor
         ));
 
         $checkinId = $this->generateCheckinId();
-        if ($checkinId !== $this->checkinId && $this->purchaseCompleted) {
+        if ($this->email !== $command->getEmail() && $this->purchaseCompleted) {
             $this->fire(new CheckinIdGenerated($this->id(), $this->email, $checkinId));
         }
     }

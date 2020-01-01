@@ -1,16 +1,15 @@
 <?php
 
-
 namespace ConferenceTools\Attendance\Domain\Payment;
-
 
 use ConferenceTools\Attendance\Domain\Payment\Command;
 use ConferenceTools\Attendance\Domain\Payment\Event;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\PurchaseCheckedOut;
+use Phactor\Message\MessageSubscriptionProvider;
 
-class MessageSubscriptions
+class MessageSubscriptions implements MessageSubscriptionProvider
 {
-    public static function getSubscriptions(): array
+    public function getSubscriptions(): array
     {
         return [
             // ######## external events ########
@@ -44,6 +43,7 @@ class MessageSubscriptions
             ],
             Event\PaymentRaised::class => [
                 Projector::class,
+                ZeroPaymentHandler::class,
             ],
             Event\PaymentStarted::class => [
                 Projector::class,

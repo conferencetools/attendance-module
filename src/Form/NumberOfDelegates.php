@@ -6,6 +6,7 @@ use Zend\Form\Element\Csrf;
 use Zend\Form\Element\DateTime;
 use Zend\Form\Element\MultiCheckbox;
 use Zend\Form\Element\Radio;
+use Zend\Form\Element\Select;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
@@ -43,6 +44,21 @@ class NumberOfDelegates extends Form implements InputFilterProviderInterface
             ],
         ]);
 
+        $discountOptions = $this->getOption('discountOptions');
+        if (!empty($discountOptions)) {
+            $this->add([
+                'type' => Select::class,
+                'name' => 'discount_code',
+                'options' => [
+                    'label' => 'Discount Code',
+                    'value_options' => array_merge(
+                        ['' => 'None'],
+                        $discountOptions
+                    )
+                ]
+            ]);
+        }
+
         $this->add(new Submit('continue', ['label' => 'Continue']));
     }
 
@@ -74,6 +90,10 @@ class NumberOfDelegates extends Form implements InputFilterProviderInterface
                     ['name' => NotEmpty::class],
                     ['name' => GreaterThan::class, 'options' => ['min' => 0]]
                 ]
+            ],
+            'discount_code' => [
+                'required' => false,
+                'allow_empty' => true,
             ]
         ];
     }

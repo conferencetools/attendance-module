@@ -7,6 +7,7 @@ use ConferenceTools\Attendance\Domain\Delegate\Command\RegisterDelegate;
 use ConferenceTools\Attendance\Domain\Delegate\DietaryRequirements;
 use ConferenceTools\Attendance\Domain\Delegate\Event\DelegateRegistered;
 use ConferenceTools\Attendance\Domain\Delegate\ReadModel\Delegate;
+use ConferenceTools\Attendance\Domain\Discounting\ReadModel\DiscountCode;
 use ConferenceTools\Attendance\Domain\Payment\Command\ConfirmPayment;
 use ConferenceTools\Attendance\Domain\Payment\Command\SelectPaymentMethod;
 use ConferenceTools\Attendance\Domain\Payment\Event\PaymentRaised;
@@ -14,6 +15,7 @@ use ConferenceTools\Attendance\Domain\Payment\PaymentType;
 use ConferenceTools\Attendance\Domain\Payment\ReadModel\Payment;
 use ConferenceTools\Attendance\Domain\Purchasing\Basket;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\AllocateTicketToDelegate;
+use ConferenceTools\Attendance\Domain\Purchasing\Command\ApplyDiscount;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\Checkout;
 use ConferenceTools\Attendance\Domain\Purchasing\Command\PurchaseItems;
 use ConferenceTools\Attendance\Domain\Purchasing\Event\TicketsReserved;
@@ -49,7 +51,14 @@ class PurchaseController extends AppController
 
     public function createAction()
     {
-        $form = $this->form(NumberOfDelegates::class);
+        $discountOptions = [];
+        /** @var DiscountCode[] $discounts */
+        $discounts = $this->repository(DiscountCode::class)->matching(Criteria::create());
+        foreach ($discounts as $discount) {
+            $discountOptions[(string) $discount] = $discount->getDiscountType()->getName();
+        }
+
+        $form = $this->form(NumberOfDelegates::class, ['discountOptions' => $discountOptions]);
         $form->setAttribute('action', $this->url()->fromRoute('attendance-admin/purchase/delegates'));
         $form->setAttribute('method', 'GET');
 
@@ -125,6 +134,20 @@ class PurchaseController extends AppController
 
                 $messages = $this->messageBus()->fire(new PurchaseItems($email, (int) $delegates, new Basket($selectedTickets, [])));
                 $purchaseId = $this->messageBus()->firstInstanceOf(TicketsReserved::class, ...$messages)->getId();
+
+                if (isset($queryData['discount_code']) && !empty($queryData['discount_code'])) {
+                    $code = $this->repository(DiscountCode::class)->get($queryData['discount_code']);
+                    if ($code instanceof DiscountCode) {
+                        $command = new ApplyDiscount(
+                            $purchaseId,
+                            $code->getDiscountType()->getId(),
+                            $queryData['discount_code'],
+                            $code->getDiscountType()->getDiscount()
+                        );
+
+                        $this->messageBus()->fire($command);
+                    }
+                }
 
                 for ($i = 0; $i < $delegates; $i++) {
                     $delegate = $data['delegate_' . $i];

@@ -23,6 +23,7 @@ return [
                 ]
             ]
         ],
+        'emails' => require __DIR__ . '/email.config.php',
     ],
     'controllers' => require __DIR__ . '/controllers.config.php',
     'doctrine' => require __DIR__ . '/doctrine.config.php',

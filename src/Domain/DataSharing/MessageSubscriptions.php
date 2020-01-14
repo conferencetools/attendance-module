@@ -30,6 +30,7 @@ class MessageSubscriptions implements MessageSubscriptionProvider
 
             Event\DelegateListCreated::class => [
                 Projector::class,
+                SendDelegateNotifications::class,
             ],
             Event\DelegateAdded::class => [
                 Projector::class,
@@ -48,6 +49,7 @@ class MessageSubscriptions implements MessageSubscriptionProvider
             ],
             Event\CollectionTerminated::class => [
                 Projector::class,
+                SendDelegateNotifications::class,
             ],
         ];
     }

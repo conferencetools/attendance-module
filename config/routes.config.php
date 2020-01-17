@@ -419,6 +419,28 @@ $routes['attendance-admin'] = [
                 ],
             ],
         ],
+        'sponsors' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/sponsors',
+                'defaults' => [
+                    'action' => 'index',
+                    'controller' => Controller\Admin\SponsorController::class,
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'create' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/create',
+                        'defaults' => [
+                            'action' => 'create',
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ]
 ];
 

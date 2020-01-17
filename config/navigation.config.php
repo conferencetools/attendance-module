@@ -62,6 +62,21 @@ return [
             'permission' => 'checkin',
         ],
         [
+            'label' => 'Manage sponsors',
+            'uri' => '',
+            'permission' => 'sponsors',
+            'pages' => [
+                [
+                    'label' => 'List',
+                    'route' => 'attendance-admin/sponsors'
+                ],
+                [
+                    'label' => 'Create',
+                    'route' => 'attendance-admin/sponsors/create'
+                ]
+            ]
+        ],
+        [
             'label' => 'Reporting',
             'uri' => '',
             'permission' => 'reports',

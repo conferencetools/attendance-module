@@ -36,6 +36,11 @@ return [
             'cache' => 'array',
             'paths' => [__DIR__ . '/../src/Domain/DataSharing']
         ],
+        'sponsor' => [
+            'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
+            'cache' => 'array',
+            'paths' => [__DIR__ . '/../src/Domain/Sponsor']
+        ],
         'orm_default' => [
             'drivers' => [
                 'ConferenceTools\\Attendance\\Domain\\Ticketing' => 'ticketing',
@@ -45,6 +50,7 @@ return [
                 'ConferenceTools\\Attendance\\Domain\\Delegate' => 'delegates',
                 'ConferenceTools\\Attendance\\Domain\\Merchandise' => 'merchandise',
                 'ConferenceTools\\Attendance\\Domain\\DataSharing' => 'datasharing',
+                'ConferenceTools\\Attendance\\Domain\\Sponsor' => 'sponsor',
             ]
         ]
     ],

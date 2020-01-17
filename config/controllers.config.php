@@ -16,5 +16,6 @@ return [
         Controller\Admin\PurchaseController::class =>  InvokableFactory::class,
         Controller\Admin\MerchandiseController::class => InvokableFactory::class,
         Controller\Admin\DelegatesController::class => InvokableFactory::class,
+        Controller\Admin\SponsorController::class => InvokableFactory::class,
     ]
 ];

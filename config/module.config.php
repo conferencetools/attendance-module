@@ -10,6 +10,8 @@ return [
             'reports' => 'View reports',
             'checkin' => 'Check in Delegates',
             'merchandise' => 'Merchandise management',
+            'sponsors' => 'Sponsor management',
+            'sponsor' => 'Access to sponsor dashboard',
         ]
     ],
     'conferencetools' => [
@@ -35,6 +37,7 @@ return [
         \ConferenceTools\Attendance\Domain\Delegate\MessageSubscriptions::class,
         \ConferenceTools\Attendance\Domain\Merchandise\MessageSubscriptions::class,
         \ConferenceTools\Attendance\Domain\Purchasing\MessageSubscriptions::class,
+        \ConferenceTools\Attendance\Domain\Sponsor\MessageSubscriptions::class,
     ],
     'navigation' => require __DIR__ . '/navigation.config.php',
     'router' => [

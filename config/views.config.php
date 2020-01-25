@@ -25,7 +25,7 @@ return [
     'attendance/admin/merchandise/index' => $viewDir . 'admin/merchandise/index.phtml',
     'attendance/admin/confirmation-form' => $viewDir . 'admin/confirmation-form.phtml',
     'attendance/admin/form' => $viewDir . 'admin/form.phtml',
-    'attendance/admin/sponsor/index' => $viewDir . 'admin/sponsor/index.phtml',
+    'attendance/sponsor/index/index' => $viewDir . 'sponsor/index/index.phtml',
 
     'email/receipt' => $viewDir . 'email/receipt.phtml',
     'email/ticket' => $viewDir . 'email/ticket.phtml',

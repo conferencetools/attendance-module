@@ -103,5 +103,10 @@ return [
                 ],
             ],
         ],
+        [
+            'label' => 'Dashboard',
+            'route' => 'attendance-sponsor',
+            'permission' => 'sponsor'
+        ],
     ],
 ];

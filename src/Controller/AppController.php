@@ -3,6 +3,8 @@
 namespace ConferenceTools\Attendance\Controller;
 
 use ConferenceTools\Attendance\Controller\Admin\PurchaseController;
+use ConferenceTools\Attendance\Controller\Sponsor\IndexController;
+use ConferenceTools\Attendance\Domain\Sponsor\ReadModel\Sponsor;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Event;
 use ConferenceTools\Attendance\Domain\Ticketing\ReadModel\Ticket;
 use ConferenceTools\Attendance\Service\TicketService;
@@ -50,5 +52,12 @@ abstract class AppController extends AbstractActionController
         }
 
         return $this->ticketsService;
+    }
+
+    protected function currentSponsor(): Sponsor
+    {
+        $identity = $this->identity();
+        $userId = $identity->getIdentifier();
+        return $this->repository(Sponsor::class)->matching(Criteria::create()->where(Criteria::expr()->eq('user', $userId)))->current();
     }
 }

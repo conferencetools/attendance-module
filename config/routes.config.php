@@ -96,6 +96,75 @@ if (!function_exists('getflag')) {
     }
 }
 
+$routes['attendance-sponsor'] = [
+    'type' => Literal::class,
+    'may_terminate' => true,
+    'options' => [
+        'route' => '/sponsor',
+        'defaults' => [
+            'requiresAuth' => true,
+            'layout' => 'admin/layout',
+            'requiresPermission' => 'sponsor',
+            'controller' => Controller\Sponsor\IndexController::class,
+            'action' => 'index',
+        ]
+    ],
+    'child_routes' => [
+        'delegatelist' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/delegatelist',
+                'defaults' => [
+                    'controller' => Controller\Sponsor\DelegateListController::class,
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'create' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/create',
+                        'defaults' => [
+                            'action' => 'create',
+
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'questions' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/questions',
+                'defaults' => [
+                    'controller' => Controller\Sponsor\QuestionsController::class,
+                ],
+            ],
+            'may_terminate' => false,
+            'child_routes' => [
+                'add' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/add',
+                        'defaults' => [
+                            'action' => 'add',
+                        ],
+                    ],
+                ],
+                'delete' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:handle/delete',
+                        'defaults' => [
+                            'action' => 'delete',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
+
 $routes['attendance-admin'] = [
     'type' => Literal::class,
     'may_terminate' => false,

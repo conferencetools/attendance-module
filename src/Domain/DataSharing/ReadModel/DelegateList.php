@@ -14,9 +14,9 @@ class DelegateList
     private $id;
     /** @ORM\Column(type="string") */
     private $owner;
-    /** @ORM\Column(type="datetime") */
+    /** @ORM\Column(type="datetime", nullable=true) */
     private $availableTime;
-    /** @ORM\Column(type="datetime") */
+    /** @ORM\Column(type="datetime", nullable=true) */
     private $lastCollectionTime;
     /** @ORM\Column(type="boolean") */
     private $listAvailable = false;

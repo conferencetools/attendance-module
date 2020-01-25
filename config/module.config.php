@@ -38,6 +38,7 @@ return [
         \ConferenceTools\Attendance\Domain\Merchandise\MessageSubscriptions::class,
         \ConferenceTools\Attendance\Domain\Purchasing\MessageSubscriptions::class,
         \ConferenceTools\Attendance\Domain\Sponsor\MessageSubscriptions::class,
+        \ConferenceTools\Attendance\Domain\DataSharing\MessageSubscriptions::class,
     ],
     'navigation' => require __DIR__ . '/navigation.config.php',
     'router' => [

@@ -17,5 +17,8 @@ return [
         Controller\Admin\MerchandiseController::class => InvokableFactory::class,
         Controller\Admin\DelegatesController::class => InvokableFactory::class,
         Controller\Admin\SponsorController::class => InvokableFactory::class,
+        Controller\Sponsor\IndexController::class => InvokableFactory::class,
+        Controller\Sponsor\QuestionsController::class => InvokableFactory::class,
+        Controller\Sponsor\DelegateListController::class => InvokableFactory::class,
     ]
 ];

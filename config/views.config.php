@@ -8,6 +8,7 @@ return [
     'attendance/purchase/payment' => $viewDir . 'purchase/payment.phtml',
     'attendance/purchase/complete' => $viewDir . 'purchase/complete.phtml',
     'attendance/delegate/update-details' => $viewDir . 'delegate/update-details.phtml',
+    'attendance/delegate/badge' => $viewDir . 'delegate/badge.phtml',
 
     'attendance/admin/index/index' => $viewDir . 'admin/index/index.phtml',
     'attendance/admin/checkin/index' => $viewDir . 'admin/checkin/index.phtml',

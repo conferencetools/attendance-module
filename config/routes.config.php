@@ -73,6 +73,15 @@ $routes = [
                             ],
                         ],
                     ],
+                    'badge' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/badge',
+                            'defaults' => [
+                                'action' => 'badge',
+                            ],
+                        ],
+                    ],
                     'resend-ticket' => [
                         'type' => Literal::class,
                         'options' => [

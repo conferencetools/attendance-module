@@ -73,6 +73,29 @@ class DelegateController extends AppController
         return $response;
     }
 
+    public function badgeAction()
+    {
+        $delegateId = $this->params()->fromRoute('delegateId');
+        $delegate = $this->repository(Delegate::class)->get($delegateId);
+
+        if (!($delegate instanceof Delegate)) {
+            return $this->notFoundAction();
+        }
+
+        $renderer = new QRCode(new QROptions(['outputType' => QRCode::OUTPUT_MARKUP_SVG, 'imageBase64' => false]));
+        $qrCode = $renderer->render($delegate->getCheckinId());
+
+        $response = $this->getResponse();
+        if ($response instanceof Response) {
+            $headers = $response->getHeaders();
+            $headers->addHeaderLine('Content-Type', 'image/svg+xml');
+        }
+
+        $viewModel = new ViewModel(['delegate' => $delegate, 'qrCode' => $qrCode]);
+        $viewModel->setTerminal(true);
+        return $viewModel;
+    }
+
     public function resendTicketEmailAction()
     {
         $delegateId = $this->params()->fromRoute('delegateId');

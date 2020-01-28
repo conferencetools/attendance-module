@@ -66,9 +66,13 @@ class DelegateList
         return $this->lastCollectionTime;
     }
 
+    /** @return OptIn[] */
     public function getOptIns(): array
     {
-        return $this->optIns;
+        $callback = function ($k, $v) {
+            return new OptIn($k, $v);
+        };
+        return array_map($callback, array_keys($this->optIns), array_values($this->optIns));
     }
 
     public function isListAvailable(): bool

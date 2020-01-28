@@ -1,0 +1,43 @@
+
+<div id="qr" style="display:none" class="panel panel-default">
+    <div class="panel-heading display-table credit-card-box">
+        <div class="row display-tr">
+            <h3 class="panel-title display-td">Scan QR code</h3>
+            <div class="display-td"></div>
+        </div>
+    </div>
+    <div class="panel-body" style="padding: 30px">
+        <button id="scan-again" class="btn btn-info">Scan again</button>
+        <video id="preview" style="display:none; margin:auto; width: 100%"></video>
+    </div>
+</div>
+
+
+<script type="module">
+    import QrScanner from "/js/qr-scanner.min.js";
+    QrScanner.WORKER_PATH = '/js/qr-scanner-worker.min.js';
+    QrScanner.hasCamera().then(hasCamera => {
+        if (hasCamera) {
+            $('#qr').show()
+        }
+    });
+    const video = document.getElementById('preview');
+    const scanner = new QrScanner(video, result => setResult(result));
+
+    function setResult(result) {
+        if (result.length > 0) {
+            window.location.href = "<?=$this->url('attendance-sponsor/delegatelist/collect', ['checkinId' => ':checkinId'])?>".replace(':checkinId', result);
+            scanner.stop();
+        }
+    }
+    function startScanning() {
+        $('#preview').show();
+        $('#scan-again').hide();
+        scanner.start();
+    }
+
+    $('#scan-again').bind('click', startScanning);
+
+    startScanning();
+
+</script>

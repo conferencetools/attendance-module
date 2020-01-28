@@ -139,6 +139,24 @@ $routes['attendance-sponsor'] = [
                         ],
                     ],
                 ],
+                'scan' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/scan',
+                        'defaults' => [
+                            'action' => 'scan',
+                        ],
+                    ],
+                ],
+                'collect' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/collect/:checkinId',
+                        'defaults' => [
+                            'action' => 'collect',
+                        ],
+                    ],
+                ],
             ],
         ],
         'questions' => [

@@ -27,6 +27,8 @@ return [
     'attendance/admin/confirmation-form' => $viewDir . 'admin/confirmation-form.phtml',
     'attendance/admin/form' => $viewDir . 'admin/form.phtml',
     'attendance/sponsor/index/index' => $viewDir . 'sponsor/index/index.phtml',
+    'attendance/sponsor/delegate-list/scan' => $viewDir . 'sponsor/delegate-list/scan.phtml',
+    'attendance/sponsor/delegate-list/collect' => $viewDir . 'sponsor/delegate-list/collect.phtml',
 
     'email/receipt' => $viewDir . 'email/receipt.phtml',
     'email/ticket' => $viewDir . 'email/ticket.phtml',

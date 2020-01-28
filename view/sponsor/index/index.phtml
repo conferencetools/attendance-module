@@ -80,6 +80,8 @@
                     <a class="btn btn-success mt-3" href="<?=$this->url('attendance-sponsor/questions/add')?>">Add question</a>
                     <p class="mt-3">Once you have added all the questions click this button. Once you have confirmed this, you will not be able to edit the questions above</p>
                     <a class="btn btn-success mt-3" href="<?=$this->url('attendance-sponsor/delegatelist/create')?>">Complete setup</a>
+                <?php else: ?>
+                    <a class="btn btn-success mt-3" href="<?=$this->url('attendance-sponsor/delegatelist/scan')?>">Add delegates to list</a>
                 <?php endif ?>
             </div>
         </div>

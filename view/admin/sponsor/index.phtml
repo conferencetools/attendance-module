@@ -15,6 +15,7 @@
                         <thead>
                         <tr>
                             <th scope="col">Name</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -23,6 +24,12 @@
                         ?>
                         <tr>
                             <td><?=$this->escapeHtml($sponsor->getName())?></td>
+                            <td>
+                                <?php if ($sponsor->getDelegateListId() !== null):?>
+                                <a href="<?=$this->url('attendance-admin/sponsors/set-list-last-collection-time', ['sponsorId' => $sponsor->getId()])?>" class="btn btn-primary">Set list last collection time</a>
+                                <a href="<?=$this->url('attendance-admin/sponsors/set-list-available-time', ['sponsorId' => $sponsor->getId()])?>" class="btn btn-primary">Set list available time</a>
+                                <?php endif?>
+                            </td>
                         </tr>
                         <?php endforeach;?>
                         </tbody>

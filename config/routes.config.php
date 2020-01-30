@@ -535,6 +535,24 @@ $routes['attendance-admin'] = [
                         ],
                     ],
                 ],
+                'set-list-last-collection-time' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/set-list-last-collection-time/:sponsorId',
+                        'defaults' => [
+                            'action' => 'set-list-last-collection-time',
+                        ],
+                    ],
+                ],
+                'set-list-available-time' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/set-list-available-time/:sponsorId',
+                        'defaults' => [
+                            'action' => 'set-list-available-time',
+                        ],
+                    ],
+                ],
             ],
         ],
     ]

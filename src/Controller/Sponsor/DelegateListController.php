@@ -60,6 +60,12 @@ class DelegateListController extends AppController
         $sponsor->getDelegateListId();
         /** @var DelegateList $list */
         $list = $this->repository(DelegateList::class)->get($sponsor->getDelegateListId());
+
+        if ($list->isListTerminated()) {
+            $this->flashMessenger()->addWarningMessage('Delegate list collection is no longer available');
+            return $this->redirect()->toRoute('attendance-sponsor');
+        }
+
         $questions = $list->getOptIns();
         $delegate = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('checkinId', $this->params()->fromRoute('checkinId'))))->first();
         if (!($delegate instanceof Delegate)) {
@@ -86,40 +92,5 @@ class DelegateListController extends AppController
     public function scanAction()
     {
         return new ViewModel([]);
-    }
-
-    public function addDelegateAction()
-    {
-        $checkinId = $this->params()->fromRoute('checkinId'); // load delegate, get real id
-        /** @var Delegate $delegate */
-        $delegate = $this->repository(Delegate::class)->matching(Criteria::create()->where(Criteria::expr()->eq('checkinId', $checkinId)))->current();
-        $delegateId = $delegate->getId();
-        $sponsor = $this->currentSponsor();
-        $listId = $sponsor->getDelegateListId();
-        $form = new Form();
-        if ($this->getRequest()->isPost()) {
-            $form->setData($this->params()->fromPost());
-            if ($form->isValid()) {
-                $data = $form->getData();
-                $this->messageBus()->fire(new AddDelegate(
-                    $listId,
-                    $delegateId,
-                    ...$this->makeQuestionResponses($data['questions'])
-                ));
-            }
-        }
-
-        return new ViewModel(['form' => $form]);
-    }
-
-    /** @return OptInConsent[] */
-    private function makeQuestionResponses(array $data): array
-    {
-        $result = [];
-        foreach ($data as $handle => $optIn) {
-            $result[] = new OptInConsent($handle, $optIn);
-        }
-
-        return $result;
     }
 }

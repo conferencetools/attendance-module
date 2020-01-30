@@ -1,3 +1,9 @@
+<?php
+/** @var \ConferenceTools\Attendance\Domain\Sponsor\ReadModel\Sponsor $sponsor */
+$sponsor = $this->sponsor;
+/** @var \ConferenceTools\Attendance\Domain\DataSharing\ReadModel\DelegateList $delegateList */
+$delegateList = $this->delegateList;
+?>
 <div class="row">
     <div class="col-md-12">
         <div class="card spur-card">
@@ -81,7 +87,26 @@
                     <p class="mt-3">Once you have added all the questions click this button. Once you have confirmed this, you will not be able to edit the questions above</p>
                     <a class="btn btn-success mt-3" href="<?=$this->url('attendance-sponsor/delegatelist/create')?>">Complete setup</a>
                 <?php else: ?>
-                    <a class="btn btn-success mt-3" href="<?=$this->url('attendance-sponsor/delegatelist/scan')?>">Add delegates to list</a>
+                    <?php if ($delegateList->isListTerminated()): ?>
+                        <?php if ($delegateList->isListAvailable()):?>
+                            <a class="btn btn-success mt-3" href="<?=$this->url('attendance-sponsor/delegatelist/scan')?>">Download list</a>
+                        <?php else: ?>
+                            <?php
+                                if ($delegateList->getAvailableTime() === null) {
+                                    $availableAt = 'soon';
+                                } else {
+                                    $availableAt = $delegateList->getAvailableTime()->format('on Y-m-d \a\t H:i');
+                                }
+                            ?>
+
+                            <p>Your list will be available to download <?=$availableAt?></p>
+                        <?php endif ?>
+                    <?php else: ?>
+                        <a class="btn btn-success mt-3" href="<?=$this->url('attendance-sponsor/delegatelist/scan')?>">Add delegates to list</a>
+                        <?php if ($delegateList->getLastCollectionTime() !== null):?>
+                            <p class="mt-3">You will be able to add delegates to your list until <?=$delegateList->getLastCollectionTime()->format('Y-m-d \a\t H:i');?></p>
+                        <?php endif?>
+                    <?php endif?>
                 <?php endif ?>
             </div>
         </div>

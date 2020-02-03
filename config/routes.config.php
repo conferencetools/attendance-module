@@ -64,6 +64,24 @@ $routes = [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
+                    'view-opt-ins' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/opt-ins',
+                            'defaults' => [
+                                'action' => 'view-opt-ins',
+                            ],
+                        ],
+                    ],
+                    'change-opt-ins' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/change-opt-ins/:delegateListId',
+                            'defaults' => [
+                                'action' => 'change-opt-ins',
+                            ],
+                        ],
+                    ],
                     'qrcode' => [
                         'type' => Literal::class,
                         'options' => [

@@ -5,6 +5,7 @@ namespace ConferenceTools\Attendance\Domain\DataSharing\ReadModel;
 use ConferenceTools\Attendance\Domain\DataSharing\OptIn;
 use ConferenceTools\Attendance\Domain\DataSharing\OptInConsent;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /** @ORM\Entity() */
@@ -105,12 +106,12 @@ class DelegateList
         $this->listTerminated = true;
     }
 
-    public function addDelegate(string $delegateId, OptInConsent ...$consents)
+    public function addDelegate(string $delegateId, OptInConsent ...$consents): void
     {
         $this->delegates->set($delegateId, new Delegate($this, $delegateId, ...$consents));
     }
 
-    public function updateDelegate(string $delegateId, OptInConsent ...$consents)
+    public function updateDelegate(string $delegateId, OptInConsent ...$consents): void
     {
         $delegate = $this->delegates->get($delegateId);
         if (!($delegate instanceof Delegate)) {
@@ -119,4 +120,14 @@ class DelegateList
 
         $delegate->updateConsents(...$consents);
     }
+
+    public function getDelegate(string $delegateId): ?Delegate
+    {
+        $delegate = $this->delegates->matching(
+            Criteria::create()->where(Criteria::expr()->eq('delegateId', $delegateId))
+        )->current();
+
+        return ($delegate instanceof Delegate) ? $delegate : null;
+    }
+
 }

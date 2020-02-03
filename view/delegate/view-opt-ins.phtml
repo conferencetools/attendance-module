@@ -1,0 +1,49 @@
+<div class="row" >
+    <div class="col-md-12">
+            <div class="panel panel-default credit-card-box">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        Delegate Details
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div style="padding: 15px;">
+                        <table class="table">
+                        <?php foreach ($this->sponsors as $sponsor):?>
+                            <?php /** @var \ConferenceTools\Attendance\Domain\Sponsor\ReadModel\Sponsor $sponsor */ ?>
+                            <?php if ($sponsor->getDelegateListId() !== null):?>
+                                <tr>
+                                    <td><?=$this->escapeHtml($sponsor->getName())?></td>
+                                    <td>
+                                        <?php if (isset($this->lists[$sponsor->getDelegateListId()])):?>
+                                            <?php if ($this->lists[$sponsor->getDelegateListId()]->getDelegate($this->delegate->getId())->includeOnList()):?>
+                                                <?php
+                                                $consents = $this->lists[$sponsor->getDelegateListId()]->getDelegate($this->delegate->getId())->getConsents();
+                                                /** @var \ConferenceTools\Attendance\Domain\DataSharing\OptIn[] $optIns */
+                                                $optIns = $this->lists[$sponsor->getDelegateListId()]->getOptIns();
+                                                ?>
+                                                We will share your data with this sponsor for the following purposes:
+                                                <?php foreach ($optIns as $optIn):?>
+                                                    <?php if (isset($consents[$optIn->getHandle()]) && $consents[$optIn->getHandle()] === true):?>
+                                                        <p><?=$this->escapeHtml($optIn->getQuestion())?></p>
+                                                    <?php endif?>
+                                                <?php endforeach;?>
+                                            <?php else:?>
+                                                You have been included on this sponsor's list but you have not agreed to any of their data usage purposes. Your data will not be shared with them.
+                                            <?php endif?>
+                                        <?php else:?>
+                                            You have not opted into any of this sponsors data usage purposes. Your data will not be shared with them
+                                        <?php endif?>
+                                    </td>
+                                    <td>
+                                        <a href="<?=$this->url('attendance/delegates/change-opt-ins', ['delegateListId' => $sponsor->getDelegateListId()], [], true)?>" class="btn btn-primary">Change this</a>
+                                    </td>
+                                </tr>
+                            <?php endif;?>
+                        <?php endforeach;?>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>

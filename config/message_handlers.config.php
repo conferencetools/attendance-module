@@ -16,6 +16,7 @@ return [
         \ConferenceTools\Attendance\Handler\EmailPurchase::class => \ConferenceTools\Attendance\Handler\EmailPurchaseFactory::class,
         \ConferenceTools\Attendance\Handler\EmailTicket::class => \ConferenceTools\Attendance\Handler\EmailTicketFactory::class,
         DataSharing\Projector::class => Factory\DataSharing\ProjectorFactory::class,
+        DataSharing\NotifiesDelegates::class => Factory\DataSharing\NotifiesDelegatesFactory::class,
         Sponsor\Projector::class => Factory\Sponsor\ProjectorFactory::class,
     ]
 ];

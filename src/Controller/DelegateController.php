@@ -99,8 +99,7 @@ class DelegateController extends AppController
             return $this->redirect()->toRoute('attendance/delegates/view-opt-ins', [], [], true);
         }
 
-        $viewModel = new ViewModel(['questions' => $questions, 'answers' => $answers]);
-        return $viewModel;
+        return new ViewModel(['questions' => $questions, 'answers' => $answers]);
     }
 
     public function qrCodeAction()

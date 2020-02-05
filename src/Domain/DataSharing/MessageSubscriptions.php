@@ -27,6 +27,9 @@ class MessageSubscriptions implements MessageSubscriptionProvider
             Command\TerminateCollection::class => [
                 DelegateList::class,
             ],
+            Command\SendDelegateNotifications::class => [
+                NotifiesDelegates::class,
+            ],
 
             Event\DelegateListCreated::class => [
                 Projector::class,

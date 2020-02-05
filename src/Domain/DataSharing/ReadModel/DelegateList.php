@@ -130,4 +130,9 @@ class DelegateList
         return ($delegate instanceof Delegate) ? $delegate : null;
     }
 
+    public function getDelegates()
+    {
+        return $this->delegates;
+    }
+
 }

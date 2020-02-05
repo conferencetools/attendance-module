@@ -36,4 +36,5 @@ return [
 
     'email/receipt' => $viewDir . 'email/receipt.phtml',
     'email/ticket' => $viewDir . 'email/ticket.phtml',
+    'email/delegate-data-notification' => $viewDir . 'email/delegate-data-notification.phtml',
 ];

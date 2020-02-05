@@ -16,4 +16,10 @@ return [
         'template' => 'email/receipt',
         'companyinfo' => null,
     ],
+    'delegate-data-notification' => [
+        'subject' => 'Your receipt',
+        'from' => null,
+        'template' => 'email/delegate-data-notification',
+        'companyinfo' => null,
+    ],
 ];

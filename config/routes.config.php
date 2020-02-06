@@ -175,6 +175,15 @@ $routes['attendance-sponsor'] = [
                         ],
                     ],
                 ],
+                'download' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/download',
+                        'defaults' => [
+                            'action' => 'download-list',
+                        ],
+                    ],
+                ],
             ],
         ],
         'questions' => [

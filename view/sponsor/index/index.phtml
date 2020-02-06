@@ -89,7 +89,7 @@ $delegateList = $this->delegateList;
                 <?php else: ?>
                     <?php if ($delegateList->isListTerminated()): ?>
                         <?php if ($delegateList->isListAvailable()):?>
-                            <a class="btn btn-success mt-3" href="<?=$this->url('attendance-sponsor/delegatelist/scan')?>">Download list</a>
+                            <a class="btn btn-success mt-3" href="<?=$this->url('attendance-sponsor/delegatelist/download')?>">Download list</a>
                         <?php else: ?>
                             <?php
                                 if ($delegateList->getAvailableTime() === null) {

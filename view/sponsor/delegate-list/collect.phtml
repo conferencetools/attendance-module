@@ -1,0 +1,122 @@
+<style>
+    :root {
+        /* larger checkbox */
+    }
+    :root label.checkbox-bootstrap input[type=checkbox] {
+        /* hide original check box */
+        opacity: 0;
+
+        /* find the nearest span with checkbox-placeholder class and draw custom checkbox */
+        /* draw checkmark before the span placeholder when original hidden input is checked */
+        /* disabled checkbox style */
+        /* disabled and checked checkbox style */
+        /* when the checkbox is focused with tab key show dots arround */
+    }
+    :root label.checkbox-bootstrap input[type=checkbox] + span.checkbox-placeholder {
+        width: 14px;
+        height: 14px;
+        border: 1px solid;
+        border-radius: 3px;
+        /*checkbox border color*/
+        border-color: #737373;
+        display: inline-block;
+        cursor: pointer;
+        margin: 0 7px 0 -20px;
+        vertical-align: middle;
+        text-align: center;
+    }
+    :root label.checkbox-bootstrap input[type=checkbox]:checked + span.checkbox-placeholder {
+        background: #0ccce4;
+    }
+    :root label.checkbox-bootstrap input[type=checkbox]:checked + span.checkbox-placeholder:before {
+        display: inline-block;
+        position: relative;
+        vertical-align: text-top;
+        width: 5px;
+        height: 9px;
+        /*checkmark arrow color*/
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        /*can be done with post css autoprefixer*/
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        transform: rotate(45deg);
+        content: "";
+    }
+    :root label.checkbox-bootstrap input[type=checkbox]:disabled + span.checkbox-placeholder {
+        background: #ececec;
+        border-color: #c3c2c2;
+    }
+    :root label.checkbox-bootstrap input[type=checkbox]:checked:disabled + span.checkbox-placeholder {
+        background: #d6d6d6;
+        border-color: #bdbdbd;
+    }
+    :root label.checkbox-bootstrap input[type=checkbox]:focus:not(:hover) + span.checkbox-placeholder {
+        outline: 1px dotted black;
+    }
+    :root label.checkbox-bootstrap.checkbox-lg input[type=checkbox] + span.checkbox-placeholder {
+        width: 52px;
+        height: 52px;
+        border: 2px solid;
+        border-radius: 5px;
+        /*checkbox border color*/
+        border-color: #737373;
+    }
+    :root label.checkbox-bootstrap.checkbox-lg input[type=checkbox]:checked + span.checkbox-placeholder:before {
+        width: 18px;
+        height: 38px;
+        /*checkmark arrow color*/
+        border: solid white;
+        border-width: 0 3px 3px 0;
+    }
+
+    :root header {
+        visibility: hidden;
+    }
+
+    :root .dash-nav {
+        visibility: hidden;
+    }
+
+    :root .dash-app {
+        margin:0
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card spur-card">
+            <div class="card-header">
+                <div class="spur-card-icon">
+                    <i class="fas fa-table"></i>
+                </div>
+                <div class="spur-card-title">Complete sponsor signup</div>
+            </div>
+            <div class="card-body ">
+                <p>By submitting this form, you will automatically be entered into any prize draws run by <?=$this->escapeHtml($this->sponsor->getName())?></p>
+                <p>
+                    Additionally, you can opt into sharing your contact information with <?=$this->escapeHtml($this->sponsor->getName())?> for the purposes listed below.
+                    We will share the information with <?=$this->escapeHtml($this->sponsor->getName())?> after the event. You will get an email confirming these choices
+                    and giving you a chance to review them before any data is shared.
+                </p>
+                <form class="form-horizontal" method="POST" action="">
+                    <?php foreach ($this->questions as $question):?>
+                        <?php /** @var \ConferenceTools\Attendance\Domain\DataSharing\OptIn $question */ ?>
+                        <div class="form-group">
+                            <label class="checkbox-bootstrap checkbox-lg">
+                                <input type="hidden" name="<?=$this->escapeHtmlAttr($question->getHandle())?>" value="0">
+                                <input type="checkbox" name="<?=$this->escapeHtmlAttr($question->getHandle())?>">
+                                <span class="checkbox-placeholder"></span>
+                                <?=$this->escapeHtml($question->getQuestion())?>
+                            </label>
+                        </div>
+                    <?php endforeach;?>
+                    <div class="form-group "><button type="submit" name="submit" class="btn-primary btn-lg btn" value="">Submit</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

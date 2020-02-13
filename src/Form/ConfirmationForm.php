@@ -9,7 +9,26 @@ class ConfirmationForm extends Form
 {
     public function init()
     {
-        $this->add(new Submit('confirm', ['label' => 'Yes']));
-        $this->add(new Submit('cancel', ['label' => 'No']));
+        $this->setAttribute('class', 'form-inline');
+        $this->add([
+            'type' => Submit::class,
+            'name' => 'confirm',
+            'options' => [
+                'label' => 'Yes',
+            ],
+            'attributes' => [
+                'class'=> 'btn-primary mr-3',
+            ]
+        ]);
+        $this->add([
+            'type' => Submit::class,
+            'name' => 'cancel',
+            'options' => [
+                'label' => 'No',
+            ],
+            'attributes' => [
+                'class'=> 'btn-outline-danger',
+            ]
+        ]);
     }
 }

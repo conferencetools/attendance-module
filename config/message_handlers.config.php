@@ -1,11 +1,6 @@
 <?php
 
-use ConferenceTools\Attendance\Domain\Ticketing;
-use ConferenceTools\Attendance\Domain\Purchasing;
-use ConferenceTools\Attendance\Domain\Delegate;
-use ConferenceTools\Attendance\Domain\Discounting;
-use ConferenceTools\Attendance\Domain\Payment;
-use ConferenceTools\Attendance\Domain\Merchandise;
+use ConferenceTools\Attendance\Domain\{Ticketing, Purchasing, Delegate, Discounting, Payment, Merchandise, DataSharing, Sponsor};
 use ConferenceTools\Attendance\Factory;
 
 return [
@@ -20,5 +15,8 @@ return [
         Merchandise\MerchandiseProjector::class => Factory\Merchandise\ProjectorFactory::class,
         \ConferenceTools\Attendance\Handler\EmailPurchase::class => \ConferenceTools\Attendance\Handler\EmailPurchaseFactory::class,
         \ConferenceTools\Attendance\Handler\EmailTicket::class => \ConferenceTools\Attendance\Handler\EmailTicketFactory::class,
+        DataSharing\Projector::class => Factory\DataSharing\ProjectorFactory::class,
+        DataSharing\NotifiesDelegates::class => Factory\DataSharing\NotifiesDelegatesFactory::class,
+        Sponsor\Projector::class => Factory\Sponsor\ProjectorFactory::class,
     ]
 ];

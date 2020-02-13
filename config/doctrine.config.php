@@ -31,10 +31,15 @@ return [
             'cache' => 'array',
             'paths' => [__DIR__ . '/../src/Domain/Merchandise']
         ],
-        'stripe' => [
+        'datasharing' => [
             'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
             'cache' => 'array',
-            'paths' => [__DIR__ . '/../src/PaymentProvider']
+            'paths' => [__DIR__ . '/../src/Domain/DataSharing']
+        ],
+        'sponsor' => [
+            'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
+            'cache' => 'array',
+            'paths' => [__DIR__ . '/../src/Domain/Sponsor']
         ],
         'orm_default' => [
             'drivers' => [
@@ -44,7 +49,8 @@ return [
                 'ConferenceTools\\Attendance\\Domain\\Purchasing' => 'purchasing',
                 'ConferenceTools\\Attendance\\Domain\\Delegate' => 'delegates',
                 'ConferenceTools\\Attendance\\Domain\\Merchandise' => 'merchandise',
-                'ConferenceTools\\Attendance\\PaymentProvider' => 'stripe',
+                'ConferenceTools\\Attendance\\Domain\\DataSharing' => 'datasharing',
+                'ConferenceTools\\Attendance\\Domain\\Sponsor' => 'sponsor',
             ]
         ]
     ],

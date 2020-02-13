@@ -64,12 +64,39 @@ $routes = [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
+                    'view-opt-ins' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/opt-ins',
+                            'defaults' => [
+                                'action' => 'view-opt-ins',
+                            ],
+                        ],
+                    ],
+                    'change-opt-ins' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/change-opt-ins/:delegateListId',
+                            'defaults' => [
+                                'action' => 'change-opt-ins',
+                            ],
+                        ],
+                    ],
                     'qrcode' => [
                         'type' => Literal::class,
                         'options' => [
                             'route' => '/qrcode',
                             'defaults' => [
                                 'action' => 'qr-code',
+                            ],
+                        ],
+                    ],
+                    'badge' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/badge',
+                            'defaults' => [
+                                'action' => 'badge',
                             ],
                         ],
                     ],
@@ -95,6 +122,102 @@ if (!function_exists('getflag')) {
         return $value ? filter_var($value, FILTER_VALIDATE_BOOLEAN) : $default;
     }
 }
+
+$routes['attendance-sponsor'] = [
+    'type' => Literal::class,
+    'may_terminate' => true,
+    'options' => [
+        'route' => '/sponsor',
+        'defaults' => [
+            'requiresAuth' => true,
+            'layout' => 'admin/layout',
+            'requiresPermission' => 'sponsor',
+            'controller' => Controller\Sponsor\IndexController::class,
+            'action' => 'index',
+        ]
+    ],
+    'child_routes' => [
+        'delegatelist' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/delegatelist',
+                'defaults' => [
+                    'controller' => Controller\Sponsor\DelegateListController::class,
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'create' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/create',
+                        'defaults' => [
+                            'action' => 'create',
+
+                        ],
+                    ],
+                ],
+                'scan' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/scan',
+                        'defaults' => [
+                            'action' => 'scan',
+                        ],
+                    ],
+                ],
+                'collect' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/collect/:checkinId',
+                        'defaults' => [
+                            'action' => 'collect',
+                        ],
+                    ],
+                ],
+                'download' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/download',
+                        'defaults' => [
+                            'action' => 'download-list',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'questions' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/questions',
+                'defaults' => [
+                    'controller' => Controller\Sponsor\QuestionsController::class,
+                ],
+            ],
+            'may_terminate' => false,
+            'child_routes' => [
+                'add' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/add',
+                        'defaults' => [
+                            'action' => 'add',
+                        ],
+                    ],
+                ],
+                'delete' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:handle/delete',
+                        'defaults' => [
+                            'action' => 'delete',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
 
 $routes['attendance-admin'] = [
     'type' => Literal::class,
@@ -414,6 +537,46 @@ $routes['attendance-admin'] = [
                         'defaults' => [
                             'action' => 'resend-ticket-email',
 
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'sponsors' => [
+            'type' => Literal::class,
+            'options' => [
+                'route' => '/sponsors',
+                'defaults' => [
+                    'action' => 'index',
+                    'controller' => Controller\Admin\SponsorController::class,
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'create' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/create',
+                        'defaults' => [
+                            'action' => 'create',
+                        ],
+                    ],
+                ],
+                'set-list-last-collection-time' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/set-list-last-collection-time/:sponsorId',
+                        'defaults' => [
+                            'action' => 'set-list-last-collection-time',
+                        ],
+                    ],
+                ],
+                'set-list-available-time' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/set-list-available-time/:sponsorId',
+                        'defaults' => [
+                            'action' => 'set-list-available-time',
                         ],
                     ],
                 ],

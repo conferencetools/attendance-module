@@ -10,6 +10,8 @@ return [
             'reports' => 'View reports',
             'checkin' => 'Check in Delegates',
             'merchandise' => 'Merchandise management',
+            'sponsors' => 'Sponsor management',
+            'sponsor' => 'Access to sponsor dashboard',
         ]
     ],
     'conferencetools' => [
@@ -23,6 +25,7 @@ return [
                 ]
             ]
         ],
+        'emails' => require __DIR__ . '/email.config.php',
     ],
     'controllers' => require __DIR__ . '/controllers.config.php',
     'doctrine' => require __DIR__ . '/doctrine.config.php',
@@ -34,6 +37,8 @@ return [
         \ConferenceTools\Attendance\Domain\Delegate\MessageSubscriptions::class,
         \ConferenceTools\Attendance\Domain\Merchandise\MessageSubscriptions::class,
         \ConferenceTools\Attendance\Domain\Purchasing\MessageSubscriptions::class,
+        \ConferenceTools\Attendance\Domain\Sponsor\MessageSubscriptions::class,
+        \ConferenceTools\Attendance\Domain\DataSharing\MessageSubscriptions::class,
     ],
     'navigation' => require __DIR__ . '/navigation.config.php',
     'router' => [

@@ -13,7 +13,7 @@ class CheckDiscountAvailability implements HasActorId
      */
     private $id;
     /**
-     * @Jms\Type("ConferenceTools\Attendance\Domain\Ticketing\AvailabilityDates")
+     * @Jms\Type("ConferenceTools\Attendance\Domain\Discounting\AvailabilityDates")
      */
     private $availabilityDates;
 
